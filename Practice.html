@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B2 Monolog Prep Cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;400i&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --accent: #c0392b;
+    --gold: #d4a017;
+    --muted: #7a7065;
+    --green: #2d6a4f;
+    --blue: #1a4a7a;
+    --purple: #5a3472;
+    --exam-bg: #1e3a2f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, #2a1a3e 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 90%, #1a2a3e 0%, transparent 50%);
+  }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    min-height: 100vh;
+    gap: 0;
+  }
+
+  /* SIDEBAR — Exam Card */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--exam-bg);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .sidebar-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    font-weight: 500;
+  }
+
+  .exam-card {
+    background: var(--paper);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .exam-card-header {
+    background: var(--accent);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .exam-card-header span {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  .exam-card-body {
+    padding: 16px 14px;
+  }
+
+  .exam-situation {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+
+  .exam-instruction {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .exam-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .exam-bullets li {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 8px 10px;
+    background: var(--cream);
+    border-radius: 8px;
+    border-left: 3px solid var(--gold);
+  }
+
+  .bullet-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: var(--gold);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Topic selector in sidebar */
+  .topic-select-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .topic-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .topic-item:hover { background: rgba(255,255,255,0.07); }
+  .topic-item.active {
+    background: rgba(212,160,23,0.15);
+    border-color: var(--gold);
+  }
+
+  .topic-item-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--paper);
+    margin-bottom: 2px;
+  }
+
+  .topic-item-theme {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* Exam Mode toggle */
+  .exam-mode-btn {
+    width: 100%;
+    padding: 11px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .exam-mode-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* Timer in sidebar */
+  .sidebar-timer {
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .timer-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    color: var(--paper);
+    margin-bottom: 10px;
+    transition: color 0.3s;
+  }
+
+  .timer-big.warning { color: var(--accent); }
+  .timer-big.prep { color: var(--gold); }
+
+  .timer-controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .t-btn {
+    padding: 7px 14px;
+    border-radius: 50px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+
+  .t-btn.primary { background: var(--gold); color: var(--ink); }
+  .t-btn.secondary { background: rgba(255,255,255,0.1); color: var(--paper); }
+
+  .timer-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .timer-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+    justify-content: center;
+  }
+
+  .timer-tab {
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--muted);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .timer-tab.active {
+    background: rgba(255,255,255,0.1);
+    color: var(--paper);
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    padding: 32px 28px 80px;
+    max-width: 700px;
+  }
+
+  header {
+    margin-bottom: 28px;
+  }
+
+  .label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 4vw, 36px);
+    color: var(--paper);
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+
+  .subtitle { color: var(--muted); font-size: 13px; }
+
+  /* Progress */
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-label { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+  /* Cards */
+  .cards-grid { display: grid; gap: 14px; }
+
+  .card {
+    background: var(--paper);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .card:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--cream);
+  }
+
+  .step-badge {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700;
+    flex-shrink: 0; color: white;
+  }
+
+  .card-title { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--ink); }
+  .card-subtitle { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .timing {
+    margin-left: auto;
+    font-size: 11px;
+    background: var(--cream);
+    padding: 3px 9px;
+    border-radius: 50px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .card-body { padding: 16px 20px 18px; }
+
+  .card-1 .step-badge { background: var(--accent); }
+  .card-2 .step-badge { background: var(--blue); }
+  .card-2b .step-badge { background: var(--purple); }
+  .card-3 .step-badge { background: var(--green); }
+  .card-1 .card-header { border-left: 4px solid var(--accent); }
+  .card-2 .card-header { border-left: 4px solid var(--blue); }
+  .card-2b .card-header { border-left: 4px solid var(--purple); }
+  .card-3 .card-header { border-left: 4px solid var(--green); }
+
+  /* Strategy grid */
+  .strategy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .strategy-box {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .strategy-box:hover { border-color: var(--gold); }
+  .strategy-box.selected { border-color: var(--accent); background: #fdf0ee; }
+  .strategy-box h4 { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .strategy-box p { font-size: 12px; color: var(--ink); line-height: 1.4; }
+
+  /* Write area */
+  .write-section label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--cream);
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+
+  textarea:focus { outline: none; border-color: var(--gold); }
+  textarea::placeholder { color: #b0a898; }
+
+  /* Phrase bank */
+  .phrase-bank { margin-top: 12px; }
+
+  .phrase-bank-toggle {
+    background: none;
+    border: 1.5px solid var(--cream);
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .phrase-bank-toggle:hover { border-color: var(--ink); color: var(--ink); }
+
+  .phrase-list { display: none; margin-top: 8px; flex-wrap: wrap; gap: 5px; }
+  .phrase-list.open { display: flex; }
+
+  .phrase-chip {
+    background: var(--cream);
+    border: 1px solid #d5cfc5;
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-style: italic;
+  }
+
+  .phrase-chip:hover { background: var(--gold); border-color: var(--gold); color: white; font-style: normal; }
+
+  /* Checklist */
+  .checklist { list-style: none; margin-top: 12px; }
+
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: var(--ink);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--cream);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li.checked { color: var(--muted); text-decoration: line-through; }
+
+  .check-box {
+    width: 16px; height: 16px;
+    border: 1.5px solid #c5bfb5;
+    border-radius: 3px;
+    flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .checklist li.checked .check-box { background: var(--green); border-color: var(--green); }
+  .check-box::after { content: '✓'; font-size: 10px; color: white; display: none; }
+  .checklist li.checked .check-box::after { display: block; }
+
+  /* Model monolog */
+  .model-toggle {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--cream);
+  }
+
+  .model-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+
+  .model-btn:hover { background: #2d2d4e; }
+
+  .model-content {
+    display: none;
+    margin-top: 12px;
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .model-content.open { display: block; }
+
+  .model-section {
+    margin-bottom: 14px;
+  }
+
+  .model-section-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .model-section p { font-size: 13px; line-height: 1.7; color: var(--ink); }
+
+  /* Upgrade table */
+  .upgrade-table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 12px; }
+  .upgrade-table th { text-align: left; padding: 5px 8px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--cream); }
+  .upgrade-table td { padding: 6px 8px; vertical-align: top; border-bottom: 1px solid var(--cream); }
+  .upgrade-table tr:last-child td { border-bottom: none; }
+  .upgrade-table .avoid { color: #999; text-decoration: line-through; font-style: italic; }
+  .upgrade-table .use { color: var(--ink); font-weight: 500; }
+
+  /* Structure mini cards */
+  .structure-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 12px; }
+  .mini-card { background: var(--cream); border-radius: 7px; padding: 8px; text-align: center; }
+  .mini-card-num { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .mini-card-text { font-size: 11px; color: var(--ink); font-weight: 500; }
+
+  /* Exam mode */
+  body.exam-mode .phrase-bank { display: none !important; }
+  body.exam-mode .upgrade-table { display: none !important; }
+  body.exam-mode .strategy-grid { display: none !important; }
+  body.exam-mode .model-toggle { display: none !important; }
+  body.exam-mode .structure-row { display: none !important; }
+  body.exam-mode .exam-mode-notice {
+    display: block !important;
+  }
+
+  .exam-mode-notice {
+    display: none;
+    background: rgba(192,57,43,0.1);
+    border: 1px solid rgba(192,57,43,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  /* Conclusion structure */
+  .concl-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 12px; }
+  .concl-box { background: var(--cream); border-radius: 7px; padding: 8px; text-align: center; }
+  .concl-icon { font-size: 18px; margin-bottom: 3px; }
+  .concl-label { font-size: 11px; font-weight: 500; color: var(--ink); }
+  .concl-sub { font-size: 10px; color: var(--muted); }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: relative; height: auto; }
+    .main { padding: 20px 16px 60px; }
+    .strategy-grid { grid-template-columns: 1fr; }
+    .structure-row, .concl-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div>
+      <div class="sidebar-label" style="margin-bottom:12px;">Exam Card</div>
+      <div class="exam-card">
+        <div class="exam-card-header">
+          <span>📋 B2 Speaking Task</span>
+        </div>
+        <div class="exam-card-body">
+          <p class="exam-situation" id="examSituation">Loading...</p>
+          <div class="exam-instruction">Take into account the following:</div>
+          <ul class="exam-bullets" id="examBullets"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timer -->
+    <div class="sidebar-timer">
+      <div class="timer-tabs">
+        <button class="timer-tab active" onclick="setTimerMode('prep', this)">⏳ Prep</button>
+        <button class="timer-tab" onclick="setTimerMode('delivery', this)">🎤 Delivery</button>
+      </div>
+      <div class="timer-big prep" id="timerDisplay">3:00</div>
+      <div class="timer-controls">
+        <button class="t-btn primary" id="timerBtn" onclick="toggleTimer()">▶ Start</button>
+        <button class="t-btn secondary" onclick="resetTimer()">↺</button>
+      </div>
+      <div class="timer-label" id="timerLabel">3 min preparation</div>
+    </div>
+
+    <!-- Exam mode -->
+    <button class="exam-mode-btn" id="examModeBtn" onclick="toggleExamMode()">🎓 Exam Mode — OFF</button>
+
+    <!-- Topic list -->
+    <div>
+      <div class="sidebar-label" style="margin-bottom:10px;">Topics</div>
+      <div class="topic-select-list" id="topicList"></div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header>
+      <div class="label">B2 Speaking — Exam Prep</div>
+      <h1>Monolog Prep Cards</h1>
+      <p class="subtitle">Follow each card in order · Use the exam card on the left as your guide</p>
+    </header>
+
+    <div class="progress-bar">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">0 / 4 sections</div>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- CARD 1: INTRO -->
+      <div class="card card-1">
+        <div class="card-header">
+          <div class="step-badge">1</div>
+          <div>
+            <div class="card-title">The Introduction</div>
+            <div class="card-subtitle">Hook · Background · Road Map</div>
+          </div>
+          <div class="timing">⏱ ~45–60 sec</div>
+        </div>
+        <div class="card-body">
+          <div class="exam-mode-notice">⚠️ Exam Mode — no aids available. Write from memory.</div>
+
+          <div class="strategy-grid">
+            <div class="strategy-box" onclick="selectStrategy(this)">
+              <h4>🌍 Global Frame</h4>
+              <p>Frame the topic as a widespread issue in today's world.</p>
+            </div>
+            <div class="strategy-box" onclick="selectStrategy(this)">
+              <h4>⚖️ Dual Perspective</h4>
+              <p>Acknowledge both advantages and disadvantages from the start.</p>
+            </div>
+            <div class="strategy-box" onclick="selectStrategy(this)">
+              <h4>❓ Rhetorical Question</h4>
+              <p>Open with a question that makes the examiner think.</p>
+            </div>
+            <div class="strategy-box" onclick="selectStrategy(this)">
+              <h4>🙋 Personal Experience</h4>
+              <p>Connect the topic to your own life or local context.</p>
+            </div>
+          </div>
+
+          <div class="write-section">
+            <label>Write your introduction</label>
+            <textarea id="intro-text" placeholder="Hook → Background (Spain / personal) → Road map (I will focus on two key areas...)" rows="5" oninput="updateProgress()"></textarea>
+          </div>
+
+          <div class="phrase-bank">
+            <button class="phrase-bank-toggle" onclick="toggleBank('bank1', this)"><span>📚</span> Phrase bank</button>
+            <div class="phrase-list" id="bank1">
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', this.innerText)">In today's fast-paced world,</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', this.innerText)">Have you ever stopped to consider</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', this.innerText)">It is widely recognised that</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', this.innerText)">This is a polarising issue —</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', this.innerText)">it's a double-edged sword</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', this.innerText)">As someone living in Spain,</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', this.innerText)">I've decided to focus on two key areas:</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', this.innerText)">First of all… after that, I will move on to</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I use a hook? (NOT "I'm going to talk about…")</li>
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I connect the topic to my life or Spain?</li>
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I announce both guiding points from the exam card?</li>
+          </ul>
+
+          <div class="model-toggle">
+            <button class="model-btn" onclick="toggleModel('model1', this)">📖 See model introduction</button>
+            <div class="model-content" id="model1">
+              <div class="model-section">
+                <div class="model-section-label">Hook</div>
+                <p id="model-intro-hook"></p>
+              </div>
+              <div class="model-section">
+                <div class="model-section-label">Background</div>
+                <p id="model-intro-bg"></p>
+              </div>
+              <div class="model-section">
+                <div class="model-section-label">Road Map</div>
+                <p id="model-intro-map"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: POINT 1 -->
+      <div class="card card-2">
+        <div class="card-header">
+          <div class="step-badge">2</div>
+          <div>
+            <div class="card-title">Main Body — Point 1</div>
+            <div class="card-subtitle" id="point1-label">Topic sentence · Explanation · Example</div>
+          </div>
+          <div class="timing">⏱ ~30–40 sec</div>
+        </div>
+        <div class="card-body">
+          <div class="exam-mode-notice">⚠️ Exam Mode — no aids available. Write from memory.</div>
+
+          <div class="structure-row">
+            <div class="mini-card"><div class="mini-card-num">1.</div><div class="mini-card-text">Topic sentence</div></div>
+            <div class="mini-card"><div class="mini-card-num">2.</div><div class="mini-card-text">Explain why</div></div>
+            <div class="mini-card"><div class="mini-card-num">3.</div><div class="mini-card-text">Real example</div></div>
+          </div>
+
+          <div class="upgrade-table" style="margin-bottom:12px;">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+              <tr><th style="text-align:left;padding:5px 8px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--cream);">Avoid</th><th style="text-align:left;padding:5px 8px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--cream);">Use instead</th></tr>
+              <tr><td style="padding:6px 8px;border-bottom:1px solid var(--cream);color:#999;text-decoration:line-through;font-style:italic;">The first thing is…</td><td style="padding:6px 8px;border-bottom:1px solid var(--cream);font-weight:500;">First of all, one key aspect to consider is…</td></tr>
+              <tr><td style="padding:6px 8px;border-bottom:1px solid var(--cream);color:#999;text-decoration:line-through;font-style:italic;">I think it's because…</td><td style="padding:6px 8px;border-bottom:1px solid var(--cream);font-weight:500;">This can be attributed to the fact that…</td></tr>
+              <tr><td style="padding:6px 8px;color:#999;text-decoration:line-through;font-style:italic;">For example…</td><td style="padding:6px 8px;font-weight:500;">A clear illustration of this is… / To illustrate…</td></tr>
+            </table>
+          </div>
+
+          <div class="write-section">
+            <label>Write your first point</label>
+            <textarea id="point1-text" placeholder="Topic sentence → explanation → real example → transition to Point 2..." rows="5" oninput="updateProgress()"></textarea>
+          </div>
+
+          <div class="phrase-bank">
+            <button class="phrase-bank-toggle" onclick="toggleBank('bank2', this)"><span>📚</span> Phrase bank</button>
+            <div class="phrase-list" id="bank2">
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', this.innerText)">First of all, one key aspect is</span>
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', this.innerText)">This can be attributed to</span>
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', this.innerText)">To illustrate this,</span>
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', this.innerText)">A clear example of this is</span>
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', this.innerText)">Not only that, but</span>
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', this.innerText)">Now let's move on to</span>
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', this.innerText)">Having looked at… let's now consider</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I address the first guiding point from the exam card?</li>
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I explain WHY, not just WHAT?</li>
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I include a real example or fact?</li>
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I transition smoothly to Point 2?</li>
+          </ul>
+
+          <div class="model-toggle">
+            <button class="model-btn" onclick="toggleModel('model2', this)">📖 See model Point 1</button>
+            <div class="model-content" id="model2">
+              <p id="model-p1"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3: POINT 2 -->
+      <div class="card card-2b">
+        <div class="card-header">
+          <div class="step-badge">3</div>
+          <div>
+            <div class="card-title">Main Body — Point 2</div>
+            <div class="card-subtitle" id="point2-label">Topic sentence · Explanation · Example</div>
+          </div>
+          <div class="timing">⏱ ~30–40 sec</div>
+        </div>
+        <div class="card-body">
+          <div class="exam-mode-notice">⚠️ Exam Mode — no aids available. Write from memory.</div>
+
+          <div class="write-section">
+            <label>Write your second point</label>
+            <textarea id="point2-text" placeholder="Different angle from Point 1 → explanation → example → link to conclusion..." rows="5" oninput="updateProgress()"></textarea>
+          </div>
+
+          <div class="phrase-bank">
+            <button class="phrase-bank-toggle" onclick="toggleBank('bank3', this)"><span>📚</span> Phrase bank</button>
+            <div class="phrase-list" id="bank3">
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', this.innerText)">Another key point to consider is</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', this.innerText)">Turning to the question of</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', this.innerText)">On the other hand,</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', this.innerText)">Despite this, it is worth noting that</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', this.innerText)">As a result,</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', this.innerText)">Consequently,</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', this.innerText)">What's more,</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', this.innerText)">It is worth mentioning that</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I address the second guiding point from the exam card?</li>
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I use a contrast or addition linker?</li>
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I include evidence or a specific example?</li>
+          </ul>
+
+          <div class="model-toggle">
+            <button class="model-btn" onclick="toggleModel('model3', this)">📖 See model Point 2</button>
+            <div class="model-content" id="model3">
+              <p id="model-p2"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 4: CONCLUSION -->
+      <div class="card card-3">
+        <div class="card-header">
+          <div class="step-badge">4</div>
+          <div>
+            <div class="card-title">The Conclusion</div>
+            <div class="card-subtitle">Summary · Opinion · Closing phrase</div>
+          </div>
+          <div class="timing">⏱ ~20–30 sec</div>
+        </div>
+        <div class="card-body">
+          <div class="exam-mode-notice">⚠️ Exam Mode — no aids available. Write from memory.</div>
+
+          <div class="concl-row">
+            <div class="concl-box"><div class="concl-icon">🔁</div><div class="concl-label">Summarise</div><div class="concl-sub">Echo your 2 points</div></div>
+            <div class="concl-box"><div class="concl-icon">💬</div><div class="concl-label">Opinion</div><div class="concl-sub">Your final view</div></div>
+            <div class="concl-box"><div class="concl-icon">🎤</div><div class="concl-label">Close</div><div class="concl-sub">Signal the end</div></div>
+          </div>
+
+          <div class="write-section">
+            <label>Write your conclusion</label>
+            <textarea id="concl-text" placeholder="To sum up… / In conclusion… + opinion + closing phrase" rows="4" oninput="updateProgress()"></textarea>
+          </div>
+
+          <div class="phrase-bank">
+            <button class="phrase-bank-toggle" onclick="toggleBank('bank4', this)"><span>📚</span> Phrase bank</button>
+            <div class="phrase-list" id="bank4">
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', this.innerText)">To sum up, we have seen that</span>
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', this.innerText)">In conclusion, it is clear that</span>
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', this.innerText)">Overall, I would argue that</span>
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', this.innerText)">Personally, I believe the best way forward is</span>
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', this.innerText)">Ultimately, what matters most is</span>
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', this.innerText)">It will be interesting to see how this develops</span>
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', this.innerText)">That brings me to the end of my monolog.</span>
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', this.innerText)">Thank you for listening.</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I summarise both guiding points?</li>
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I give a personal opinion or reflection?</li>
+            <li onclick="toggleCheck(this)"><div class="check-box"></div> Did I use a clear closing phrase?</li>
+          </ul>
+
+          <div class="model-toggle">
+            <button class="model-btn" onclick="toggleModel('model4', this)">📖 See model conclusion</button>
+            <div class="model-content" id="model4">
+              <p id="model-concl"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const topics = [
+  {
+    name: "Mental Health Taboo",
+    theme: "Health & Wellbeing",
+    situation: "Despite growing awareness, mental health remains a sensitive and often avoided topic in many societies, including Spain.",
+    bullets: [
+      "Why mental health is still considered a taboo subject",
+      "What can be done to normalise mental health conversations"
+    ],
+    model: {
+      hook: "Have you ever felt overwhelmed or anxious, but felt too embarrassed to tell anyone? Most of us have. And yet, in a world where we talk openly about physical illness, mental health remains one of the last great taboos — a problem we can no longer afford to ignore.",
+      bg: "As someone living in Spain, I've always found this issue particularly relevant. I've noticed that many people around me tend to dismiss emotional struggles with phrases like 'anímate' or 'no es para tanto.' This cultural tendency to minimise mental health concerns makes it a deeply polarising issue.",
+      map: "I've decided to focus on two key areas today. First of all, I would like to address why mental health stigma still exists. After that, I will move on to examine what individuals and governments could do to tackle this effectively.",
+      p1: "To begin with, one key factor behind the stigma is a lack of education. Mental health has historically been misunderstood — conditions like depression were often dismissed as personal weakness rather than genuine medical issues. This can be attributed to decades of silence in schools and public discourse. To illustrate this, psychology was only recently incorporated more seriously into Spain's public healthcare conversations, meaning many older generations grew up with no framework for understanding emotional wellbeing. Now that we've looked at the roots of the problem, let's turn to what can be done.",
+      p2: "Another key point to consider is the role of education and public campaigns in breaking the taboo. Countries like the UK have invested heavily in school-based mental health programmes, and as a result, younger generations are significantly more open about their struggles. What's more, high-profile figures speaking publicly about their experiences have had a remarkable impact on normalising the conversation. Spain has seen growing awareness, though investment in mental health services still lags behind other European countries.",
+      concl: "To sum up, we have seen that mental health stigma persists largely due to historical silence and cultural attitudes, but that education and open public discourse offer a genuine path forward. Personally, I believe that normalising these conversations — starting in schools — is essential for a healthier society. That brings me to the end of my monolog — thank you for listening."
+    }
+  },
+  {
+    name: "Influencer Culture",
+    theme: "Society & Media",
+    situation: "Social media has given rise to a new type of celebrity — the influencer — whose impact on consumer behaviour and social values is increasingly debated.",
+    bullets: [
+      "The appeal and economic power of influencer culture",
+      "The negative effects of influencer culture on young people"
+    ],
+    model: {
+      hook: "Nowadays, influencer culture is a subject of intense debate. While it offers undeniable opportunities for creativity and entrepreneurship, it also raises troubling questions about authenticity and the values we are passing on to younger generations. It is, without doubt, a double-edged sword.",
+      bg: "As someone living in Spain, I've always found this topic particularly relevant. Platforms like Instagram and TikTok have completely transformed the way young people define success. In cities like Madrid, becoming an influencer is now considered a legitimate career path — something unthinkable just ten years ago.",
+      map: "I've decided to focus on two key areas today. First of all, I will examine the economic and creative potential of influencer culture. After that, I will move on to consider its darker effects on self-image and consumer behaviour.",
+      p1: "To begin with, one important aspect to consider is the economic potential that influencer culture has unlocked. This can be attributed to the democratisation of content creation — anyone with a smartphone can, in theory, build an audience. A clear illustration of this is the phenomenon of micro-influencers in Spain, who collaborate with local brands in ways that traditional advertising cannot match. Having looked at these advantages, let's now consider the other side.",
+      p2: "Turning to the question of its negative impact, influencer culture has been widely criticised for promoting unrealistic lifestyles and fuelling anxiety among teenagers. What's more, the pressure to present a curated, perfect version of one's life has been linked to rising rates of low self-esteem. Consequently, several countries are now introducing legislation requiring influencers to label digitally altered images — a step I believe is long overdue.",
+      concl: "To sum up, we have seen that influencer culture represents both a powerful economic opportunity and a significant social risk. Personally, I am of the opinion that the key lies in digital literacy — teaching people to consume online content critically rather than passively. Ultimately, what matters most is not the platform itself, but how we use it. Thank you for listening."
+    }
+  },
+  {
+    name: "Remote Work",
+    theme: "Education & Work",
+    situation: "The COVID-19 pandemic dramatically accelerated the shift to working from home, and many companies and employees are still adjusting to this new reality.",
+    bullets: [
+      "The advantages of remote work for employees and businesses",
+      "The challenges and drawbacks of working from home"
+    ],
+    model: {
+      hook: "Have you ever dreamed of working in your pyjamas? For millions of people around the world, that dream became a reality during the pandemic — and many are reluctant to give it up. Remote work has transformed the way we think about employment, and it's a debate that shows no sign of slowing down.",
+      bg: "As someone living in Spain, I find this topic particularly timely. Many Spanish companies were initially resistant to remote working, yet the shift has been significant. From my own experience, I've noticed that attitudes towards flexible working have changed enormously, especially among younger professionals in Madrid and Barcelona.",
+      map: "I've decided to focus on two key areas today. First of all, I would like to examine the genuine advantages that remote work offers to both employees and businesses. After that, I will address the challenges and drawbacks that this model brings with it.",
+      p1: "To begin with, one of the most significant advantages of remote work is the improvement in work-life balance. This can be attributed to the elimination of daily commutes, which in cities like Madrid can take up to two hours a day. As a result, employees report higher levels of job satisfaction and productivity. A clear example of this is a recent survey by the Spanish Ministry of Labour, which found that remote workers logged fewer sick days than their office-based colleagues. Now that we've considered the benefits, let's look at the other side.",
+      p2: "On the other hand, remote work presents real challenges that deserve attention. One key issue is the blurring of boundaries between professional and personal life — many workers find it difficult to 'switch off' when the office is their living room. What's more, younger employees and new hires often miss out on the mentorship and social interaction that an office environment provides, which can slow their professional development. Consequently, many companies are now adopting hybrid models as a compromise.",
+      concl: "To sum up, we have seen that remote work offers genuine advantages in terms of flexibility and productivity, but also creates challenges around isolation and work-life boundaries. Personally, I believe the future lies in hybrid models that combine the best of both worlds. It will be interesting to see how Spanish companies evolve on this issue in the coming years. That brings me to the end of my monolog."
+    }
+  },
+  {
+    name: "Fast Fashion",
+    theme: "Environment",
+    situation: "The fast fashion industry produces vast quantities of cheap clothing, but its environmental and social costs are increasingly coming under scrutiny.",
+    bullets: [
+      "The environmental impact of the fast fashion industry",
+      "What consumers and governments can do to tackle the problem"
+    ],
+    model: {
+      hook: "Have you ever bought a piece of clothing, worn it twice, and then thrown it away? Most of us have — and we rarely stop to think about the consequences. Fast fashion has made clothing cheaper and more disposable than ever before, but at an enormous cost to our planet.",
+      bg: "As someone living in Spain, I find this topic especially relevant. Spain is home to some of the world's largest fast fashion brands, including Zara and Mango. From my own experience, I've noticed that attitudes are beginning to shift, particularly among younger Spaniards who are increasingly drawn to second-hand and sustainable fashion.",
+      map: "I've decided to address two key areas today. First of all, I will examine the environmental damage caused by the fast fashion model. After that, I will explore what both consumers and governments can realistically do to address this growing crisis.",
+      p1: "To begin with, one of the most alarming aspects of fast fashion is its devastating impact on the environment. The fashion industry is responsible for around 10% of global carbon emissions and is one of the largest consumers of water worldwide. This can be attributed to the pressure on brands to release new collections every few weeks, which encourages overproduction and waste. A clear illustration of this is the Atacama Desert in Chile, where thousands of tonnes of discarded clothing pile up every year, creating a visible monument to throwaway culture. Now let's consider what can be done.",
+      p2: "Turning to potential solutions, both consumers and governments have a role to play. On the consumer side, the growing popularity of second-hand platforms like Vinted in Spain shows that attitudes are changing. What's more, the European Union has recently proposed legislation requiring clothing brands to make garments more durable and easier to repair — a significant step forward. Consequently, brands that fail to adapt may face both legal pressure and a loss of consumer trust.",
+      concl: "To sum up, we have seen that fast fashion creates serious environmental damage, but that both individual choices and government regulation can help reverse this trend. Personally, I believe that a cultural shift — buying less but buying better — is the most sustainable solution in the long run. Ultimately, what matters most is that we start treating our clothing with the same care we would give any other resource. Thank you for listening."
+    }
+  },
+  {
+    name: "Social Media & Identity",
+    theme: "Society & Media",
+    situation: "Social media platforms have become central to how people present themselves and form their identities, especially among younger generations.",
+    bullets: [
+      "How social media affects the way people construct their identity",
+      "The psychological effects of social media on mental wellbeing"
+    ],
+    model: {
+      hook: "In today's hyperconnected world, it is widely recognised that social media plays a significant role in shaping who we are — or at least, who we want others to think we are. Yet behind the curated photos and carefully chosen hashtags lies a much more complex and sometimes troubling reality.",
+      bg: "As someone living in Spain, I've always found this issue particularly relevant. From my own experience, I've noticed that many people — especially teenagers — spend enormous amounts of time crafting their online persona, often at the expense of authentic human connection.",
+      map: "I've decided to focus on two key areas. First of all, I will address how social media shapes the way people construct their identities. After that, I will move on to examine the psychological consequences this can have on mental wellbeing.",
+      p1: "To begin with, one key aspect to consider is how social media has transformed the concept of identity from something private and personal into something public and performative. This can be attributed to the way platforms like Instagram reward certain types of content — beautiful images, aspirational lifestyles — with likes and followers. As a result, many users find themselves presenting a highly edited version of themselves online. A clear illustration of this is the phenomenon of 'Instagram face' — a uniform beauty standard that has emerged across cultures and borders, flattening rather than celebrating diversity.",
+      p2: "On the other hand, the psychological toll of this constant self-presentation is significant. Research consistently links heavy social media use to higher rates of anxiety, depression, and low self-esteem, particularly among adolescent girls. What's more, the addictive design of these platforms — based on variable reward systems — makes it extremely difficult for users to disengage. Consequently, several European countries are now debating age restrictions and screen time regulations for minors.",
+      concl: "To sum up, we have seen that social media has fundamentally changed how people construct and present their identities, and that this comes at a real psychological cost. Personally, I believe the solution lies in digital literacy — teaching young people to use these platforms critically and with awareness. Ultimately, what matters most is that we remember who we are beyond our online profiles. That brings me to the end of my monolog."
+    }
+  },
+  {
+    name: "Urban Living",
+    theme: "Urban & Community",
+    situation: "More people than ever are choosing to live in large cities, but urban life brings with it a unique set of challenges that affect quality of life.",
+    bullets: [
+      "The main challenges of living in a big city like Madrid",
+      "What city authorities can do to improve urban quality of life"
+    ],
+    model: {
+      hook: "Have you ever wondered what it truly costs to live in a big city? Not just financially, but in terms of your health, your time, and your wellbeing? Urban living is often portrayed as exciting and full of opportunity — but it also comes with a set of challenges that are becoming increasingly difficult to ignore.",
+      bg: "As someone living in Spain, I find this topic particularly close to home. Cities like Madrid and Barcelona are magnets for young professionals, but they are also places where housing costs have skyrocketed, traffic is relentless, and loneliness — paradoxically — is on the rise.",
+      map: "I've decided to focus on two key areas today. First of all, I will address the main challenges that urban dwellers face. After that, I will consider what local authorities can do to make city life more sustainable and enjoyable.",
+      p1: "To begin with, one of the most pressing challenges of urban living is the housing crisis. This can be attributed to rising demand, insufficient affordable housing stock, and the growing impact of platforms like Airbnb, which have reduced the availability of long-term rentals. A clear illustration of this is Madrid's Lavapiés and Malasaña districts, where average rents have more than doubled in the past decade, pushing long-term residents out of their own neighbourhoods. Now that we've looked at the key challenges, let's consider what can be done.",
+      p2: "Another important aspect to consider is the role of city authorities in improving quality of life. On the one hand, initiatives like Madrid's cycling infrastructure expansion and pedestrianisation of city centre streets show what is possible. What's more, investment in green spaces — parks, urban gardens, tree-lined streets — has been shown to reduce stress and improve mental health in dense urban areas. Consequently, cities that prioritise people over cars tend to score higher on quality of life indices.",
+      concl: "To sum up, we have seen that urban living presents real challenges around housing and wellbeing, but that thoughtful city planning can make a significant difference. Personally, I believe that the cities of the future must put people and sustainability at their core, not just economic growth. It will be fascinating to see how Spanish cities evolve over the next decade. Thank you for listening."
+    }
+  },
+  {
+    name: "Digital Detox",
+    theme: "Technology",
+    situation: "In an increasingly connected world, many people feel overwhelmed by constant notifications and screen time, leading to a growing movement to disconnect from technology.",
+    bullets: [
+      "Why more people are feeling the need to disconnect from technology",
+      "The benefits and limitations of practising a digital detox"
+    ],
+    model: {
+      hook: "Have you ever reached for your phone the moment you woke up — before you'd even said good morning to anyone? If so, you're far from alone. In today's hyperconnected world, many people are starting to question whether constant connectivity is truly making their lives better — or simply busier.",
+      bg: "As someone living in Spain, I find this topic increasingly relevant. From my own experience, I've noticed that even during family gatherings or meals with friends, screens are rarely out of sight. The debate around digital wellbeing is becoming more urgent — particularly for younger generations who have never known a world without smartphones.",
+      map: "I've decided to address two key areas today. First of all, I will examine why so many people are feeling the urge to disconnect. After that, I will consider the real benefits — and limitations — of practising a digital detox.",
+      p1: "To begin with, one key factor driving the digital detox movement is the growing awareness of technology's impact on mental health. This can be attributed to the addictive design of social media platforms, which are deliberately engineered to keep users scrolling. As a result, many people report feelings of anxiety, poor concentration, and a constant sense of being 'on.' A clear illustration of this is the rising number of wellness retreats and 'phone-free' holidays being offered across Spain, from rural Andalucía to the Pyrenees. Now let's consider what a detox actually achieves.",
+      p2: "Turning to the benefits and limitations of a digital detox, the evidence suggests that even short breaks from screens can reduce stress and improve sleep quality. What's more, spending time offline has been shown to boost creativity and strengthen face-to-face relationships. However, it is worth noting that a complete digital detox is neither realistic nor desirable for most people in the modern world — the key lies in finding a healthy balance rather than total abstinence.",
+      concl: "To sum up, we have seen that the desire to disconnect from technology stems from very real pressures, and that a mindful approach to screen time can bring genuine benefits. Personally, I believe the solution is not to reject technology entirely, but to use it more intentionally. Ultimately, what matters most is that we remain in control of our devices — not the other way around. Thank you for listening."
+    }
+  },
+  {
+    name: "AI in the Workplace",
+    theme: "Technology",
+    situation: "Artificial intelligence is rapidly changing the nature of work across many industries, creating both opportunities and significant concerns for workers and employers alike.",
+    bullets: [
+      "The opportunities that AI creates in the modern workplace",
+      "The risks and challenges that AI poses for workers"
+    ],
+    model: {
+      hook: "In today's fast-paced world, it is widely recognised that artificial intelligence is no longer a distant sci-fi concept — it is already reshaping the way millions of people work. Whether this transformation represents opportunity or threat depends very much on who you ask.",
+      bg: "As someone living in Spain, I find this topic particularly timely. The country's growing tech sector, combined with the government's recent National AI Strategy, means that the debate around AI and employment is becoming increasingly urgent — especially for young people entering the job market.",
+      map: "I've decided to focus on two key areas today. First of all, I will examine the genuine opportunities that AI creates in the workplace. After that, I will move on to address the very real risks and challenges it poses for workers.",
+      p1: "To begin with, one of the most significant opportunities offered by AI is the automation of repetitive and time-consuming tasks. This can be attributed to advances in machine learning that allow software to process data, generate reports, and even draft communications far faster than any human. As a result, workers in fields like finance, healthcare, and logistics are finding that AI frees them up to focus on more creative and strategic work. A clear illustration of this is the use of AI diagnostic tools in Spanish hospitals, which have significantly reduced the time needed to analyse medical imaging.",
+      p2: "On the other hand, AI poses serious risks that we cannot afford to dismiss. One key concern is job displacement — particularly for workers in routine or manual roles who may lack the resources to retrain. What's more, there is a growing risk of algorithmic bias, where AI systems perpetuate existing inequalities in hiring and promotion decisions. Consequently, trade unions and governments across Europe are calling for stronger regulation to ensure that the benefits of AI are shared fairly.",
+      concl: "To sum up, we have seen that AI brings remarkable opportunities to the workplace, but also raises serious questions about employment security and fairness. Personally, I believe the key challenge is not to slow down AI development, but to ensure that workers are equipped to adapt to it. Ultimately, the future of work will depend on the choices we make today. That brings me to the end of my monolog."
+    }
+  },
+  {
+    name: "Tourism: Blessing or Burden?",
+    theme: "Urban & Community",
+    situation: "Spain is one of the world's most visited countries, but the enormous growth in tourism is having increasingly controversial effects on local communities and environments.",
+    bullets: [
+      "The economic and cultural benefits of tourism for Spain",
+      "The negative effects of mass tourism on local communities"
+    ],
+    model: {
+      hook: "Have you ever visited a beautiful city only to find it overwhelmed with tourists — including yourself? Spain attracts tens of millions of visitors every year, and while tourism is undeniably good for business, it is increasingly clear that it comes at a significant cost to the communities and places that welcome it.",
+      bg: "As someone living in Spain, I find this debate impossible to ignore. From Barcelona's famous 'tourists go home' protests to the overcrowding of Mallorca's beaches, the tension between welcoming visitors and protecting local life has become one of the defining issues of our times.",
+      map: "I've decided to focus on two key areas today. First of all, I will acknowledge the genuine economic and cultural benefits that tourism brings to Spain. After that, I will address the negative effects of mass tourism on local communities.",
+      p1: "To begin with, it is important to recognise the enormous economic contribution that tourism makes to Spain. This can be attributed to the fact that the sector accounts for approximately 12% of Spain's GDP and supports millions of jobs — from hotel workers and restaurant staff to tour guides and artisans. A clear illustration of this is the Canary Islands, where tourism is essentially the backbone of the entire economy and funds public services for local residents. Having acknowledged these benefits, let's now turn to the other side of the picture.",
+      p2: "Turning to the negative effects, mass tourism has placed enormous pressure on local housing markets, infrastructure, and cultural identity. The proliferation of short-term rental platforms like Airbnb has dramatically reduced the availability of affordable housing in cities like Seville and San Sebastián, pushing local families out of their own neighbourhoods. What's more, the environmental impact — from overtourism in natural parks to pollution caused by cruise ships — is becoming increasingly difficult to manage. Consequently, several Spanish cities are now imposing tourist taxes and visitor caps on their most popular sites.",
+      concl: "To sum up, we have seen that tourism brings real economic benefits to Spain, but that mass tourism without proper management is putting communities and environments under severe strain. Personally, I believe the future lies in sustainable and responsible tourism — fewer visitors who stay longer, spend more, and respect local culture. It will be interesting to see how Spanish tourism policy evolves in the coming years. Thank you for listening."
+    }
+  },
+  {
+    name: "University: Still Worth It?",
+    theme: "Education & Work",
+    situation: "With rising tuition fees and a competitive job market, many young people are questioning whether a university degree is still a worthwhile investment.",
+    bullets: [
+      "The value and benefits of a university education",
+      "The alternatives to university and the limitations of a degree"
+    ],
+    model: {
+      hook: "Have you ever questioned whether spending four or more years — and a considerable amount of money — at university is truly worth it? This is a question that more and more young people are asking, at a time when graduate unemployment remains stubbornly high and the cost of higher education continues to rise.",
+      bg: "As someone living in Spain, I find this issue particularly relevant. Spain has one of the highest youth unemployment rates in Europe, and many graduates find themselves overqualified for available jobs. From my own experience, I've noticed that young people are increasingly exploring alternatives — from vocational training to entrepreneurship — that were once considered second-best to a university degree.",
+      map: "I've decided to focus on two key areas today. First of all, I will address the genuine value and benefits that a university education still offers. After that, I will consider the growing range of alternatives and the limitations of relying solely on a degree.",
+      p1: "To begin with, one of the most enduring benefits of university is the combination of academic knowledge and personal development it provides. This can be attributed to the unique environment that universities offer — one that exposes students to diverse ideas, cultures, and ways of thinking. A clear illustration of this is research from the OECD, which consistently shows that graduates earn significantly more over their lifetimes than non-graduates, even accounting for the cost of their education. Not only that, but universities provide access to professional networks that can be invaluable in the early stages of a career. Now let's consider the alternatives.",
+      p2: "On the other hand, it would be misleading to suggest that university is the right path for everyone. Vocational training programmes — known in Spain as FP, or Formación Profesional — are increasingly well-regarded and often lead more directly to employment than a traditional degree. What's more, in rapidly evolving fields like technology and digital marketing, practical skills and demonstrable experience are often valued more highly than academic qualifications. Consequently, many employers are beginning to remove degree requirements from their job advertisements altogether.",
+      concl: "To sum up, we have seen that university still offers genuine value in terms of knowledge, personal growth, and long-term earning potential, but that it is no longer the only — or always the best — path to a successful career. Personally, I believe the most important thing is that young people make an informed choice based on their own interests and goals, rather than following a path out of habit or social expectation. That brings me to the end of my monolog — thank you for listening."
+    }
+  }
+];
+
+let currentTopicIndex = 0;
+let timerInterval = null;
+let timerSeconds = 180;
+let timerMode = 'prep';
+let timerRunning = false;
+let examModeOn = false;
+
+function init() {
+  const list = document.getElementById('topicList');
+  topics.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'topic-item' + (i === 0 ? ' active' : '');
+    div.innerHTML = `<div class="topic-item-name">${t.name}</div><div class="topic-item-theme">${t.theme}</div>`;
+    div.onclick = () => loadTopic(i, div);
+    list.appendChild(div);
+  });
+  loadTopic(0, list.children[0]);
+}
+
+function loadTopic(i, el) {
+  currentTopicIndex = i;
+  document.querySelectorAll('.topic-item').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+
+  const t = topics[i];
+  document.getElementById('examSituation').textContent = t.situation;
+
+  const bulletsEl = document.getElementById('examBullets');
+  bulletsEl.innerHTML = t.bullets.map((b, n) =>
+    `<li><span class="bullet-num">${n + 1}</span><span>${b}</span></li>`
+  ).join('');
+
+  // Update point labels
+  document.getElementById('point1-label').textContent = t.bullets[0];
+  document.getElementById('point2-label').textContent = t.bullets[1];
+
+  // Load models
+  document.getElementById('model-intro-hook').textContent = t.model.hook;
+  document.getElementById('model-intro-bg').textContent = t.model.bg;
+  document.getElementById('model-intro-map').textContent = t.model.map;
+  document.getElementById('model-p1').textContent = t.model.p1;
+  document.getElementById('model-p2').textContent = t.model.p2;
+  document.getElementById('model-concl').textContent = t.model.concl;
+
+  // Clear text areas and checklists
+  ['intro-text','point1-text','point2-text','concl-text'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.querySelectorAll('.checklist li').forEach(li => li.classList.remove('checked'));
+  document.querySelectorAll('.model-content').forEach(m => m.classList.remove('open'));
+
+  updateProgress();
+  resetTimer();
+}
+
+function selectStrategy(el) {
+  document.querySelectorAll('.strategy-box').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function toggleBank(id, btn) {
+  const list = document.getElementById(id);
+  list.classList.toggle('open');
+  btn.querySelector('span').textContent = list.classList.contains('open') ? '📖' : '📚';
+}
+
+function insertPhrase(id, phrase) {
+  const ta = document.getElementById(id);
+  ta.value = ta.value ? ta.value + ' ' + phrase : phrase;
+  ta.focus();
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('checked');
+}
+
+function updateProgress() {
+  const fields = ['intro-text','point1-text','point2-text','concl-text'];
+  const filled = fields.filter(id => document.getElementById(id).value.trim().length > 10).length;
+  document.getElementById('progressFill').style.width = (filled / 4 * 100) + '%';
+  document.getElementById('progressLabel').textContent = `${filled} / 4 sections`;
+}
+
+function toggleModel(id, btn) {
+  const m = document.getElementById(id);
+  m.classList.toggle('open');
+  btn.textContent = m.classList.contains('open') ? '📕 Hide model' : '📖 See model ' + btn.textContent.split('model ')[1];
+}
+
+// Timer
+function setTimerMode(mode, btn) {
+  timerMode = mode;
+  document.querySelectorAll('.timer-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  resetTimer();
+}
+
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timerBtn').textContent = '▶ Resume';
+  } else {
+    timerRunning = true;
+    document.getElementById('timerBtn').textContent = '⏸ Pause';
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      const display = document.getElementById('timerDisplay');
+      const m = Math.floor(timerSeconds / 60);
+      const s = timerSeconds % 60;
+      display.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      display.className = 'timer-big';
+      if (timerSeconds <= 15) display.classList.add('warning');
+      else if (timerMode === 'prep') display.classList.add('prep');
+      if (timerSeconds <= 0) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        display.textContent = 'Time!';
+        document.getElementById('timerBtn').textContent = '▶ Start';
+      }
+    }, 1000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = timerMode === 'prep' ? 180 : 60;
+  const display = document.getElementById('timerDisplay');
+  display.textContent = timerMode === 'prep' ? '3:00' : '1:00';
+  display.className = 'timer-big ' + (timerMode === 'prep' ? 'prep' : '');
+  document.getElementById('timerBtn').textContent = '▶ Start';
+  document.getElementById('timerLabel').textContent = timerMode === 'prep' ? '3 min preparation' : '1 min delivery';
+}
+
+function toggleExamMode() {
+  examModeOn = !examModeOn;
+  const btn = document.getElementById('examModeBtn');
+  if (examModeOn) {
+    document.body.classList.add('exam-mode');
+    btn.classList.add('active');
+    btn.textContent = '🎓 Exam Mode — ON';
+  } else {
+    document.body.classList.remove('exam-mode');
+    btn.classList.remove('active');
+    btn.textContent = '🎓 Exam Mode — OFF';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
