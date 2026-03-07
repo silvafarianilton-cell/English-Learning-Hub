@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phrasal Verbs Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #fdf6ec;
+    --warm: #f5e6cc;
+    --sage: #7a9e7e;
+    --sage-dark: #5a7d5e;
+    --coral: #e07a5f;
+    --coral-light: #f2a996;
+    --navy: #2d3561;
+    --sand: #c9a87c;
+    --sand-light: #e8d5b5;
+    --text: #2a2a2a;
+    --muted: #7a7a7a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(122,158,126,0.12) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(224,122,95,0.1) 0%, transparent 50%);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    color: var(--navy);
+    line-height: 1.2;
+  }
+
+  .header h1 em {
+    color: var(--coral);
+    font-style: italic;
+  }
+
+  .header p {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .category-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 30px;
+    animation: fadeDown 0.8s 0.1s ease both;
+  }
+
+  .tab-btn {
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: 2px solid var(--sand-light);
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.25s;
+    letter-spacing: 0.03em;
+  }
+
+  .tab-btn:hover { border-color: var(--sage); color: var(--sage-dark); }
+
+  .tab-btn.active {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: white;
+    box-shadow: 0 4px 14px rgba(122,158,126,0.35);
+  }
+
+  .tab-btn.all.active {
+    background: var(--navy);
+    border-color: var(--navy);
+    box-shadow: 0 4px 14px rgba(45,53,97,0.3);
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    width: 100%;
+    max-width: 640px;
+    margin-bottom: 24px;
+    animation: fadeDown 0.8s 0.15s ease both;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .progress-bar-bg {
+    height: 8px;
+    border-radius: 99px;
+    background: var(--sand-light);
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--sage), var(--coral));
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Quiz card */
+  .card {
+    background: white;
+    border-radius: 24px;
+    padding: 36px 40px;
+    max-width: 640px;
+    width: 100%;
+    box-shadow: 0 8px 40px rgba(45,53,97,0.08), 0 2px 8px rgba(45,53,97,0.04);
+    animation: cardIn 0.5s ease both;
+    position: relative;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(18px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .category-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .badge-health   { background: #e8f5e9; color: #388e3c; }
+  .badge-hobbies  { background: #e3f2fd; color: #1565c0; }
+  .badge-money    { background: #fff8e1; color: #f57f17; }
+  .badge-chores   { background: #fce4ec; color: #c62828; }
+
+  .question-num {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    color: var(--navy);
+    line-height: 1.45;
+    margin-bottom: 10px;
+  }
+
+  .question-text .blank {
+    display: inline-block;
+    min-width: 120px;
+    border-bottom: 3px solid var(--coral);
+    color: var(--coral);
+    font-style: italic;
+    padding: 0 4px;
+  }
+
+  /* Hint */
+  .hint-area {
+    margin: 10px 0 20px;
+  }
+
+  .hint-toggle {
+    background: none;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--sand);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    transition: color 0.2s;
+  }
+
+  .hint-toggle:hover { color: var(--coral); }
+
+  .hint-icon {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--warm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+  }
+
+  .hint-box {
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: var(--warm);
+    border-left: 4px solid var(--sand);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #5a4a2a;
+    line-height: 1.5;
+    display: none;
+    animation: fadeDown 0.3s ease;
+  }
+
+  .hint-box.visible { display: block; }
+
+  /* Options */
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .option-btn {
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 2px solid var(--sand-light);
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    line-height: 1.3;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--sage);
+    background: #f0f7f1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(122,158,126,0.2);
+  }
+
+  .option-btn.correct {
+    border-color: var(--sage);
+    background: #e8f5e9;
+    color: var(--sage-dark);
+  }
+
+  .option-btn.wrong {
+    border-color: var(--coral);
+    background: #fdecea;
+    color: var(--coral);
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  /* Feedback */
+  .feedback {
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  .feedback.correct-fb {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid var(--sage);
+    display: block;
+  }
+
+  .feedback.wrong-fb {
+    background: #fdecea;
+    color: #c62828;
+    border-left: 4px solid var(--coral);
+    display: block;
+  }
+
+  .feedback .example {
+    margin-top: 6px;
+    font-style: italic;
+    font-weight: 400;
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  /* Nav buttons */
+  .nav-area {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .nav-btn {
+    padding: 12px 28px;
+    border-radius: 99px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-next {
+    background: var(--navy);
+    color: white;
+    box-shadow: 0 4px 14px rgba(45,53,97,0.25);
+  }
+
+  .btn-next:hover { background: #1e2545; transform: translateY(-2px); }
+
+  /* Score screen */
+  .score-screen {
+    background: white;
+    border-radius: 24px;
+    padding: 48px 40px;
+    max-width: 640px;
+    width: 100%;
+    box-shadow: 0 8px 40px rgba(45,53,97,0.08);
+    text-align: center;
+    animation: cardIn 0.5s ease;
+    display: none;
+  }
+
+  .score-circle {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, var(--sage) 0%, var(--navy) 100%);
+    box-shadow: 0 8px 30px rgba(45,53,97,0.25);
+  }
+
+  .score-circle .num {
+    font-size: 2.8rem;
+    color: white;
+    line-height: 1;
+  }
+
+  .score-circle .denom {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .score-screen h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+
+  .score-screen p {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .btn-restart {
+    padding: 14px 36px;
+    border-radius: 99px;
+    border: none;
+    background: var(--coral);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(224,122,95,0.35);
+    transition: all 0.2s;
+  }
+
+  .btn-restart:hover { background: #c9614a; transform: translateY(-2px); }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 520px) {
+    .options { grid-template-columns: 1fr; }
+    .card { padding: 28px 22px; }
+    .question-text { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Phrasal Verbs<br><em>Warm-up Quiz</em></h1>
+  <p>Take it easy — trust your instincts 🌿</p>
+</div>
+
+<div class="category-tabs">
+  <button class="tab-btn all active" onclick="setCategory('all')">All Topics</button>
+  <button class="tab-btn" onclick="setCategory('health')">💪 Health</button>
+  <button class="tab-btn" onclick="setCategory('hobbies')">🎨 Hobbies</button>
+  <button class="tab-btn" onclick="setCategory('money')">💰 Money</button>
+  <button class="tab-btn" onclick="setCategory('chores')">🧹 Chores</button>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span id="progress-label">Question 1</span>
+    <span id="score-label">Score: 0</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="card" id="quiz-card">
+  <div class="category-badge" id="cat-badge"></div>
+  <div class="question-num" id="q-num"></div>
+  <div class="question-text" id="q-text"></div>
+
+  <div class="hint-area">
+    <button class="hint-toggle" onclick="toggleHint()">
+      <span class="hint-icon">💡</span> Need a hint?
+    </button>
+    <div class="hint-box" id="hint-box"></div>
+  </div>
+
+  <div class="options" id="options"></div>
+  <div class="feedback" id="feedback"></div>
+
+  <div class="nav-area">
+    <button class="nav-btn btn-next" id="next-btn" onclick="nextQuestion()" style="display:none">Next →</button>
+  </div>
+</div>
+
+<div class="score-screen" id="score-screen">
+  <div class="score-circle">
+    <span class="num" id="final-score">0</span>
+    <span class="denom" id="final-total">/10</span>
+  </div>
+  <h2 id="score-title">Well done!</h2>
+  <p id="score-msg"></p>
+  <button class="btn-restart" onclick="restartQuiz()">Play again 🔄</button>
+</div>
+
+<script>
+const allQuestions = [
+  // HEALTH
+  {
+    cat: 'health',
+    phrasal: 'get fit',
+    sentence: 'She decided to ___ this year and started going to the gym three times a week.',
+    hint: 'This means to become healthier and stronger through exercise.',
+    example: '"She finally got fit after months of working out every morning."',
+    options: ['get fit', 'burn off', 'pass out', 'cut down on'],
+    answer: 'get fit'
+  },
+  {
+    cat: 'health',
+    phrasal: 'work out',
+    sentence: 'He loves to ___ at the gym — he goes every morning before work.',
+    hint: 'Two words. Think about what you do at a gym — it\'s physical exercise.',
+    example: '"I work out for 45 minutes every day to stay in shape."',
+    options: ['warm up', 'work out', 'cool down', 'pass out'],
+    answer: 'work out'
+  },
+  {
+    cat: 'health',
+    phrasal: 'warm up',
+    sentence: 'Always ___ before a run — it helps prevent injuries.',
+    hint: 'You do this at the beginning of exercise — gentle movements to prepare your body.',
+    example: '"The coach told us to warm up for 10 minutes before the match."',
+    options: ['cool down', 'warm up', 'burn off', 'cut down on'],
+    answer: 'warm up'
+  },
+  {
+    cat: 'health',
+    phrasal: 'cool down',
+    sentence: 'After the race, she needed to ___ with some light stretching.',
+    hint: 'The opposite of the previous one — you do this at the END of exercise.',
+    example: '"Don\'t stop suddenly — you should cool down slowly after running."',
+    options: ['warm up', 'get fit', 'cool down', 'pass out'],
+    answer: 'cool down'
+  },
+  {
+    cat: 'health',
+    phrasal: 'cut down on',
+    sentence: 'The doctor told him to ___ sugar to improve his health.',
+    hint: 'This means to reduce the amount of something — you eat or do LESS of it.',
+    example: '"I\'m trying to cut down on coffee — I was drinking five cups a day!"',
+    options: ['cut down on', 'burn off', 'stock up on', 'pass out'],
+    answer: 'cut down on'
+  },
+  {
+    cat: 'health',
+    phrasal: 'come down with',
+    sentence: 'I think I\'m ___ a cold — my throat is sore and I feel tired.',
+    hint: 'You use this when you start to feel ill. It always goes with an illness.',
+    example: '"She came down with the flu and had to stay in bed for a week."',
+    options: ['come down with', 'pass out', 'burn off', 'get fit'],
+    answer: 'come down with'
+  },
+  {
+    cat: 'health',
+    phrasal: 'pass out',
+    sentence: 'It was so hot during the concert that two people ___.',
+    hint: 'This means to suddenly lose consciousness — to faint.',
+    example: '"He hadn\'t eaten all day and nearly passed out in the meeting."',
+    options: ['cool down', 'work out', 'pass out', 'warm up'],
+    answer: 'pass out'
+  },
+  {
+    cat: 'health',
+    phrasal: 'burn off',
+    sentence: 'I went for a long walk to ___ the calories from that big lunch.',
+    hint: 'You do this with calories or energy — you get rid of them through exercise.',
+    example: '"A 30-minute jog should burn off those extra cookies you ate!"',
+    options: ['burn off', 'cut down on', 'get fit', 'come down with'],
+    answer: 'burn off'
+  },
+  // HOBBIES
+  {
+    cat: 'hobbies',
+    phrasal: 'join in',
+    sentence: 'The game started without her, but she was happy to ___ later.',
+    hint: 'This means to start participating in something that is already happening.',
+    example: '"Everyone was singing — come on, join in!"',
+    options: ['give up', 'join in', 'pick up', 'hang out'],
+    answer: 'join in'
+  },
+  {
+    cat: 'hobbies',
+    phrasal: 'take up',
+    sentence: 'She decided to ___ photography after seeing some beautiful pictures online.',
+    hint: 'This means to start a new hobby or activity for the first time.',
+    example: '"He took up chess during lockdown and now he\'s quite good."',
+    options: ['give up', 'wind down', 'take up', 'try out'],
+    answer: 'take up'
+  },
+  {
+    cat: 'hobbies',
+    phrasal: 'get into',
+    sentence: 'I never liked jazz before, but I\'ve really ___ it lately.',
+    hint: 'This means to start enjoying or becoming interested in something.',
+    example: '"She got into running last summer and ran her first 5K."',
+    options: ['get into', 'give up', 'hang out', 'pick up'],
+    answer: 'get into'
+  },
+  {
+    cat: 'hobbies',
+    phrasal: 'hang out',
+    sentence: 'We like to ___ at the park on weekends and just relax.',
+    hint: 'Informal — it means to spend time relaxing with friends, not doing anything specific.',
+    example: '"Do you want to hang out this evening? We could watch a film."',
+    options: ['take up', 'hang out', 'try out', 'wind down'],
+    answer: 'hang out'
+  },
+  {
+    cat: 'hobbies',
+    phrasal: 'give up',
+    sentence: 'He tried learning the guitar but ___ after a few months — it was too hard.',
+    hint: 'This means to stop doing something, usually because it\'s too difficult.',
+    example: '"Don\'t give up! You\'re so close to finishing."',
+    options: ['give up', 'get into', 'join in', 'pick up'],
+    answer: 'give up'
+  },
+  {
+    cat: 'hobbies',
+    phrasal: 'pick up',
+    sentence: 'She ___ Spanish quite quickly because she was already learning Italian.',
+    hint: 'Here it means to learn something informally and gradually, not in a class.',
+    example: '"He picked up a few words of Japanese just from watching anime."',
+    options: ['pick up', 'take up', 'try out', 'wind down'],
+    answer: 'pick up'
+  },
+  {
+    cat: 'hobbies',
+    phrasal: 'try out',
+    sentence: 'I want to ___ that new yoga class before deciding if I\'ll join.',
+    hint: 'This means to test or experiment with something to see if you like it.',
+    example: '"Why don\'t you try out the new board game tonight?"',
+    options: ['wind down', 'join in', 'try out', 'give up'],
+    answer: 'try out'
+  },
+  {
+    cat: 'hobbies',
+    phrasal: 'wind down',
+    sentence: 'Reading before bed helps me ___ and get ready to sleep.',
+    hint: 'This means to relax and become calmer, usually at the end of the day.',
+    example: '"He likes to wind down in the evening with a hot drink and a book."',
+    options: ['wind down', 'hang out', 'take up', 'get into'],
+    answer: 'wind down'
+  },
+  // MONEY
+  {
+    cat: 'money',
+    phrasal: 'get by',
+    sentence: 'Her salary is low, but she manages to ___ by living simply.',
+    hint: 'This means to have just enough money to survive — not rich, but okay.',
+    example: '"We can get by on one salary while I look for a new job."',
+    options: ['splash out on', 'get by', 'run out of', 'save up'],
+    answer: 'get by'
+  },
+  {
+    cat: 'money',
+    phrasal: 'splash out on',
+    sentence: 'They decided to ___ a fancy dinner for their anniversary.',
+    hint: 'This means to spend a lot of money on something special — a bit of a treat!',
+    example: '"She splashed out on new shoes even though they were very expensive."',
+    options: ['cut back on', 'pay off', 'splash out on', 'stock up on'],
+    answer: 'splash out on'
+  },
+  {
+    cat: 'money',
+    phrasal: 'save up',
+    sentence: 'He\'s been ___ for two years to buy a new laptop.',
+    hint: 'This means to keep money over a period of time to buy something big later.',
+    example: '"I\'m saving up for a trip to Japan — I have almost enough now."',
+    options: ['save up', 'pay back', 'run out of', 'get by'],
+    answer: 'save up'
+  },
+  {
+    cat: 'money',
+    phrasal: 'pay off',
+    sentence: 'It took her ten years to finally ___ her student loan.',
+    hint: 'This means to finish paying a debt completely — until you owe nothing.',
+    example: '"Once I pay off my credit card, I\'ll start saving more."',
+    options: ['pay back', 'cut back on', 'pay off', 'stock up on'],
+    answer: 'pay off'
+  },
+  {
+    cat: 'money',
+    phrasal: 'pay back',
+    sentence: 'I lent him €50 last week. He said he\'d ___ me on Friday.',
+    hint: 'Similar to pay off, but this is about returning money to a specific person.',
+    example: '"Don\'t worry — I\'ll pay you back as soon as I get my salary."',
+    options: ['pay off', 'pay back', 'save up', 'get by'],
+    answer: 'pay back'
+  },
+  {
+    cat: 'money',
+    phrasal: 'cut back on',
+    sentence: 'To save money, they decided to ___ eating out at restaurants.',
+    hint: 'This means to spend less on something — similar to "cut down on."',
+    example: '"We cut back on our subscriptions to save about €50 a month."',
+    options: ['splash out on', 'cut back on', 'stock up on', 'run out of'],
+    answer: 'cut back on'
+  },
+  {
+    cat: 'money',
+    phrasal: 'stock up on',
+    sentence: 'Before the long weekend, they went to ___ food and drinks.',
+    hint: 'This means to buy a large quantity of something to have it ready for later.',
+    example: '"I always stock up on pasta and rice at the end of the month."',
+    options: ['stock up on', 'run out of', 'get by', 'pay off'],
+    answer: 'stock up on'
+  },
+  {
+    cat: 'money',
+    phrasal: 'run out of',
+    sentence: 'We ___ milk this morning, so I had to go to the shop.',
+    hint: 'This means to use all of something until there is none left.',
+    example: '"We ran out of time before we could finish the exam."',
+    options: ['save up', 'run out of', 'cut back on', 'pay back'],
+    answer: 'run out of'
+  },
+  // CHORES
+  {
+    cat: 'chores',
+    phrasal: 'pick up',
+    sentence: 'Could you ___ your clothes from the floor, please?',
+    hint: 'In the context of chores, this means to lift things off the floor or a surface.',
+    example: '"She asked the kids to pick up their toys before dinner."',
+    options: ['put away', 'pick up', 'sort out', 'wipe down'],
+    answer: 'pick up'
+  },
+  {
+    cat: 'chores',
+    phrasal: 'take out',
+    sentence: 'Don\'t forget to ___ the rubbish before you go to bed.',
+    hint: 'This is something you do with rubbish or a bin — you move it outside.',
+    example: '"It\'s your turn to take out the bins tonight."',
+    options: ['take out', 'sort out', 'sweep up', 'hang out'],
+    answer: 'take out'
+  },
+  {
+    cat: 'chores',
+    phrasal: 'sort out',
+    sentence: 'I really need to ___ my wardrobe — it\'s a complete mess.',
+    hint: 'This means to organise, tidy up, or deal with something that is disorganised.',
+    example: '"He spent the weekend sorting out all the old boxes in the garage."',
+    options: ['wipe down', 'sort out', 'put away', 'pick up'],
+    answer: 'sort out'
+  },
+  {
+    cat: 'chores',
+    phrasal: 'put away',
+    sentence: 'After dinner, she asked the children to ___ their toys.',
+    hint: 'This means to return things to their correct place after using them.',
+    example: '"Can you put away the dishes once they\'re dry?"',
+    options: ['sort out', 'hang out', 'put away', 'sweep up'],
+    answer: 'put away'
+  },
+  {
+    cat: 'chores',
+    phrasal: 'hang out',
+    sentence: 'It\'s a sunny day — perfect to ___ the washing to dry.',
+    hint: 'Different from the hobbies meaning! Here it\'s about putting wet clothes outside.',
+    example: '"She hung out the laundry early so it would be dry by the afternoon."',
+    options: ['wipe down', 'take out', 'hang out', 'sweep up'],
+    answer: 'hang out'
+  },
+  {
+    cat: 'chores',
+    phrasal: 'wipe down',
+    sentence: 'After cooking, she always ___ the kitchen counter with a cloth.',
+    hint: 'This means to clean a flat surface by moving a wet or damp cloth across it.',
+    example: '"Don\'t forget to wipe down the table after you eat."',
+    options: ['wipe down', 'sort out', 'pick up', 'take out'],
+    answer: 'wipe down'
+  },
+  {
+    cat: 'chores',
+    phrasal: 'sweep up',
+    sentence: 'He grabbed a broom to ___ the broken glass from the floor.',
+    hint: 'You use a broom to do this — you clean things off the floor.',
+    example: '"She swept up the leaves that had blown into the hallway."',
+    options: ['put away', 'sweep up', 'hang out', 'wipe down'],
+    answer: 'sweep up'
+  }
+];
+
+const catColors = {
+  health:  { cls: 'badge-health',  label: '💪 Health & Fitness' },
+  hobbies: { cls: 'badge-hobbies', label: '🎨 Hobbies' },
+  money:   { cls: 'badge-money',   label: '💰 Money' },
+  chores:  { cls: 'badge-chores',  label: '🧹 Chores' }
+};
+
+let currentCategory = 'all';
+let questions = [];
+let current = 0;
+let score = 0;
+let answered = false;
+
+function shuffle(arr) {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+function setCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  restartQuiz();
+}
+
+function buildQuestions() {
+  let pool = currentCategory === 'all'
+    ? [...allQuestions]
+    : allQuestions.filter(q => q.cat === currentCategory);
+  return shuffle(pool).slice(0, Math.min(10, pool.length));
+}
+
+function loadQuestion() {
+  answered = false;
+  const q = questions[current];
+
+  // Badge
+  const badgeEl = document.getElementById('cat-badge');
+  badgeEl.className = 'category-badge ' + catColors[q.cat].cls;
+  badgeEl.textContent = catColors[q.cat].label;
+
+  // Number
+  document.getElementById('q-num').textContent = `Question ${current + 1} of ${questions.length}`;
+
+  // Text
+  const sentence = q.sentence.replace('___', `<span class="blank">${q.phrasal}</span>`).replace(q.phrasal, '______');
+  // Actually build the blank correctly
+  const filled = q.sentence.replace('___', `<span class="blank">______</span>`);
+  document.getElementById('q-text').innerHTML = filled;
+
+  // Hint
+  document.getElementById('hint-box').textContent = q.hint;
+  document.getElementById('hint-box').classList.remove('visible');
+
+  // Options
+  const optEl = document.getElementById('options');
+  optEl.innerHTML = '';
+  shuffle([...q.options]).forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(opt, q, btn);
+    optEl.appendChild(btn);
+  });
+
+  // Feedback
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+
+  // Next btn
+  document.getElementById('next-btn').style.display = 'none';
+
+  // Progress
+  const pct = (current / questions.length) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `Question ${current + 1} of ${questions.length}`;
+  document.getElementById('score-label').textContent = `Score: ${score}`;
+
+  // Animate card
+  const card = document.getElementById('quiz-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'cardIn 0.45s ease both';
+}
+
+function selectAnswer(opt, q, btn) {
+  if (answered) return;
+  answered = true;
+
+  const allBtns = document.querySelectorAll('.option-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.answer) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById('feedback');
+
+  if (opt === q.answer) {
+    score++;
+    btn.classList.add('correct');
+    fb.className = 'feedback correct-fb';
+    fb.innerHTML = `✅ <strong>Exactly right!</strong><br><span class="example">${q.example}</span>`;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback wrong-fb';
+    fb.innerHTML = `❌ <strong>Not quite.</strong> The answer is <strong>"${q.answer}"</strong>.<br><span class="example">${q.example}</span>`;
+  }
+
+  document.getElementById('score-label').textContent = `Score: ${score}`;
+
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.style.display = 'inline-block';
+  if (current >= questions.length - 1) nextBtn.textContent = 'See results 🎉';
+  else nextBtn.textContent = 'Next →';
+}
+
+function toggleHint() {
+  const box = document.getElementById('hint-box');
+  box.classList.toggle('visible');
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showScore();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showScore() {
+  document.getElementById('quiz-card').style.display = 'none';
+  const ss = document.getElementById('score-screen');
+  ss.style.display = 'block';
+
+  const pct = score / questions.length;
+  document.getElementById('final-score').textContent = score;
+  document.getElementById('final-total').textContent = `/${questions.length}`;
+  document.getElementById('progress-fill').style.width = '100%';
+
+  let title, msg;
+  if (pct === 1) {
+    title = 'Perfect! 🌟'; msg = 'You got every single one right! Your knowledge of phrasal verbs is excellent. Keep going!';
+  } else if (pct >= 0.8) {
+    title = 'Great job! 🎉'; msg = `You got ${score} out of ${questions.length}. You really know your phrasal verbs! Review the ones you missed and you\'ll be perfect.`;
+  } else if (pct >= 0.6) {
+    title = 'Good effort! 👍'; msg = `${score} out of ${questions.length} — that\'s solid! Try the quiz again and see if the hints help you remember the trickier ones.`;
+  } else {
+    title = 'Keep practising! 💪'; msg = `${score} out of ${questions.length} this time. No worries — phrasal verbs take time. Try a single category first to focus your study!`;
+  }
+
+  document.getElementById('score-title').textContent = title;
+  document.getElementById('score-msg').textContent = msg;
+}
+
+function restartQuiz() {
+  score = 0;
+  current = 0;
+  questions = buildQuestions();
+  document.getElementById('quiz-card').style.display = 'block';
+  document.getElementById('score-screen').style.display = 'none';
+  loadQuestion();
+}
+
+// Init
+questions = buildQuestions();
+loadQuestion();
+</script>
+</body>
+</html>
