@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Detective — Reading & Writing Exercise</title>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f4ee;
+    --paper: #fffdf8;
+    --ink: #1e1e2e;
+    --muted: #7c7a8a;
+    --border: #dedad2;
+    --cyan: #0099aa;
+    --cyan-lt: #e0f6f9;
+    --green: #1a8a5a;
+    --green-lt: #e0f5ec;
+    --amber: #c07800;
+    --amber-lt: #fff4d6;
+    --red: #c0392b;
+    --red-lt: #fdecea;
+    --purple: #7c3aed;
+    --purple-lt: #f0ebff;
+    --tag-1p: #0099aa;
+    --tag-3p: #7c3aed;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+    padding: 40px 16px 80px;
+  }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeDown 0.5s ease both;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .header .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .header h1 {
+    font-family: 'Bitter', serif;
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  .header h1 span.c { color: var(--cyan); }
+  .header h1 span.p { color: var(--purple); }
+
+  .header .subtitle {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+    animation: fadeDown 0.5s 0.1s ease both;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-1p { background: var(--tag-1p); }
+  .dot-3p { background: var(--tag-3p); }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── READING CARD ── */
+  .reading-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px 36px;
+    margin-bottom: 36px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    animation: fadeUp 0.5s 0.15s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reading-card h2 {
+    font-family: 'Bitter', serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+
+  .reading-card .byline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .reading-card p {
+    font-family: 'Bitter', serif;
+    font-size: 15.5px;
+    line-height: 1.85;
+    color: #2e2e3e;
+    margin-bottom: 16px;
+  }
+
+  .reading-card p:last-child { margin-bottom: 0; }
+
+  /* Highlighted spans */
+  mark.p1 {
+    background: var(--cyan-lt);
+    color: #005566;
+    border-bottom: 2px solid var(--cyan);
+    padding: 0 2px;
+    border-radius: 2px;
+    font-weight: 600;
+    font-style: normal;
+  }
+
+  mark.p3 {
+    background: var(--purple-lt);
+    color: #4c1d95;
+    border-bottom: 2px solid var(--purple);
+    padding: 0 2px;
+    border-radius: 2px;
+    font-weight: 600;
+    font-style: normal;
+  }
+
+  /* ── GRAMMAR NOTE ── */
+  .grammar-note {
+    background: var(--amber-lt);
+    border: 1px solid #e8c060;
+    border-left: 4px solid var(--amber);
+    padding: 16px 20px;
+    margin-bottom: 36px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #5a3800;
+    border-radius: 0 4px 4px 0;
+    animation: fadeUp 0.5s 0.2s ease both;
+  }
+
+  .grammar-note strong {
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+    color: var(--amber);
+  }
+
+  .grammar-note .rule-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .grammar-note .rule-col {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .grammar-note .rule-col h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    margin-bottom: 6px;
+  }
+
+  .grammar-note code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    background: rgba(0,0,0,0.07);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  /* ── QUESTIONS SECTION ── */
+  .questions {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: fadeUp 0.5s 0.25s ease both;
+  }
+
+  .q-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+
+  .q-card:focus-within {
+    box-shadow: 0 0 0 3px rgba(0,153,170,0.15);
+    border-color: var(--cyan);
+  }
+
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 20px 14px;
+  }
+
+  .q-num {
+    width: 28px; height: 28px;
+    background: var(--ink);
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .q-body { flex: 1; }
+
+  .q-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-bottom: 7px;
+    font-weight: 600;
+  }
+
+  .tag-1p { background: var(--cyan-lt); color: #005566; }
+  .tag-3p { background: var(--purple-lt); color: #4c1d95; }
+  .tag-both { background: var(--green-lt); color: #0a4a2a; }
+
+  .q-text {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .q-hint {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .q-input-area {
+    padding: 0 20px 18px 62px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 72px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 10px 12px;
+    font-family: 'Bitter', serif;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    resize: vertical;
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+  }
+
+  textarea:focus {
+    border-color: var(--cyan);
+    background: white;
+  }
+
+  textarea::placeholder {
+    color: #bbb;
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  /* answered state */
+  textarea.answered {
+    border-color: var(--green);
+    background: var(--green-lt);
+  }
+
+  /* ── CHECK BUTTON ── */
+  .check-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px 12px 62px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .btn-check {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .btn-check:hover { background: #333; }
+
+  .feedback {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    transition: color 0.2s;
+  }
+
+  .feedback.good { color: var(--green); font-style: normal; font-weight: 600; }
+  .feedback.hint { color: var(--amber); }
+
+  /* ── MODEL ANSWERS (hidden by default) ── */
+  .model-answer {
+    display: none;
+    margin: 10px 20px 14px 62px;
+    background: var(--green-lt);
+    border: 1px solid #a8ddc0;
+    border-radius: 3px;
+    padding: 10px 14px;
+    font-family: 'Bitter', serif;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: #0a4a2a;
+  }
+
+  .model-answer strong {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 5px;
+    color: var(--green);
+  }
+
+  .model-answer mark.p1,
+  .model-answer mark.p3 {
+    font-family: 'Bitter', serif;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: transparent;
+    z-index: 100;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  /* ── SUBMIT ── */
+  .submit-section {
+    margin-top: 40px;
+    text-align: center;
+    animation: fadeUp 0.5s 0.3s ease both;
+  }
+
+  .btn-submit {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 14px 40px;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+    letter-spacing: 0.03em;
+  }
+
+  .btn-submit:hover { background: #333; transform: translateY(-1px); }
+
+  .score-display {
+    display: none;
+    margin-top: 24px;
+    padding: 20px 28px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .score-display .big-score {
+    font-family: 'Bitter', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .score-display p { color: var(--muted); font-size: 13px; }
+
+  @media (max-width: 480px) {
+    .reading-card { padding: 22px 18px; }
+    .q-input-area, .check-bar, .model-answer { padding-left: 20px; }
+    .grammar-note .rule-row { flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="eyebrow">English · A2 · Reading & Writing</div>
+    <h1>Two Tech People —<br><span class="c">I work</span> vs. <span class="p">She works</span></h1>
+    <p class="subtitle">Read the text · Notice the patterns · Answer the questions</p>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="dot dot-1p"></div> 1st person — I / We</div>
+    <div class="legend-item"><div class="dot dot-3p"></div> 3rd person — He / She / It</div>
+  </div>
+
+  <!-- READING TEXT -->
+  <div class="section-label">Part 1 — Read</div>
+
+  <div class="reading-card">
+    <h2>Two Colleagues, Two Worlds</h2>
+    <div class="byline">A SHORT TEXT · PRESENT SIMPLE · AFFIRMATIVE</div>
+
+    <p>
+      <mark class="p1">My name is Marco.</mark>
+      <mark class="p1">I work</mark> as a software developer in Montreal.
+      Every day, <mark class="p1">I use</mark> Python to build small automation tools.
+      <mark class="p1">I also love</mark> electronics —
+      <mark class="p1">I design</mark> circuits with Arduino in my free time.
+      At home, <mark class="p1">I have</mark> a son. He is young, but he already
+      <mark class="p3">loves</mark> technology too.
+    </p>
+
+    <p>
+      <mark class="p1">I have</mark> a colleague at work. Her name is Sara.
+      <mark class="p3">She works</mark> on the same team as me.
+      <mark class="p3">Sara knows</mark> a lot about machine learning —
+      <mark class="p3">she trains</mark> AI models and <mark class="p3">she writes</mark> Python scripts every day.
+      <mark class="p3">She also uses</mark> cloud platforms like AWS.
+      <mark class="p3">Sara reads</mark> a lot of research papers.
+      <mark class="p3">She says</mark> that AI <mark class="p3">changes</mark> everything.
+    </p>
+
+    <p>
+      <mark class="p1">I agree</mark> with her.
+      <mark class="p1">I think</mark> AI <mark class="p3">makes</mark> our work faster and smarter.
+      At my company, a new AI assistant <mark class="p3">helps</mark> us write better code.
+      <mark class="p3">It suggests</mark> solutions and <mark class="p3">it finds</mark> bugs automatically.
+      <mark class="p1">I really enjoy</mark> using it.
+    </p>
+
+    <p>
+      Every Friday, Sara and <mark class="p1">I</mark> have a short meeting.
+      <mark class="p3">She shares</mark> what <mark class="p3">she learns</mark> that week,
+      and <mark class="p1">I show</mark> her my new circuit projects.
+      <mark class="p1">I think</mark> <mark class="p3">she understands</mark> electronics better than me now!
+    </p>
+  </div>
+
+  <!-- GRAMMAR NOTE -->
+  <div class="grammar-note">
+    <strong>📌 Notice the pattern</strong>
+    <div class="rule-row">
+      <div class="rule-col">
+        <h4 style="color:#005566">1st person — I</h4>
+        <code>I work</code> · <code>I use</code> · <code>I think</code><br>
+        → verb stays the same
+      </div>
+      <div class="rule-col">
+        <h4 style="color:#4c1d95">3rd person — She / He / It</h4>
+        <code>She work<strong>s</strong></code> · <code>It find<strong>s</strong></code> · <code>He train<strong>s</strong></code><br>
+        → always add <strong>-s</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUESTIONS -->
+  <div class="section-label">Part 2 — Write your answers</div>
+
+  <div class="questions" id="questionsContainer">
+
+    <!-- Q1 -->
+    <div class="q-card" data-q="1">
+      <div class="q-header">
+        <div class="q-num">1</div>
+        <div class="q-body">
+          <div class="q-tag tag-1p">1st person · about you</div>
+          <div class="q-text">What do you do at work every day?</div>
+          <div class="q-hint">Write 1–2 sentences. Start with: <em>I …</em></div>
+        </div>
+      </div>
+      <div class="q-input-area">
+        <textarea placeholder="I work as a… / I use… / I write…" rows="2"></textarea>
+      </div>
+      <div class="check-bar">
+        <button class="btn-check" onclick="checkAnswer(1)">Check</button>
+        <span class="feedback" id="fb1">Write at least one sentence.</span>
+      </div>
+      <div class="model-answer" id="ma1">
+        <strong>Example answer</strong>
+        <mark class="p1">I work</mark> as a software developer. Every day, <mark class="p1">I write</mark> code and <mark class="p1">I test</mark> new tools.
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="q-card" data-q="2">
+      <div class="q-header">
+        <div class="q-num">2</div>
+        <div class="q-body">
+          <div class="q-tag tag-1p">1st person · about you</div>
+          <div class="q-text">What technology do you use in your free time?</div>
+          <div class="q-hint">Write 1–2 sentences. Start with: <em>I …</em></div>
+        </div>
+      </div>
+      <div class="q-input-area">
+        <textarea placeholder="I use… / I build… / I enjoy…" rows="2"></textarea>
+      </div>
+      <div class="check-bar">
+        <button class="btn-check" onclick="checkAnswer(2)">Check</button>
+        <span class="feedback" id="fb2">Write at least one sentence.</span>
+      </div>
+      <div class="model-answer" id="ma2">
+        <strong>Example answer</strong>
+        In my free time, <mark class="p1">I design</mark> circuits with Arduino. <mark class="p1">I also use</mark> AI tools to help me with my projects.
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="q-card" data-q="3">
+      <div class="q-header">
+        <div class="q-num">3</div>
+        <div class="q-body">
+          <div class="q-tag tag-3p">3rd person · about Sara</div>
+          <div class="q-text">What does Sara do at work? Write 2 things.</div>
+          <div class="q-hint">Look at the text. Use: <em>She …s</em></div>
+        </div>
+      </div>
+      <div class="q-input-area">
+        <textarea placeholder="She trains… / She writes…" rows="2"></textarea>
+      </div>
+      <div class="check-bar">
+        <button class="btn-check" onclick="checkAnswer(3)">Check</button>
+        <span class="feedback" id="fb3">Write at least one sentence.</span>
+      </div>
+      <div class="model-answer" id="ma3">
+        <strong>Example answer</strong>
+        <mark class="p3">She trains</mark> AI models. <mark class="p3">She also writes</mark> Python scripts every day.
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="q-card" data-q="4">
+      <div class="q-header">
+        <div class="q-num">4</div>
+        <div class="q-body">
+          <div class="q-tag tag-3p">3rd person · about the AI tool</div>
+          <div class="q-text">What does the AI assistant at Marco's company do?</div>
+          <div class="q-hint">Use: <em>It …s</em></div>
+        </div>
+      </div>
+      <div class="q-input-area">
+        <textarea placeholder="It helps… / It suggests… / It finds…" rows="2"></textarea>
+      </div>
+      <div class="check-bar">
+        <button class="btn-check" onclick="checkAnswer(4)">Check</button>
+        <span class="feedback" id="fb4">Write at least one sentence.</span>
+      </div>
+      <div class="model-answer" id="ma4">
+        <strong>Example answer</strong>
+        <mark class="p3">It helps</mark> the team write better code. <mark class="p3">It suggests</mark> solutions and <mark class="p3">it finds</mark> bugs automatically.
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="q-card" data-q="5">
+      <div class="q-header">
+        <div class="q-num">5</div>
+        <div class="q-body">
+          <div class="q-tag tag-3p">3rd person · about someone you know</div>
+          <div class="q-text">Think of a person you know. What do they do with technology?</div>
+          <div class="q-hint">Write 2 sentences. Use their name or: <em>He / She …s</em></div>
+        </div>
+      </div>
+      <div class="q-input-area">
+        <textarea placeholder="My friend / My son / My colleague… He uses… / She builds…" rows="3"></textarea>
+      </div>
+      <div class="check-bar">
+        <button class="btn-check" onclick="checkAnswer(5)">Check</button>
+        <span class="feedback" id="fb5">Write at least one sentence.</span>
+      </div>
+      <div class="model-answer" id="ma5">
+        <strong>Example answer</strong>
+        My son <mark class="p3">loves</mark> video games. <mark class="p3">He plays</mark> every evening and <mark class="p3">he knows</mark> a lot about computers.
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="q-card" data-q="6">
+      <div class="q-header">
+        <div class="q-num">6</div>
+        <div class="q-body">
+          <div class="q-tag tag-both">1st + 3rd person · compare</div>
+          <div class="q-text">Compare yourself with Sara. Write 2 sentences — one about you, one about her.</div>
+          <div class="q-hint">Use: <em>I …</em> and <em>She …s</em></div>
+        </div>
+      </div>
+      <div class="q-input-area">
+        <textarea placeholder="I build circuits. She trains AI models." rows="3"></textarea>
+      </div>
+      <div class="check-bar">
+        <button class="btn-check" onclick="checkAnswer(6)">Check</button>
+        <span class="feedback" id="fb6">Write at least two sentences.</span>
+      </div>
+      <div class="model-answer" id="ma6">
+        <strong>Example answer</strong>
+        <mark class="p1">I design</mark> circuits and <mark class="p1">I use</mark> Arduino. <mark class="p3">Sara trains</mark> AI models and <mark class="p3">she uses</mark> cloud platforms.
+      </div>
+    </div>
+
+    <!-- Q7 BONUS -->
+    <div class="q-card" data-q="7">
+      <div class="q-header">
+        <div class="q-num">★</div>
+        <div class="q-body">
+          <div class="q-tag tag-both" style="background:#fff4d6;color:#7a4000;">Bonus · Free writing</div>
+          <div class="q-text">Describe an AI tool you know. What does it do? Write 3 sentences.</div>
+          <div class="q-hint">Think of ChatGPT, Claude, Copilot, Midjourney… Use: <em>It …s</em></div>
+        </div>
+      </div>
+      <div class="q-input-area">
+        <textarea placeholder="I use… every day. It generates… It also helps me…" rows="4"></textarea>
+      </div>
+      <div class="check-bar">
+        <button class="btn-check" onclick="checkAnswer(7)">Check</button>
+        <span class="feedback" id="fb7">Write at least 2 sentences.</span>
+      </div>
+      <div class="model-answer" id="ma7">
+        <strong>Example answer</strong>
+        <mark class="p1">I use</mark> Claude every day. <mark class="p3">It generates</mark> text and <mark class="p3">it answers</mark> questions. <mark class="p3">It also helps</mark> me write better emails in English.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-section">
+    <button class="btn-submit" onclick="submitAll()">Show all answers &amp; examples</button>
+    <div class="score-display" id="scoreDisplay">
+      <span class="big-score" id="scoreText"></span>
+      <p id="scoreMsg"></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const totalQs = 7;
+  const answered = new Array(totalQs + 1).fill(false);
+
+  function getTextarea(n) {
+    return document.querySelector(`.q-card[data-q="${n}"] textarea`);
+  }
+
+  function checkAnswer(n) {
+    const ta = getTextarea(n);
+    const val = ta.value.trim();
+    const fb = document.getElementById(`fb${n}`);
+    const ma = document.getElementById(`ma${n}`);
+
+    if (val.length < 8) {
+      fb.textContent = "Write a full sentence first!";
+      fb.className = "feedback hint";
+      return;
+    }
+
+    // Check for common -s errors (3rd person Qs)
+    const thirdQs = [3, 4, 5];
+    if (thirdQs.includes(n)) {
+      const lower = val.toLowerCase();
+      const verbPattern = /\b(she|he|it|sara|my\s\w+)\s+([a-z]+)\b/g;
+      let match;
+      let missingS = false;
+      const irregulars = ['is','has','goes','does','uses','makes','says','writes','trains','learns','shares','knows','suggests','finds','helps','thinks','agrees','enjoys','loves','reads','changes'];
+      while ((match = verbPattern.exec(lower)) !== null) {
+        const verb = match[2];
+        if (!verb.endsWith('s') && !['a','the','to','in','on','at','and','or'].includes(verb)) {
+          if (!irregulars.includes(verb) && verb.length > 2) {
+            missingS = true;
+          }
+        }
+      }
+      if (missingS) {
+        fb.textContent = "💡 Check: did you add -s to the verb after he/she/it?";
+        fb.className = "feedback hint";
+        ma.style.display = "block";
+        return;
+      }
+    }
+
+    fb.textContent = "✓ Good — check the example below.";
+    fb.className = "feedback good";
+    ma.style.display = "block";
+    ta.classList.add("answered");
+
+    if (!answered[n]) {
+      answered[n] = true;
+      updateProgress();
+    }
+  }
+
+  function updateProgress() {
+    const done = answered.filter(Boolean).length;
+    const pct = (done / totalQs) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+  }
+
+  function submitAll() {
+    // Show all model answers
+    for (let i = 1; i <= totalQs; i++) {
+      const ma = document.getElementById(`ma${i}`);
+      if (ma) ma.style.display = "block";
+      const ta = getTextarea(i);
+      if (ta && ta.value.trim().length > 5) {
+        ta.classList.add("answered");
+        const fb = document.getElementById(`fb${i}`);
+        if (fb && !fb.classList.contains('good')) {
+          fb.textContent = "✓ See example answer below.";
+          fb.className = "feedback good";
+        }
+        if (!answered[i]) { answered[i] = true; }
+      }
+    }
+    updateProgress();
+
+    const done = answered.filter(Boolean).length;
+    const scoreEl = document.getElementById('scoreDisplay');
+    const scoreText = document.getElementById('scoreText');
+    const scoreMsg = document.getElementById('scoreMsg');
+
+    scoreEl.style.display = "block";
+    scoreText.textContent = `${done} / ${totalQs} answered`;
+
+    if (done === totalQs) {
+      scoreMsg.textContent = "Excellent work! Read the example answers and compare. Focus on the -s endings in 3rd person.";
+    } else if (done >= 4) {
+      scoreMsg.textContent = "Good effort! Read the examples for the remaining questions. Notice the -s pattern.";
+    } else {
+      scoreMsg.textContent = "Try to write at least one sentence per question. Read the examples carefully — notice I vs. She/He/It.";
+    }
+
+    scoreEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+</script>
+
+</body>
+</html>
