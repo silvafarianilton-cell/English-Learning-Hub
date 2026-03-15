@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App World — Present Simple A2</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f13;
+  --card: #18181f;
+  --card2: #1e1e28;
+  --border: rgba(255,255,255,0.07);
+  --text: #f0f0f5;
+  --muted: #8888a0;
+  --cyan: #00e5ff;
+  --pink: #ff4d8d;
+  --yellow: #ffd93d;
+  --green: #00e096;
+  --purple: #b66eff;
+  --red: #ff5c5c;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content:''; position:fixed;
+  width:600px; height:600px;
+  background: radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%);
+  top:-200px; left:-200px; pointer-events:none; z-index:0;
+}
+body::after {
+  content:''; position:fixed;
+  width:500px; height:500px;
+  background: radial-gradient(circle, rgba(182,110,255,0.06) 0%, transparent 70%);
+  bottom:-100px; right:-100px; pointer-events:none; z-index:0;
+}
+
+/* HEADER */
+header {
+  position:relative; z-index:2;
+  padding: 2.5rem 1.5rem 1.2rem;
+  max-width:780px; margin:0 auto;
+  display:flex; align-items:center; gap:1.2rem;
+}
+.header-icon {
+  width:52px; height:52px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.6rem; flex-shrink:0;
+  box-shadow: 0 0 24px rgba(0,229,255,0.25);
+}
+.header-text h1 {
+  font-family:'Syne',sans-serif;
+  font-size:clamp(1.4rem,4vw,1.9rem);
+  font-weight:800; line-height:1.1;
+}
+.header-text h1 span { color:var(--cyan); }
+.header-text p { color:var(--muted); font-size:0.88rem; margin-top:0.2rem; }
+
+/* BADGES */
+.level-row {
+  max-width:780px; margin:0 auto;
+  padding:0 1.5rem 1.4rem;
+  display:flex; gap:0.5rem; flex-wrap:wrap;
+  position:relative; z-index:2;
+}
+.badge {
+  font-family:'Syne',sans-serif;
+  font-size:0.68rem; font-weight:700;
+  letter-spacing:0.08em;
+  padding:0.28rem 0.75rem;
+  border-radius:20px; border:1px solid;
+}
+.bc { color:var(--cyan); border-color:rgba(0,229,255,0.3); background:rgba(0,229,255,0.07); }
+.bp { color:var(--pink); border-color:rgba(255,77,141,0.3); background:rgba(255,77,141,0.07); }
+.by { color:var(--yellow); border-color:rgba(255,217,61,0.3); background:rgba(255,217,61,0.07); }
+
+/* PROGRESS */
+.progress-wrap {
+  max-width:780px; margin:0 auto;
+  padding:0 1.5rem 1.8rem;
+  position:relative; z-index:2;
+}
+.progress-label {
+  display:flex; justify-content:space-between;
+  font-size:0.72rem; color:var(--muted); margin-bottom:0.4rem;
+  font-family:'Syne',sans-serif; font-weight:600;
+}
+.progress-track { height:5px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; }
+.progress-fill {
+  height:100%;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  border-radius:3px;
+  transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  width:0%;
+  box-shadow:0 0 10px rgba(0,229,255,0.3);
+}
+
+/* TABS */
+.tabs {
+  max-width:780px; margin:0 auto;
+  padding:0 1.5rem 1.4rem;
+  display:flex; gap:0.5rem;
+  position:relative; z-index:2;
+}
+.tab {
+  flex:1; background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:0.7rem 0.4rem;
+  text-align:center; cursor:pointer;
+  transition:all 0.2s;
+  font-family:'Syne',sans-serif;
+  font-size:0.7rem; font-weight:700;
+  color:var(--muted); letter-spacing:0.04em;
+}
+.tab .ti { display:block; font-size:1.25rem; margin-bottom:0.25rem; }
+.tab.active { color:var(--text); border-color:rgba(0,229,255,0.4); background:rgba(0,229,255,0.06); }
+.tab:hover:not(.active) { border-color:rgba(255,255,255,0.1); color:var(--text); }
+
+/* MAIN */
+main {
+  max-width:780px; margin:0 auto;
+  padding:0 1.5rem 5rem;
+  position:relative; z-index:2;
+}
+.section { display:none; animation:fadeUp 0.3s ease; }
+.section.active { display:block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+/* SECTION HEADER */
+.sec-title {
+  font-family:'Syne',sans-serif;
+  font-size:1.15rem; font-weight:800;
+  display:flex; align-items:center; gap:0.6rem;
+  margin-bottom:0.3rem;
+}
+.dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.sec-sub { color:var(--muted); font-size:0.84rem; margin-bottom:1.2rem; }
+
+/* GRAMMAR TIP BOX */
+.tip-box {
+  border-radius:var(--radius-sm);
+  padding:1rem 1.1rem;
+  margin-bottom:1.3rem;
+  font-size:0.86rem;
+  line-height:1.75;
+  border:1px solid;
+}
+.tip-cyan { background:rgba(0,229,255,0.04); border-color:rgba(0,229,255,0.15); border-left:3px solid var(--cyan); }
+.tip-pink  { background:rgba(255,77,141,0.04); border-color:rgba(255,77,141,0.15); border-left:3px solid var(--pink); }
+.tip-purple{ background:rgba(182,110,255,0.04); border-color:rgba(182,110,255,0.15); border-left:3px solid var(--purple); }
+.tip-box strong { font-weight:600; }
+.tip-box .hl-cyan   { color:var(--cyan); }
+.tip-box .hl-pink   { color:var(--pink); }
+.tip-box .hl-yellow { color:var(--yellow); }
+.tip-box .hl-purple { color:var(--purple); }
+.tip-box em { color:var(--text); font-style:normal; }
+
+/* QUESTION CARD */
+.q-card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.2rem; margin-bottom:0.9rem;
+  transition:border-color 0.25s;
+}
+.q-card.ok  { border-color:rgba(0,224,150,0.35); }
+.q-card.bad { border-color:rgba(255,92,92,0.35); }
+.q-num {
+  font-family:'Syne',sans-serif;
+  font-size:0.62rem; font-weight:700;
+  color:var(--muted); letter-spacing:0.12em; margin-bottom:0.55rem;
+}
+.q-prompt { font-size:0.97rem; line-height:1.6; margin-bottom:0.9rem; }
+.q-prompt .blank { color:var(--yellow); font-weight:600; }
+
+/* MC OPTIONS */
+.mc-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.45rem; }
+@media(max-width:460px){ .mc-grid{ grid-template-columns:1fr; } }
+.mc-btn {
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:0.6rem 0.85rem;
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:0.9rem; cursor:pointer;
+  text-align:left; transition:all 0.18s;
+}
+.mc-btn:hover:not(:disabled) {
+  border-color:rgba(0,229,255,0.3);
+  background:rgba(0,229,255,0.05);
+  transform:translateY(-1px);
+}
+.mc-btn.correct { border-color:var(--green); background:rgba(0,224,150,0.08); color:var(--green); }
+.mc-btn.wrong   { border-color:var(--red);   background:rgba(255,92,92,0.08);  color:var(--red); }
+.mc-btn:disabled { cursor:default; }
+
+/* FEEDBACK */
+.q-fb {
+  margin-top:0.75rem; padding:0.6rem 0.85rem;
+  border-radius:var(--radius-sm);
+  font-size:0.84rem; line-height:1.5;
+  display:none; animation:fadeUp 0.2s ease;
+}
+.q-fb.show { display:block; }
+.q-fb.ok  { background:rgba(0,224,150,0.07); border:1px solid rgba(0,224,150,0.25); color:var(--green); }
+.q-fb.bad { background:rgba(255,92,92,0.07);  border:1px solid rgba(255,92,92,0.25);  color:var(--red); }
+
+/* SCORE CARD */
+.score-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1.4rem;
+  text-align:center; margin-bottom:1rem;
+  display:none;
+}
+.score-card.show { display:block; animation:fadeUp 0.4s ease; }
+.score-big { font-family:'Syne',sans-serif; font-size:2.8rem; font-weight:800; line-height:1; }
+.score-lbl { color:var(--muted); font-size:0.82rem; margin-top:0.25rem; }
+.score-stars { font-size:1.7rem; margin:0.7rem 0; }
+
+/* VOCAB */
+.vocab-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(130px,1fr));
+  gap:0.55rem; margin-bottom:1.3rem;
+}
+.v-chip {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:0.65rem 0.8rem; text-align:center;
+  cursor:pointer; transition:all 0.18s; user-select:none;
+}
+.v-chip:hover { border-color:rgba(255,77,141,0.35); background:rgba(255,77,141,0.04); }
+.v-chip.selected { border-color:var(--pink); background:rgba(255,77,141,0.09); }
+.v-chip.used { opacity:0.38; pointer-events:none; }
+.v-emoji { font-size:1.35rem; display:block; margin-bottom:0.25rem; }
+.v-word { font-family:'Syne',sans-serif; font-size:0.82rem; font-weight:700; }
+
+.match-list { display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1rem; }
+.match-row {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:0.85rem 1rem;
+  display:flex; align-items:center; gap:0.8rem;
+  font-size:0.88rem; cursor:pointer; transition:border-color 0.2s;
+}
+.match-row:hover:not(.done) { border-color:rgba(255,77,141,0.3); }
+.match-def { color:var(--muted); flex:1; line-height:1.4; }
+.match-ans {
+  font-family:'Syne',sans-serif; font-weight:700; font-size:0.82rem;
+  min-width:96px; text-align:right; color:var(--muted); transition:color 0.2s;
+}
+.match-row.filled .match-ans { color:var(--pink); }
+.match-row.ok-match  { border-color:rgba(0,224,150,0.35); }
+.match-row.ok-match  .match-ans { color:var(--green); }
+.match-row.bad-match { border-color:rgba(255,92,92,0.35); }
+.match-row.bad-match .match-ans { color:var(--red); }
+
+/* WRITING */
+.w-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1.2rem; margin-bottom:1rem;
+}
+.w-prompt { font-size:0.97rem; line-height:1.6; margin-bottom:0.3rem; }
+.w-prompt strong { color:var(--yellow); }
+.w-hint { font-size:0.77rem; color:var(--muted); font-style:italic; margin-bottom:0.8rem; }
+.w-hint span { color:var(--purple); font-style:normal; font-weight:500; }
+
+textarea {
+  width:100%; background:var(--card2);
+  border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:0.85rem 1rem; color:var(--text);
+  font-family:'DM Sans',sans-serif; font-size:0.93rem; line-height:1.6;
+  resize:vertical; min-height:80px; outline:none; transition:border-color 0.2s;
+}
+textarea:focus { border-color:rgba(182,110,255,0.4); }
+textarea::placeholder { color:var(--muted); font-style:italic; }
+textarea:disabled { opacity:0.6; cursor:default; }
+
+/* MODEL ANSWER BOX */
+.model-box {
+  margin-top:0.85rem; padding:0.9rem 1rem;
+  background:rgba(182,110,255,0.06);
+  border:1px solid rgba(182,110,255,0.22);
+  border-radius:var(--radius-sm);
+  display:none; animation:fadeUp 0.3s ease;
+}
+.model-box.show { display:block; }
+.model-label {
+  font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:700;
+  letter-spacing:0.1em; color:var(--purple); margin-bottom:0.55rem;
+}
+.model-text { font-size:0.88rem; line-height:1.7; color:var(--text); }
+.model-text .hl { color:var(--cyan); font-weight:600; }
+.model-text .note { color:var(--muted); font-style:italic; font-size:0.82rem; }
+.self-check {
+  margin-top:0.6rem; padding-top:0.6rem;
+  border-top:1px solid rgba(255,255,255,0.06);
+  font-size:0.8rem; color:var(--muted);
+}
+.self-check strong { color:var(--yellow); }
+
+/* BUTTONS */
+.btn {
+  display:inline-flex; align-items:center; gap:0.45rem;
+  padding:0.6rem 1.2rem; border-radius:var(--radius-sm);
+  border:1px solid; cursor:pointer;
+  font-family:'Syne',sans-serif; font-size:0.78rem; font-weight:700;
+  letter-spacing:0.04em; transition:all 0.18s; background:transparent;
+}
+.btn-cyan   { color:var(--cyan);   border-color:rgba(0,229,255,0.3); }
+.btn-cyan:hover   { background:rgba(0,229,255,0.09);   box-shadow:0 0 14px rgba(0,229,255,0.15); }
+.btn-pink   { color:var(--pink);   border-color:rgba(255,77,141,0.3); }
+.btn-pink:hover   { background:rgba(255,77,141,0.09); }
+.btn-purple { color:var(--purple); border-color:rgba(182,110,255,0.3); }
+.btn-purple:hover { background:rgba(182,110,255,0.09); }
+.btn:disabled { opacity:0.4; cursor:not-allowed; }
+.btn-row { display:flex; gap:0.55rem; margin-top:0.85rem; flex-wrap:wrap; }
+
+/* TOAST */
+.toast-wrap { position:fixed; bottom:1.4rem; right:1.4rem; z-index:99; display:flex; flex-direction:column; gap:0.35rem; align-items:flex-end; }
+.toast {
+  background:var(--card2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:0.55rem 0.95rem;
+  font-family:'Syne',sans-serif; font-size:0.76rem; font-weight:600;
+  color:var(--text); max-width:220px;
+  animation: toastIn 0.28s ease, toastOut 0.28s ease 2.7s forwards;
+}
+@keyframes toastIn  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes toastOut { to{opacity:0;transform:translateY(-6px)} }
+</style>
+</head>
+<body>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-icon">📱</div>
+  <div class="header-text">
+    <h1>App <span>World</span></h1>
+    <p>A2 English — Present Simple: I / he / she / they</p>
+  </div>
+</header>
+
+<div class="level-row">
+  <div class="badge bc">A2 LEVEL</div>
+  <div class="badge bp">PRESENT SIMPLE</div>
+  <div class="badge by">1st &amp; 3rd PERSON</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>PROGRESS</span><span id="prog-txt">0 / 3 done</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="prog-bar"></div></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="goTab(0)"><span class="ti">📖</span>GRAMMAR</div>
+  <div class="tab"        onclick="goTab(1)"><span class="ti">🔤</span>VOCAB</div>
+  <div class="tab"        onclick="goTab(2)"><span class="ti">✍️</span>WRITING</div>
+</div>
+
+<main>
+
+<!-- ══════════════════════════
+     TAB 0 — GRAMMAR
+══════════════════════════ -->
+<div class="section active" id="sec-0">
+
+  <div class="sec-title"><div class="dot" style="background:var(--cyan)"></div>Grammar — Present Simple</div>
+  <div class="sec-sub">Choose the correct verb form for each sentence.</div>
+
+  <div class="tip-box tip-cyan">
+    <strong class="hl-cyan">Present Simple — Key Rules</strong><br>
+    <em>I / you / we / they</em> → base verb &nbsp;→&nbsp; <span class="hl-yellow">I use, they send, we check</span><br>
+    <em>he / she / it</em> → verb <strong class="hl-cyan">+ s / es</strong> &nbsp;→&nbsp; <span class="hl-yellow">she uses, he watches, it works</span><br>
+    Negative: &nbsp;<span class="hl-yellow">I <strong>don't</strong> use</span> &nbsp;/&nbsp; <span class="hl-yellow">she <strong>doesn't</strong> use</span>
+  </div>
+
+  <!-- Q1 -->
+  <div class="q-card" id="gq0">
+    <div class="q-num">QUESTION 1 OF 6</div>
+    <div class="q-prompt">My sister <span class="blank">_____</span> TikTok every night before she goes to sleep.</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="ansG(0,0)">watch</button>
+      <button class="mc-btn" onclick="ansG(0,1)">watches</button>
+      <button class="mc-btn" onclick="ansG(0,2)">watchs</button>
+      <button class="mc-btn" onclick="ansG(0,3)">is watch</button>
+    </div>
+    <div class="q-fb" id="gf0"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card" id="gq1">
+    <div class="q-num">QUESTION 2 OF 6</div>
+    <div class="q-prompt">I <span class="blank">_____</span> my messages every morning when I wake up.</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="ansG(1,0)">checks</button>
+      <button class="mc-btn" onclick="ansG(1,1)">check</button>
+      <button class="mc-btn" onclick="ansG(1,2)">is check</button>
+      <button class="mc-btn" onclick="ansG(1,3)">do check</button>
+    </div>
+    <div class="q-fb" id="gf1"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card" id="gq2">
+    <div class="q-num">QUESTION 3 OF 6</div>
+    <div class="q-prompt">My friends and I <span class="blank">_____</span> photos on Instagram after school.</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="ansG(2,0)">posts</button>
+      <button class="mc-btn" onclick="ansG(2,1)">post</button>
+      <button class="mc-btn" onclick="ansG(2,2)">postes</button>
+      <button class="mc-btn" onclick="ansG(2,3)">posting</button>
+    </div>
+    <div class="q-fb" id="gf2"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card" id="gq3">
+    <div class="q-num">QUESTION 4 OF 6</div>
+    <div class="q-prompt">He <span class="blank">_____</span> use Snapchat. He prefers WhatsApp.</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="ansG(3,0)">don't</button>
+      <button class="mc-btn" onclick="ansG(3,1)">doesn't</button>
+      <button class="mc-btn" onclick="ansG(3,2)">not</button>
+      <button class="mc-btn" onclick="ansG(3,3)">isn't</button>
+    </div>
+    <div class="q-fb" id="gf3"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card" id="gq4">
+    <div class="q-num">QUESTION 5 OF 6</div>
+    <div class="q-prompt">They <span class="blank">_____</span> music on Spotify when they study.</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="ansG(4,0)">listens</button>
+      <button class="mc-btn" onclick="ansG(4,1)">listen</button>
+      <button class="mc-btn" onclick="ansG(4,2)">listenings</button>
+      <button class="mc-btn" onclick="ansG(4,3)">does listen</button>
+    </div>
+    <div class="q-fb" id="gf4"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-card" id="gq5">
+    <div class="q-num">QUESTION 6 OF 6</div>
+    <div class="q-prompt">She <span class="blank">_____</span> new apps because her phone <span class="blank">_____</span> enough storage.</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="ansG(5,0)">don't download / don't have</button>
+      <button class="mc-btn" onclick="ansG(5,1)">doesn't download / doesn't have</button>
+      <button class="mc-btn" onclick="ansG(5,2)">doesn't download / don't have</button>
+      <button class="mc-btn" onclick="ansG(5,3)">don't download / doesn't have</button>
+    </div>
+    <div class="q-fb" id="gf5"></div>
+  </div>
+
+  <div class="score-card" id="g-sc">
+    <div class="score-big" id="g-sc-n" style="color:var(--cyan)">—</div>
+    <div class="score-lbl">Grammar Score</div>
+    <div class="score-stars" id="g-stars">—</div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-cyan" id="g-nxt" onclick="goTab(1)" style="display:none">Next: Vocabulary →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     TAB 1 — VOCABULARY
+══════════════════════════ -->
+<div class="section" id="sec-1">
+
+  <div class="sec-title"><div class="dot" style="background:var(--pink)"></div>Vocabulary Match</div>
+  <div class="sec-sub">Tap a word, then tap its definition to match them.</div>
+
+  <div class="tip-box tip-pink">
+    <strong class="hl-pink">App vocabulary — do you know these words?</strong><br>
+    These are common words people use every day when they talk about phones and apps.
+    Read each definition carefully before you match!
+  </div>
+
+  <div class="vocab-grid" id="v-words">
+    <div class="v-chip" data-w="notification" onclick="pickWord(this)">
+      <span class="v-emoji">🔔</span><div class="v-word">notification</div>
+    </div>
+    <div class="v-chip" data-w="update" onclick="pickWord(this)">
+      <span class="v-emoji">🔄</span><div class="v-word">update</div>
+    </div>
+    <div class="v-chip" data-w="username" onclick="pickWord(this)">
+      <span class="v-emoji">👤</span><div class="v-word">username</div>
+    </div>
+    <div class="v-chip" data-w="upload" onclick="pickWord(this)">
+      <span class="v-emoji">☁️</span><div class="v-word">upload</div>
+    </div>
+    <div class="v-chip" data-w="log out" onclick="pickWord(this)">
+      <span class="v-emoji">🚪</span><div class="v-word">log out</div>
+    </div>
+    <div class="v-chip" data-w="storage" onclick="pickWord(this)">
+      <span class="v-emoji">💾</span><div class="v-word">storage</div>
+    </div>
+  </div>
+
+  <div class="match-list" id="v-defs">
+    <div class="match-row" data-d="notification" onclick="pickDef(this)">
+      <div class="match-def">A small message your phone shows to tell you something new happened in an app</div>
+      <div class="match-ans" id="ma-notification">—</div>
+    </div>
+    <div class="match-row" data-d="update" onclick="pickDef(this)">
+      <div class="match-def">To install a new and better version of an app on your phone</div>
+      <div class="match-ans" id="ma-update">—</div>
+    </div>
+    <div class="match-row" data-d="username" onclick="pickDef(this)">
+      <div class="match-def">The name you choose to log in and be known by in an app</div>
+      <div class="match-ans" id="ma-username">—</div>
+    </div>
+    <div class="match-row" data-d="upload" onclick="pickDef(this)">
+      <div class="match-def">To send a photo or video from your phone to the internet</div>
+      <div class="match-ans" id="ma-upload">—</div>
+    </div>
+    <div class="match-row" data-d="log out" onclick="pickDef(this)">
+      <div class="match-def">To exit or leave your account in an app</div>
+      <div class="match-ans" id="ma-log out">—</div>
+    </div>
+    <div class="match-row" data-d="storage" onclick="pickDef(this)">
+      <div class="match-def">The space on your phone where photos, apps, and files are saved</div>
+      <div class="match-ans" id="ma-storage">—</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-pink" onclick="checkVocab()" id="v-chk">Check answers ✓</button>
+  </div>
+
+  <div class="score-card" id="v-sc">
+    <div class="score-big" id="v-sc-n" style="color:var(--pink)">—</div>
+    <div class="score-lbl">Vocabulary Score</div>
+    <div class="score-stars" id="v-stars">—</div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-cyan" id="v-nxt" onclick="goTab(2)" style="display:none">Next: Writing →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     TAB 2 — WRITING
+══════════════════════════ -->
+<div class="section" id="sec-2">
+
+  <div class="sec-title"><div class="dot" style="background:var(--purple)"></div>Writing — Complete the sentences</div>
+  <div class="sec-sub">Complete each sentence with your own words. Then click "Show answer" to compare.</div>
+
+  <div class="tip-box tip-purple">
+    <strong class="hl-purple">Remember!</strong><br>
+    <em>I / you / we / they</em> → <span class="hl-yellow">I use, they send, we check</span><br>
+    <em>he / she / it</em> → <span class="hl-yellow">she <strong>uses</strong>, he <strong>watches</strong>, it <strong>works</strong></span><br>
+    Write a full sentence. Look at the hint words to help you!
+  </div>
+
+  <!-- W1 -->
+  <div class="w-card">
+    <div class="w-prompt">1. Every day, I use my phone to <strong>_______________</strong></div>
+    <div class="w-hint">💡 Use: <span>present simple (I)</span> + an app activity &nbsp;→&nbsp; check, send, watch, listen, play, download</div>
+    <textarea id="w0" placeholder="Every day, I use my phone to ..."></textarea>
+    <div class="btn-row">
+      <button class="btn btn-purple" onclick="showModel(0)">Show answer 👁</button>
+    </div>
+    <div class="model-box" id="mb0">
+      <div class="model-label">✦ MODEL ANSWER</div>
+      <div class="model-text">
+        Every day, I use my phone to <span class="hl">check my messages</span> and <span class="hl">listen to music</span>.<br>
+        <span class="note">Other good answers: "watch videos", "send voice notes", "play games", "scroll through Instagram"</span>
+      </div>
+      <div class="self-check">
+        <strong>✔ Check your answer:</strong> Did you use the base verb after "to"? &nbsp;(to <em>check</em>, to <em>listen</em> — no -s needed here!)
+      </div>
+    </div>
+  </div>
+
+  <!-- W2 -->
+  <div class="w-card">
+    <div class="w-prompt">2. My best friend <strong>_______________</strong> every day on his / her phone.</div>
+    <div class="w-hint">💡 Use: <span>present simple (he / she)</span> → verb <strong>+ s</strong> &nbsp;→&nbsp; watches, sends, plays, uses, checks</div>
+    <textarea id="w1" placeholder="My best friend ... every day on his / her phone."></textarea>
+    <div class="btn-row">
+      <button class="btn btn-purple" onclick="showModel(1)">Show answer 👁</button>
+    </div>
+    <div class="model-box" id="mb1">
+      <div class="model-label">✦ MODEL ANSWER</div>
+      <div class="model-text">
+        My best friend <span class="hl">watches</span> videos on YouTube every day on his phone.<br>
+        My best friend <span class="hl">sends</span> voice notes on WhatsApp every day on her phone.<br>
+        <span class="note">Other good answers: "plays games", "checks Instagram", "uses TikTok"</span>
+      </div>
+      <div class="self-check">
+        <strong>✔ Check your answer:</strong> Did you add <strong>-s</strong> to the verb? &nbsp;(he/she → watch<em>es</em>, send<em>s</em>, play<em>s</em>)
+      </div>
+    </div>
+  </div>
+
+  <!-- W3 -->
+  <div class="w-card">
+    <div class="w-prompt">3. My friends and I <strong>_______________</strong> when we are bored.</div>
+    <div class="w-hint">💡 Use: <span>present simple (we)</span> — no -s! &nbsp;→&nbsp; watch, play, send, scroll, use, listen</div>
+    <textarea id="w2" placeholder="My friends and I ... when we are bored."></textarea>
+    <div class="btn-row">
+      <button class="btn btn-purple" onclick="showModel(2)">Show answer 👁</button>
+    </div>
+    <div class="model-box" id="mb2">
+      <div class="model-label">✦ MODEL ANSWER</div>
+      <div class="model-text">
+        My friends and I <span class="hl">watch</span> videos on YouTube when we are bored.<br>
+        My friends and I <span class="hl">play</span> games on our phones when we are bored.<br>
+        <span class="note">Other good answers: "scroll through Instagram", "send funny memes", "listen to music"</span>
+      </div>
+      <div class="self-check">
+        <strong>✔ Check your answer:</strong> "My friends and I" = <em>we</em> → <strong>no -s</strong> on the verb! &nbsp;(watch, play — not watches/plays)
+      </div>
+    </div>
+  </div>
+
+  <!-- W4 -->
+  <div class="w-card">
+    <div class="w-prompt">4. My mum / dad doesn't use <strong>_______________</strong> because <strong>_______________</strong></div>
+    <div class="w-hint">💡 Name an app + give a reason &nbsp;→&nbsp; he/she <span>doesn't</span> + base verb &nbsp;→&nbsp; it is difficult / she prefers / he doesn't like</div>
+    <textarea id="w3" placeholder="My mum / dad doesn't use ... because ..."></textarea>
+    <div class="btn-row">
+      <button class="btn btn-purple" onclick="showModel(3)">Show answer 👁</button>
+    </div>
+    <div class="model-box" id="mb3">
+      <div class="model-label">✦ MODEL ANSWER</div>
+      <div class="model-text">
+        My mum <span class="hl">doesn't use</span> TikTok because <span class="hl">she doesn't like</span> short videos.<br>
+        My dad <span class="hl">doesn't use</span> Instagram because <span class="hl">he prefers</span> WhatsApp.<br>
+        <span class="note">Note: after "doesn't", the verb has <strong>no -s</strong> → doesn't <em>use</em> (not <em>uses</em>)</span>
+      </div>
+      <div class="self-check">
+        <strong>✔ Check your answer:</strong> After <em>doesn't</em>, did you use the base verb with <strong>no -s</strong>? &nbsp;(doesn't <em>use</em> ✓ / doesn't <em>uses</em> ✗)
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:0.5rem">
+    <button class="btn btn-cyan" onclick="finishWriting()">✅ I'm done!</button>
+  </div>
+
+  <div class="score-card" id="w-sc">
+    <div class="score-big" style="color:var(--purple)">🎉</div>
+    <div class="score-lbl" style="margin-top:0.4rem">Great work! You completed all three sections.</div>
+    <div class="score-stars">⭐⭐⭐</div>
+    <div style="font-size:0.82rem; color:var(--muted); margin-top:0.3rem">Remember to review the model answers and check your verb forms!</div>
+  </div>
+
+</div><!-- end sec-2 -->
+</main>
+
+<script>
+// ─── TOAST ───
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast'; t.innerHTML = msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(() => t.remove(), 3100);
+}
+
+// ─── PROGRESS ───
+const done = [false, false, false];
+function markDone(i) {
+  done[i] = true;
+  const n = done.filter(Boolean).length;
+  document.getElementById('prog-txt').textContent = n + ' / 3 done';
+  document.getElementById('prog-bar').style.width = (n / 3 * 100) + '%';
+}
+
+// ─── TABS ───
+function goTab(i) {
+  document.querySelectorAll('.tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
+  document.querySelectorAll('.section').forEach((s,idx) => s.classList.toggle('active', idx===i));
+}
+
+// ─── GRAMMAR ───
+const GD = [
+  { ans: 1, ok: "✅ <strong>watches</strong> — he/she/it + verb → add <strong>-es</strong> after -ch. My sister = she.", no: "❌ With <em>she</em>, add <strong>-es</strong> to watch → <em>watches</em>. (watch → watches, not watchs!)" },
+  { ans: 1, ok: "✅ <strong>check</strong> — I + base verb, no -s needed.", no: "❌ With <em>I</em>, use the base verb with no -s → <em>check</em>." },
+  { ans: 1, ok: "✅ <strong>post</strong> — My friends and I = we → base verb, no -s.", no: "❌ 'My friends and I' means <em>we</em> → no -s on the verb → <em>post</em>." },
+  { ans: 1, ok: "✅ <strong>doesn't</strong> — he/she/it → negative = <em>doesn't</em> + base verb.", no: "❌ With <em>he</em>, the negative is <em>doesn't</em> (not <em>don't</em>)." },
+  { ans: 1, ok: "✅ <strong>listen</strong> — they → base verb, no -s.", no: "❌ With <em>they</em>, use the base verb → <em>listen</em> (no -s!)." },
+  { ans: 1, ok: "✅ <strong>doesn't download / doesn't have</strong> — both verbs go with <em>she</em> and <em>it</em> → both need <em>doesn't</em>.", no: "❌ Both subjects are he/she/it → both negatives need <em>doesn't</em>: <em>doesn't download</em> and <em>doesn't have</em>." }
+];
+
+let gDone = 0, gRight = 0;
+
+function ansG(qi, chosen) {
+  const card = document.getElementById('gq' + qi);
+  const fb   = document.getElementById('gf' + qi);
+  const btns = card.querySelectorAll('.mc-btn');
+  btns.forEach(b => b.disabled = true);
+  const d = GD[qi];
+  const ok = chosen === d.ans;
+  btns[chosen].classList.add(ok ? 'correct' : 'wrong');
+  if (!ok) btns[d.ans].classList.add('correct');
+  fb.className = 'q-fb show ' + (ok ? 'ok' : 'bad');
+  fb.innerHTML = ok ? d.ok : d.no;
+  card.classList.add(ok ? 'ok' : 'bad');
+  if (ok) { gRight++; toast('✅ Correct! +1'); } else toast('💡 Check the feedback!');
+  gDone++;
+  if (gDone === 6) {
+    const sc = document.getElementById('g-sc');
+    sc.classList.add('show');
+    document.getElementById('g-sc-n').textContent = gRight + '/6';
+    const p = gRight / 6;
+    document.getElementById('g-stars').textContent = p === 1 ? '⭐⭐⭐' : p >= 0.66 ? '⭐⭐' : '⭐';
+    document.getElementById('g-nxt').style.display = 'inline-flex';
+    markDone(0);
+    toast('📖 Grammar done! Go to Vocabulary →');
+  }
+}
+
+// ─── VOCABULARY ───
+let selWord = null;
+let pairs = {};
+
+function pickWord(chip) {
+  if (chip.classList.contains('used')) return;
+  document.querySelectorAll('.v-chip').forEach(c => c.classList.remove('selected'));
+  if (selWord === chip) { selWord = null; return; }
+  selWord = chip;
+  chip.classList.add('selected');
+}
+
+function pickDef(row) {
+  if (row.classList.contains('done')) return;
+  if (!selWord) { toast('👆 Tap a word card first!'); return; }
+  const w = selWord.dataset.w;
+  const d = row.dataset.d;
+  row.querySelector('.match-ans').textContent = w;
+  row.classList.add('filled', 'done');
+  pairs[d] = w;
+  selWord.classList.remove('selected');
+  selWord.classList.add('used');
+  selWord = null;
+  if (Object.keys(pairs).length === 6) toast('✅ All matched! Now click Check answers.');
+}
+
+function checkVocab() {
+  if (Object.keys(pairs).length < 6) { toast('👆 Match all 6 words first!'); return; }
+  let right = 0;
+  document.querySelectorAll('#v-defs .match-row').forEach(row => {
+    const d = row.dataset.d;
+    if (pairs[d] === d) { row.classList.add('ok-match'); right++; }
+    else {
+      row.classList.add('bad-match');
+      row.querySelector('.match-ans').textContent = pairs[d] + ' ✗ → ' + d;
+    }
+  });
+  const sc = document.getElementById('v-sc');
+  sc.classList.add('show');
+  document.getElementById('v-sc-n').textContent = right + '/6';
+  const p = right / 6;
+  document.getElementById('v-stars').textContent = p === 1 ? '⭐⭐⭐' : p >= 0.66 ? '⭐⭐' : '⭐';
+  document.getElementById('v-chk').disabled = true;
+  document.getElementById('v-nxt').style.display = 'inline-flex';
+  markDone(1);
+  toast('🔤 Vocabulary done! Go to Writing →');
+}
+
+// ─── WRITING ───
+function showModel(i) {
+  const ta = document.getElementById('w' + i);
+  if (!ta.value.trim()) { toast('✏️ Write something first!'); return; }
+  ta.disabled = true;
+  document.getElementById('mb' + i).classList.add('show');
+}
+
+function finishWriting() {
+  document.getElementById('w-sc').classList.add('show');
+  markDone(2);
+  toast('🎉 Well done! Check your model answers carefully.');
+}
+</script>
+</body>
+</html>
