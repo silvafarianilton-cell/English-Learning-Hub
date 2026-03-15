@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B2 Blog Writing Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --accent: #c0392b;
+    --gold: #d4a017;
+    --muted: #7a7065;
+    --green: #2d6a4f;
+    --blue: #1a4a7a;
+    --purple: #5a3472;
+    --teal: #1a6a6a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 15% 10%, #2a1a3e 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 90%, #1a2a1e 0%, transparent 50%);
+  }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 290px 1fr;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: rgba(10,10,20,0.7);
+    border-right: 1px solid rgba(255,255,255,0.07);
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    backdrop-filter: blur(10px);
+  }
+
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+  .sidebar-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    font-weight: 500;
+  }
+
+  /* Prompt card */
+  .prompt-card {
+    background: var(--paper);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .prompt-card-header {
+    background: var(--blue);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .prompt-card-header span {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.8);
+    font-weight: 500;
+  }
+
+  .prompt-card-body { padding: 14px; }
+
+  .prompt-image-area {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    background: var(--cream);
+    aspect-ratio: 16/9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    position: relative;
+  }
+
+  .prompt-image-area .img-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.5));
+    border-radius: 8px;
+  }
+
+  .prompt-topic-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .prompt-task {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .prompt-task strong { color: var(--ink); font-style: normal; }
+
+  .word-target {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--cream);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .word-count-display {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--ink);
+  }
+
+  .word-count-display.good { color: var(--green); }
+  .word-count-display.over { color: var(--accent); }
+
+  /* Timer */
+  .sidebar-timer {
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .timer-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    color: var(--paper);
+    margin-bottom: 10px;
+    transition: color 0.3s;
+  }
+
+  .timer-big.warning { color: var(--accent); }
+
+  .timer-controls { display: flex; gap: 8px; justify-content: center; }
+
+  .t-btn {
+    padding: 7px 14px;
+    border-radius: 50px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+
+  .t-btn.primary { background: var(--gold); color: var(--ink); }
+  .t-btn.secondary { background: rgba(255,255,255,0.1); color: var(--paper); }
+  .timer-label { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  /* Exam mode */
+  .exam-mode-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    background: transparent;
+    color: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+
+  .exam-mode-btn.active { background: var(--accent); border-color: var(--accent); }
+
+  /* Topic list */
+  .topic-select-list { display: flex; flex-direction: column; gap: 5px; }
+
+  .topic-item {
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .topic-item:hover { background: rgba(255,255,255,0.06); }
+
+  .topic-item.active {
+    background: rgba(212,160,23,0.12);
+    border-color: var(--gold);
+  }
+
+  .topic-item-name { font-size: 12px; font-weight: 500; color: var(--paper); margin-bottom: 1px; }
+  .topic-item-tag { font-size: 10px; color: var(--muted); }
+
+  /* MAIN */
+  .main { padding: 28px 28px 80px; max-width: 720px; }
+
+  header { margin-bottom: 24px; }
+
+  .site-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 4vw, 34px);
+    color: var(--paper);
+    line-height: 1.15;
+    margin-bottom: 5px;
+  }
+
+  .subtitle { color: var(--muted); font-size: 13px; }
+
+  /* Progress */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .prog-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .prog-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .prog-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+  /* MODEL ARTICLE */
+  .model-toggle-bar {
+    background: rgba(26,74,122,0.3);
+    border: 1px solid rgba(26,74,122,0.5);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+  }
+
+  .model-toggle-bar:hover { background: rgba(26,74,122,0.4); }
+
+  .model-toggle-bar .mtb-icon { font-size: 20px; }
+  .model-toggle-bar .mtb-text { flex: 1; }
+  .model-toggle-bar .mtb-title { font-size: 13px; font-weight: 500; color: var(--paper); }
+  .model-toggle-bar .mtb-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .model-toggle-bar .mtb-arrow { color: var(--muted); font-size: 16px; transition: transform 0.2s; }
+  .model-toggle-bar.open .mtb-arrow { transform: rotate(90deg); }
+
+  .model-article {
+    display: none;
+    background: var(--paper);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    animation: fadeSlide 0.25s ease;
+  }
+
+  @keyframes fadeSlide { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .model-article.open { display: block; }
+
+  .model-article-header {
+    background: var(--blue);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .model-article-header span { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.7); font-weight: 500; }
+
+  .model-article-body { padding: 22px 24px; }
+
+  .model-article-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--ink);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  .model-para { margin-bottom: 14px; font-size: 13px; line-height: 1.8; color: var(--ink); }
+
+  .model-annotation {
+    display: inline;
+    position: relative;
+  }
+
+  .anno-mark {
+    background: rgba(212,160,23,0.25);
+    border-bottom: 2px solid var(--gold);
+    cursor: help;
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  .anno-tip {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 7px 10px;
+    border-radius: 7px;
+    white-space: nowrap;
+    z-index: 100;
+    width: max-content;
+    max-width: 220px;
+    white-space: normal;
+    pointer-events: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  }
+
+  .model-annotation:hover .anno-tip { display: block; }
+
+  .section-label-pill {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .pill-hook { background: rgba(192,57,43,0.15); color: var(--accent); }
+  .pill-body { background: rgba(26,74,122,0.15); color: #5b9bd5; }
+  .pill-link { background: rgba(90,52,114,0.15); color: #a67fd4; }
+  .pill-cta { background: rgba(45,106,79,0.15); color: #4dba87; }
+
+  /* CARDS */
+  .cards-grid { display: grid; gap: 12px; }
+
+  .writing-card {
+    background: var(--paper);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .writing-card:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,0,0,0.3); }
+
+  .wcard-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--cream);
+  }
+
+  .wcard-badge {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 14px; font-weight: 700;
+    flex-shrink: 0; color: white;
+  }
+
+  .wcard-title { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--ink); }
+  .wcard-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .wcard-time { margin-left: auto; font-size: 10px; background: var(--cream); padding: 3px 8px; border-radius: 50px; color: var(--muted); white-space: nowrap; }
+
+  .wcard-body { padding: 14px 18px 16px; }
+
+  /* Card colour variants */
+  .wc-hook .wcard-badge { background: var(--accent); }
+  .wc-hook .wcard-header { border-left: 4px solid var(--accent); }
+  .wc-body1 .wcard-badge { background: var(--blue); }
+  .wc-body1 .wcard-header { border-left: 4px solid var(--blue); }
+  .wc-body2 .wcard-badge { background: var(--purple); }
+  .wc-body2 .wcard-header { border-left: 4px solid var(--purple); }
+  .wc-link .wcard-badge { background: var(--teal); }
+  .wc-link .wcard-header { border-left: 4px solid var(--teal); }
+  .wc-cta .wcard-badge { background: var(--green); }
+  .wc-cta .wcard-header { border-left: 4px solid var(--green); }
+
+  /* Strategy boxes */
+  .strat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 12px; }
+
+  .strat-box {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 9px 11px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .strat-box:hover { border-color: var(--gold); }
+  .strat-box.selected { border-color: var(--accent); background: #fdf0ee; }
+  .strat-box h4 { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+  .strat-box p { font-size: 11px; color: var(--ink); line-height: 1.4; }
+
+  /* Upgrade table */
+  .upgrade-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 10px; }
+  .upgrade-table th { text-align: left; padding: 5px 8px; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--cream); }
+  .upgrade-table td { padding: 5px 8px; vertical-align: top; border-bottom: 1px solid var(--cream); }
+  .upgrade-table tr:last-child td { border-bottom: none; }
+  .avoid { color: #bbb; text-decoration: line-through; font-style: italic; }
+  .use-instead { color: var(--ink); font-weight: 500; }
+
+  /* Phrase bank */
+  .phrase-bank { margin-top: 10px; }
+
+  .pb-toggle {
+    background: none;
+    border: 1.5px solid var(--cream);
+    padding: 5px 11px;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .pb-toggle:hover { border-color: var(--ink); color: var(--ink); }
+
+  .pb-list { display: none; margin-top: 7px; flex-wrap: wrap; gap: 5px; }
+  .pb-list.open { display: flex; }
+
+  .pb-chip {
+    background: var(--cream);
+    border: 1px solid #d5cfc5;
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.12s;
+    font-style: italic;
+  }
+
+  .pb-chip:hover { background: var(--gold); border-color: var(--gold); color: white; font-style: normal; }
+
+  /* Textarea */
+  .write-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--cream);
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    resize: vertical;
+    transition: border-color 0.2s;
+    line-height: 1.7;
+  }
+
+  textarea:focus { outline: none; border-color: var(--gold); }
+  textarea::placeholder { color: #b0a898; font-style: italic; }
+
+  /* Checklist */
+  .checklist { list-style: none; margin-top: 10px; }
+
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: var(--ink);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--cream);
+    cursor: pointer;
+    transition: color 0.15s;
+    line-height: 1.4;
+  }
+
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li.checked { color: var(--muted); text-decoration: line-through; }
+
+  .check-box {
+    width: 15px; height: 15px;
+    border: 1.5px solid #c5bfb5;
+    border-radius: 3px;
+    flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .checklist li.checked .check-box { background: var(--green); border-color: var(--green); }
+  .check-box::after { content: '✓'; font-size: 9px; color: white; display: none; }
+  .checklist li.checked .check-box::after { display: block; }
+
+  /* Structure mini */
+  .struct-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 10px; }
+  .struct-box { background: var(--cream); border-radius: 7px; padding: 8px; text-align: center; }
+  .struct-num { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .struct-txt { font-size: 11px; color: var(--ink); font-weight: 500; }
+
+  /* Exam mode hides */
+  body.exam-mode .phrase-bank,
+  body.exam-mode .strat-grid,
+  body.exam-mode .upgrade-table,
+  body.exam-mode .struct-row,
+  body.exam-mode .model-toggle-bar { display: none !important; }
+
+  body.exam-mode .exam-notice { display: block !important; }
+
+  .exam-notice {
+    display: none;
+    background: rgba(192,57,43,0.1);
+    border: 1px solid rgba(192,57,43,0.25);
+    border-radius: 7px;
+    padding: 9px 12px;
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: relative; height: auto; }
+    .main { padding: 18px 14px 60px; }
+    .strat-grid { grid-template-columns: 1fr; }
+    .struct-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- Prompt card -->
+    <div>
+      <div class="sidebar-label" style="margin-bottom:10px;">Writing Prompt</div>
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span>📝 B2 Blog Task</span>
+        </div>
+        <div class="prompt-card-body">
+          <div class="prompt-image-area" id="promptEmoji">🏝️</div>
+          <div class="prompt-topic-name" id="promptName">The Faroe Islands</div>
+          <p class="prompt-task" id="promptTask">You have seen a striking photograph. <strong>Write a blog post</strong> about this place — hook your reader, describe what makes it special, and invite them to follow your blog.</p>
+          <div class="word-target">
+            <span>Words written:</span>
+            <span class="word-count-display" id="wordCount">0</span>
+            <span>/ 150–200</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timer -->
+    <div class="sidebar-timer">
+      <div class="timer-big" id="timerDisplay">25:00</div>
+      <div class="timer-controls">
+        <button class="t-btn primary" id="timerBtn" onclick="toggleTimer()">▶ Start</button>
+        <button class="t-btn secondary" onclick="resetTimer()">↺ Reset</button>
+      </div>
+      <div class="timer-label">25 min writing time</div>
+    </div>
+
+    <!-- Exam mode -->
+    <button class="exam-mode-btn" id="examModeBtn" onclick="toggleExamMode()">🎓 Exam Mode — OFF</button>
+
+    <!-- Topics -->
+    <div>
+      <div class="sidebar-label" style="margin-bottom:8px;">Topics</div>
+      <div class="topic-select-list" id="topicList"></div>
+    </div>
+
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <header>
+      <div class="site-label">B2 Writing — Blog &amp; Article</div>
+      <h1>Blog Writing Cards</h1>
+      <p class="subtitle">Read the model · then write your own · section by section</p>
+    </header>
+
+    <div class="progress-row">
+      <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-label" id="progLabel">0 / 5 sections</div>
+    </div>
+
+    <!-- MODEL ARTICLE -->
+    <div class="model-toggle-bar" id="modelToggleBar" onclick="toggleModel()">
+      <div class="mtb-icon">📰</div>
+      <div class="mtb-text">
+        <div class="mtb-title">Read the model article first</div>
+        <div class="mtb-sub">Annotated — hover over highlighted phrases to see why they work</div>
+      </div>
+      <div class="mtb-arrow">›</div>
+    </div>
+
+    <div class="model-article" id="modelArticle">
+      <div class="model-article-header">
+        <span>📰 Model Article</span>
+        <span id="modelTopicLabel"></span>
+      </div>
+      <div class="model-article-body">
+        <div class="model-article-title" id="modelTitle"></div>
+        <div id="modelBody"></div>
+      </div>
+    </div>
+
+    <!-- WRITING CARDS -->
+    <div class="cards-grid">
+
+      <!-- CARD 1: HOOK -->
+      <div class="writing-card wc-hook">
+        <div class="wcard-header">
+          <div class="wcard-badge">1</div>
+          <div>
+            <div class="wcard-title">The Hook</div>
+            <div class="wcard-sub">Opening sentence · Intrigue · Set the scene</div>
+          </div>
+          <div class="wcard-time">⏱ ~2–3 sentences</div>
+        </div>
+        <div class="wcard-body">
+          <div class="exam-notice">⚠️ Exam Mode active — write from memory.</div>
+
+          <div class="strat-grid">
+            <div class="strat-box" onclick="selectStrat(this)">
+              <h4>❓ Rhetorical Q</h4>
+              <p>Open with a question the reader can't ignore.</p>
+            </div>
+            <div class="strat-box" onclick="selectStrat(this)">
+              <h4>🎬 Scene-setter</h4>
+              <p>Drop the reader straight into a vivid moment or image.</p>
+            </div>
+            <div class="strat-box" onclick="selectStrat(this)">
+              <h4>😲 Surprising fact</h4>
+              <p>Lead with something unexpected or counterintuitive.</p>
+            </div>
+            <div class="strat-box" onclick="selectStrat(this)">
+              <h4>💬 Bold claim</h4>
+              <p>Make a strong statement that demands explanation.</p>
+            </div>
+          </div>
+
+          <table class="upgrade-table">
+            <tr><th>Avoid</th><th>Use instead</th></tr>
+            <tr><td class="avoid">In this article I will talk about…</td><td class="use-instead">What comes to mind when you see…?</td></tr>
+            <tr><td class="avoid">This is a place called…</td><td class="use-instead">Tucked away in the North Atlantic lies…</td></tr>
+            <tr><td class="avoid">I want to tell you about…</td><td class="use-instead">Imagine waking up to… / Few places on earth…</td></tr>
+          </table>
+
+          <label class="write-label">Write your opening hook</label>
+          <textarea id="ta-hook" rows="4" placeholder="Draw the reader in from the very first word…" oninput="updateProgress(); updateWordCount()"></textarea>
+
+          <div class="phrase-bank">
+            <button class="pb-toggle" onclick="togglePB('pb1',this)"><span>📚</span> Phrase bank</button>
+            <div class="pb-list" id="pb1">
+              <span class="pb-chip" onclick="ins('ta-hook',this.innerText)">What comes to mind when you see this picture?</span>
+              <span class="pb-chip" onclick="ins('ta-hook',this.innerText)">Few places on earth look quite like</span>
+              <span class="pb-chip" onclick="ins('ta-hook',this.innerText)">Imagine standing on the edge of</span>
+              <span class="pb-chip" onclick="ins('ta-hook',this.innerText)">Many people assume this image is digitally altered.</span>
+              <span class="pb-chip" onclick="ins('ta-hook',this.innerText)">Tucked away in the heart of</span>
+              <span class="pb-chip" onclick="ins('ta-hook',this.innerText)">Have you ever wondered what it would feel like to</span>
+              <span class="pb-chip" onclick="ins('ta-hook',this.innerText)">It sounds almost too good to be true — and yet,</span>
+              <span class="pb-chip" onclick="ins('ta-hook',this.innerText)">This is not a painting. This is real.</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="tc(this)"><div class="check-box"></div> Does my opening avoid "In this article I will…"?</li>
+            <li onclick="tc(this)"><div class="check-box"></div> Does it create curiosity or intrigue?</li>
+            <li onclick="tc(this)"><div class="check-box"></div> Is the reader drawn in from the first sentence?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CARD 2: BODY PARAGRAPH 1 -->
+      <div class="writing-card wc-body1">
+        <div class="wcard-header">
+          <div class="wcard-badge">2</div>
+          <div>
+            <div class="wcard-title">Body — Paragraph 1</div>
+            <div class="wcard-sub">Main point · Development · Personal connection</div>
+          </div>
+          <div class="wcard-time">⏱ ~3–5 sentences</div>
+        </div>
+        <div class="wcard-body">
+          <div class="exam-notice">⚠️ Exam Mode active — write from memory.</div>
+
+          <div class="struct-row">
+            <div class="struct-box"><div class="struct-num">1.</div><div class="struct-txt">Topic sentence</div></div>
+            <div class="struct-box"><div class="struct-num">2.</div><div class="struct-txt">Develop it</div></div>
+            <div class="struct-box"><div class="struct-num">3.</div><div class="struct-txt">Personal touch</div></div>
+          </div>
+
+          <table class="upgrade-table">
+            <tr><th>Avoid</th><th>Use instead</th></tr>
+            <tr><td class="avoid">It is very beautiful.</td><td class="use-instead">The landscape is nothing short of breathtaking.</td></tr>
+            <tr><td class="avoid">There are many things to do.</td><td class="use-instead">The region offers a wealth of experiences for every kind of traveller.</td></tr>
+            <tr><td class="avoid">I liked it a lot.</td><td class="use-instead">It left a lasting impression on me — one I find difficult to put into words.</td></tr>
+          </table>
+
+          <label class="write-label">Write your first body paragraph</label>
+          <textarea id="ta-body1" rows="5" placeholder="Introduce your first main idea about this topic…" oninput="updateProgress(); updateWordCount()"></textarea>
+
+          <div class="phrase-bank">
+            <button class="pb-toggle" onclick="togglePB('pb2',this)"><span>📚</span> Phrase bank</button>
+            <div class="pb-list" id="pb2">
+              <span class="pb-chip" onclick="ins('ta-body1',this.innerText)">What makes this place truly remarkable is</span>
+              <span class="pb-chip" onclick="ins('ta-body1',this.innerText)">The landscape is nothing short of breathtaking —</span>
+              <span class="pb-chip" onclick="ins('ta-body1',this.innerText)">Unlike anywhere else I have ever visited,</span>
+              <span class="pb-chip" onclick="ins('ta-body1',this.innerText)">From the moment I arrived, I was struck by</span>
+              <span class="pb-chip" onclick="ins('ta-body1',this.innerText)">It is the kind of place that stays with you long after you leave.</span>
+              <span class="pb-chip" onclick="ins('ta-body1',this.innerText)">The region offers a wealth of experiences for</span>
+              <span class="pb-chip" onclick="ins('ta-body1',this.innerText)">What I found most surprising was</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="tc(this)"><div class="check-box"></div> Is my topic sentence clear and specific?</li>
+            <li onclick="tc(this)"><div class="check-box"></div> Did I develop the idea (not just state it)?</li>
+            <li onclick="tc(this)"><div class="check-box"></div> Did I add a personal reaction or detail?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CARD 3: BODY PARAGRAPH 2 -->
+      <div class="writing-card wc-body2">
+        <div class="wcard-header">
+          <div class="wcard-badge">3</div>
+          <div>
+            <div class="wcard-title">Body — Paragraph 2</div>
+            <div class="wcard-sub">Second angle · Evidence or detail · Smooth transition</div>
+          </div>
+          <div class="wcard-time">⏱ ~3–5 sentences</div>
+        </div>
+        <div class="wcard-body">
+          <div class="exam-notice">⚠️ Exam Mode active — write from memory.</div>
+
+          <table class="upgrade-table">
+            <tr><th>Avoid</th><th>Use instead</th></tr>
+            <tr><td class="avoid">Also, another thing is…</td><td class="use-instead">Beyond its natural beauty, what strikes many visitors is…</td></tr>
+            <tr><td class="avoid">Another good thing is…</td><td class="use-instead">Equally compelling is the fact that…</td></tr>
+            <tr><td class="avoid">And it's also interesting that…</td><td class="use-instead">What is particularly fascinating, however, is…</td></tr>
+          </table>
+
+          <label class="write-label">Write your second body paragraph</label>
+          <textarea id="ta-body2" rows="5" placeholder="Bring a fresh angle — culture, history, personal story, surprising detail…" oninput="updateProgress(); updateWordCount()"></textarea>
+
+          <div class="phrase-bank">
+            <button class="pb-toggle" onclick="togglePB('pb3',this)"><span>📚</span> Phrase bank</button>
+            <div class="pb-list" id="pb3">
+              <span class="pb-chip" onclick="ins('ta-body2',this.innerText)">Beyond its visual appeal,</span>
+              <span class="pb-chip" onclick="ins('ta-body2',this.innerText)">Equally compelling is</span>
+              <span class="pb-chip" onclick="ins('ta-body2',this.innerText)">What is particularly fascinating, nonetheless, is</span>
+              <span class="pb-chip" onclick="ins('ta-body2',this.innerText)">Whilst the scenery alone would be enough to attract visitors,</span>
+              <span class="pb-chip" onclick="ins('ta-body2',this.innerText)">It is worth noting that</span>
+              <span class="pb-chip" onclick="ins('ta-body2',this.innerText)">In fact, many people are surprised to learn that</span>
+              <span class="pb-chip" onclick="ins('ta-body2',this.innerText)">By contrast with other destinations,</span>
+              <span class="pb-chip" onclick="ins('ta-body2',this.innerText)">Perhaps most surprisingly of all,</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="tc(this)"><div class="check-box"></div> Is this a different angle from Paragraph 1?</li>
+            <li onclick="tc(this)"><div class="check-box"></div> Did I use a transition that links to the previous paragraph?</li>
+            <li onclick="tc(this)"><div class="check-box"></div> Did I include a specific detail or fact?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CARD 4: PARAGRAPH LINK -->
+      <div class="writing-card wc-link">
+        <div class="wcard-header">
+          <div class="wcard-badge">4</div>
+          <div>
+            <div class="wcard-title">Linking & Flow</div>
+            <div class="wcard-sub">Check your transitions between paragraphs</div>
+          </div>
+          <div class="wcard-time">⏱ review &amp; edit</div>
+        </div>
+        <div class="wcard-body">
+          <div class="exam-notice">⚠️ Exam Mode active — write from memory.</div>
+
+          <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6;">A blog article should flow like a conversation — each paragraph should feel connected to the last. Check your transitions here and rewrite any that feel abrupt.</p>
+
+          <table class="upgrade-table">
+            <tr><th>Instead of starting P2 with…</th><th>Try…</th></tr>
+            <tr><td class="avoid">Also…</td><td class="use-instead">Beyond this… / Equally remarkable…</td></tr>
+            <tr><td class="avoid">But…</td><td class="use-instead">Nevertheless… / That said… / Nonetheless…</td></tr>
+            <tr><td class="avoid">Another thing…</td><td class="use-instead">What is perhaps less well known, however, is…</td></tr>
+            <tr><td class="avoid">And finally…</td><td class="use-instead">To round off this picture… / Perhaps most memorably of all…</td></tr>
+          </table>
+
+          <label class="write-label">Rewrite any weak transitions here</label>
+          <textarea id="ta-link" rows="3" placeholder="Paste a transition you're unsure about and rewrite it with a stronger connector…" oninput="updateProgress()"></textarea>
+
+          <div class="phrase-bank">
+            <button class="pb-toggle" onclick="togglePB('pb4',this)"><span>📚</span> Transition bank</button>
+            <div class="pb-list" id="pb4">
+              <span class="pb-chip" onclick="ins('ta-link',this.innerText)">Beyond its natural beauty,</span>
+              <span class="pb-chip" onclick="ins('ta-link',this.innerText)">Equally remarkable is the fact that</span>
+              <span class="pb-chip" onclick="ins('ta-link',this.innerText)">Nevertheless, what truly sets it apart is</span>
+              <span class="pb-chip" onclick="ins('ta-link',this.innerText)">Whilst this alone makes it worth visiting,</span>
+              <span class="pb-chip" onclick="ins('ta-link',this.innerText)">To round off this picture,</span>
+              <span class="pb-chip" onclick="ins('ta-link',this.innerText)">Perhaps most memorably of all,</span>
+              <span class="pb-chip" onclick="ins('ta-link',this.innerText)">What is perhaps less well known is that</span>
+              <span class="pb-chip" onclick="ins('ta-link',this.innerText)">Having said that,</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="tc(this)"><div class="check-box"></div> Does each paragraph connect naturally to the next?</li>
+            <li onclick="tc(this)"><div class="check-box"></div> Have I avoided repeating the same transition twice?</li>
+            <li onclick="tc(this)"><div class="check-box"></div> Does the article feel like a conversation, not a list?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CARD 5: CLOSING + CTA -->
+      <div class="writing-card wc-cta">
+        <div class="wcard-header">
+          <div class="wcard-badge">5</div>
+          <div>
+            <div class="wcard-title">Closing + Call to Action</div>
+            <div class="wcard-sub">Wrap up · Personal reflection · Invite to subscribe</div>
+          </div>
+          <div class="wcard-time">⏱ ~2–3 sentences</div>
+        </div>
+        <div class="wcard-body">
+          <div class="exam-notice">⚠️ Exam Mode active — write from memory.</div>
+
+          <div class="struct-row">
+            <div class="struct-box"><div class="struct-num">1.</div><div class="struct-txt">Final thought</div></div>
+            <div class="struct-box"><div class="struct-num">2.</div><div class="struct-txt">Reflection</div></div>
+            <div class="struct-box"><div class="struct-num">3.</div><div class="struct-txt">CTA / subscribe</div></div>
+          </div>
+
+          <table class="upgrade-table">
+            <tr><th>Avoid</th><th>Use instead</th></tr>
+            <tr><td class="avoid">Please subscribe to my blog.</td><td class="use-instead">If this has sparked your curiosity, hit subscribe — there's plenty more to come.</td></tr>
+            <tr><td class="avoid">I hope you liked my article.</td><td class="use-instead">I hope this has given you a glimpse of why this place holds such a special place in my heart.</td></tr>
+            <tr><td class="avoid">Follow me for more.</td><td class="use-instead">Stay curious — and stay tuned. Until next time.</td></tr>
+          </table>
+
+          <label class="write-label">Write your closing + call to action</label>
+          <textarea id="ta-cta" rows="4" placeholder="Leave the reader wanting more — and give them a reason to come back…" oninput="updateProgress(); updateWordCount()"></textarea>
+
+          <div class="phrase-bank">
+            <button class="pb-toggle" onclick="togglePB('pb5',this)"><span>📚</span> Phrase bank</button>
+            <div class="pb-list" id="pb5">
+              <span class="pb-chip" onclick="ins('ta-cta',this.innerText)">If this has sparked your curiosity,</span>
+              <span class="pb-chip" onclick="ins('ta-cta',this.innerText)">I hope this has given you a small glimpse of</span>
+              <span class="pb-chip" onclick="ins('ta-cta',this.innerText)">Whether or not you ever get the chance to visit,</span>
+              <span class="pb-chip" onclick="ins('ta-cta',this.innerText)">Places like this remind us that the world is still full of wonders.</span>
+              <span class="pb-chip" onclick="ins('ta-cta',this.innerText)">Hit subscribe to join me on my next adventure.</span>
+              <span class="pb-chip" onclick="ins('ta-cta',this.innerText)">Stay curious — and stay tuned. Until next time.</span>
+              <span class="pb-chip" onclick="ins('ta-cta',this.innerText)">If you enjoyed this post, don't forget to share it — and subscribe for weekly stories from around the world.</span>
+              <span class="pb-chip" onclick="ins('ta-cta',this.innerText)">This is just the beginning of the story.</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="tc(this)"><div class="check-box"></div> Did I wrap up with a reflection, not just a summary?</li>
+            <li onclick="tc(this)"><div class="check-box"></div> Is the CTA natural — not just "Please subscribe"?</li>
+            <li onclick="tc(this)"><div class="check-box"></div> Does the ending feel warm and personal?</li>
+          </ul>
+        </div>
+      </div>
+
+    </div><!-- /cards-grid -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+const TOPICS = [
+  {
+    name: "The Faroe Islands",
+    tag: "Nature & Travel",
+    emoji: "🌊",
+    task: "You have seen a striking photograph of grass-roofed houses on cliffs above the sea. <strong>Write a blog post</strong> about this extraordinary place — hook your reader, explain why it looks unreal, and invite them to subscribe.",
+    modelTitle: "Where the Cliffs Meet the Sky: My First Look at the Faroe Islands",
+    modelBody: `
+      <p class="model-para">
+        <span class="section-label-pill pill-hook">HOOK</span>
+        <span class="model-annotation"><span class="anno-mark">What comes to mind when you see this picture?</span><span class="anno-tip">🎣 Rhetorical question — pulls the reader in immediately without announcing the topic.</span></span>
+        Many people scroll past it assuming it's a painting, a digital creation, or at the very least, a place that could never truly exist.
+        <span class="model-annotation"><span class="anno-mark">And yet, it does.</span><span class="anno-tip">💥 Short punchy sentence after a long one — creates rhythm and emphasis. Very effective in blog writing.</span></span>
+        I know, because I have stood there myself.
+      </p>
+      <p class="model-para">
+        <span class="section-label-pill pill-body">BODY 1</span>
+        <span class="model-annotation"><span class="anno-mark">The Faroe Islands sit in the North Atlantic, halfway between Norway and Iceland, and they feel like somewhere the rest of the world has simply forgotten to find.</span><span class="anno-tip">📍 Strong topic sentence — gives location AND atmosphere in one go.</span></span>
+        The landscape is nothing short of breathtaking: sheer cliffs plunge into a sea that shifts between steel-grey and the deepest blue depending on the light.
+        <span class="model-annotation"><span class="anno-mark">From the moment I arrived, I was struck by the silence — a rare, almost sacred kind of quiet that cities have long since lost.</span><span class="anno-tip">✍️ Personal reaction + elevated vocabulary: 'nothing short of', 'sacred', 'plunge'. This is what examiners want to see.</span></span>
+      </p>
+      <p class="model-para">
+        <span class="section-label-pill pill-body">BODY 2</span>
+        <span class="model-annotation"><span class="anno-mark">Beyond the scenery, what genuinely surprised me was the culture.</span><span class="anno-tip">🔗 'Beyond the scenery' — smooth transition that introduces a new angle without using 'Also' or 'Another thing'.</span></span>
+        The Faroese have maintained their own language, traditions, and way of life with remarkable tenacity, <span class="model-annotation"><span class="anno-mark">despite — or perhaps because of — their isolation.</span><span class="anno-tip">⚖️ 'Despite — or perhaps because of' — sophisticated qualification. Shows nuanced thinking.</span></span>
+        The grass-roofed houses are not a tourist gimmick; they are a practical tradition dating back centuries.
+        <span class="model-annotation"><span class="anno-mark">In fact, it is precisely this refusal to modernise at all costs that makes the islands feel so genuinely alive.</span><span class="anno-tip">💡 'In fact' + 'precisely' — emphasis markers that signal a key insight. Great for concluding a body paragraph.</span></span>
+      </p>
+      <p class="model-para">
+        <span class="section-label-pill pill-cta">CLOSING + CTA</span>
+        <span class="model-annotation"><span class="anno-mark">I hope this has given you a small glimpse of why the Faroe Islands have stayed with me long after I left.</span><span class="anno-tip">💌 Warm, personal closing — much better than 'I hope you liked my article.'</span></span>
+        Places like this remind us that the world is still full of wonders — you just have to know where to look.
+        <span class="model-annotation"><span class="anno-mark">If this post has sparked your curiosity, hit subscribe — there are plenty more stories like this one waiting for you.</span><span class="anno-tip">📲 Natural CTA — feels like an invitation, not a command. 'Hit subscribe' is informal and friendly, matching the blog tone.</span></span>
+      </p>`
+  },
+  {
+    name: "The Northern Lights",
+    tag: "Nature & Travel",
+    emoji: "🌌",
+    task: "You have seen a photograph of the aurora borealis lighting up a night sky. <strong>Write a blog post</strong> describing the experience of witnessing this phenomenon and invite readers to subscribe for more travel stories.",
+    modelTitle: "Chasing the Aurora: The Night the Sky Came Alive",
+    modelBody: `
+      <p class="model-para"><span class="section-label-pill pill-hook">HOOK</span><span class="model-annotation"><span class="anno-mark">There are moments in life that no photograph can truly capture.</span><span class="anno-tip">🎣 Bold claim — challenges the reader before they've even read the topic. Immediately intriguing.</span></span> Watching the aurora borealis dance across an arctic sky is, without doubt, one of them. I had seen the images countless times. <span class="model-annotation"><span class="anno-mark">Nothing prepared me for the real thing.</span><span class="anno-tip">💥 Short sentence used for maximum impact — creates suspense and draws the reader forward.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 1</span><span class="model-annotation"><span class="anno-mark">The experience is as disorienting as it is beautiful.</span><span class="anno-tip">📌 Topic sentence with a surprising word: 'disorienting' — the reader doesn't expect that and wants to know more.</span></span> Standing in a field in northern Norway at two in the morning, the temperature well below freezing, I watched curtains of green and violet light ripple across the sky as if the atmosphere itself was breathing. <span class="model-annotation"><span class="anno-mark">It left me with the unsettling, humbling sense that the universe is vastly larger — and stranger — than our daily lives suggest.</span><span class="anno-tip">✍️ Elevated emotional vocabulary: 'unsettling', 'humbling', 'vastly'. Gives the paragraph depth and authenticity.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 2</span><span class="model-annotation"><span class="anno-mark">Beyond the spectacle itself, what struck me was how profoundly it affected the people around me.</span><span class="anno-tip">🔗 'Beyond the spectacle itself' — elegant transition introducing a new angle: other people's reactions.</span></span> Complete strangers stood side by side in silence. <span class="model-annotation"><span class="anno-mark">There is something about natural wonder, I think, that briefly dissolves the barriers we erect between ourselves.</span><span class="anno-tip">💡 Philosophical reflection — elevates the article from travel blog to something more thoughtful. Examiners reward this.</span></span> Nonetheless, the lights themselves remained indifferent to all of us — which somehow made them more magnificent.</p>
+      <p class="model-para"><span class="section-label-pill pill-cta">CLOSING + CTA</span>I hope this has given you a sense of why some experiences simply cannot be left on a bucket list indefinitely. <span class="model-annotation"><span class="anno-mark">Whether or not you ever find yourself under an arctic sky, I hope this post has brought a little of that wonder to your screen.</span><span class="anno-tip">💌 Inclusive closing — makes the reader feel included even if they never travel there. Warm and authentic.</span></span> Stay curious, stay adventurous — and subscribe for more stories like this one.</p>`
+  },
+  {
+    name: "Street Food Culture",
+    tag: "Food & Society",
+    emoji: "🍜",
+    task: "You have seen a vibrant photo of a busy street food market at night. <strong>Write a blog post</strong> about what street food reveals about a culture and why every traveller should seek it out.",
+    modelTitle: "Eat Where the Locals Eat: What Street Food Tells You That Restaurants Never Will",
+    modelBody: `
+      <p class="model-para"><span class="section-label-pill pill-hook">HOOK</span><span class="model-annotation"><span class="anno-mark">If you really want to understand a city, skip the restaurant and follow your nose.</span><span class="anno-tip">🎣 Bold, direct advice as a hook — immediately tells the reader they're going to learn something useful. Confident and engaging.</span></span> The best food I have ever eaten has never appeared on a menu. It has come from a plastic stool at the side of a road, served in a paper bowl, surrounded by the noise and heat of a city in full swing.</p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 1</span><span class="model-annotation"><span class="anno-mark">Street food, at its best, is a form of living history.</span><span class="anno-tip">📌 Striking, unexpected topic sentence — 'living history' is a fresh way to describe food. Makes the reader think differently.</span></span> Each dish carries the fingerprints of geography, migration, and tradition. The spices tell you about ancient trade routes; the techniques reveal what ingredients have always been available; the portion sizes reflect how people have worked and lived for generations. <span class="model-annotation"><span class="anno-mark">No fine dining establishment, however accomplished, can replicate this kind of authenticity.</span><span class="anno-tip">💡 'However accomplished' — sophisticated concession within a sentence. Acknowledges the other side without losing the argument.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 2</span><span class="model-annotation"><span class="anno-mark">Beyond the food itself, what I find most remarkable about street markets is the sense of community they generate.</span><span class="anno-tip">🔗 'Beyond the food itself' — clean transition to a new angle: social dimension rather than culinary.</span></span> In many cultures, the street market is not simply a place to eat — it is where neighbours meet, where news is shared, and where the rhythm of a city becomes visible. <span class="model-annotation"><span class="anno-mark">By contrast, eating alone in a hotel restaurant, however comfortable, offers none of this.</span><span class="anno-tip">⚖️ 'By contrast' — explicit comparison that reinforces the main argument elegantly. 'However comfortable' = sophisticated concession.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-cta">CLOSING + CTA</span>Next time you travel somewhere new, resist the pull of the familiar and wander towards the smell of something you cannot identify. <span class="model-annotation"><span class="anno-mark">I promise it will teach you more about a place than any guidebook ever could.</span><span class="anno-tip">💌 Direct address ('I promise you') — creates intimacy between writer and reader. Perfect for blog tone.</span></span> If that idea appeals to you, subscribe — because I have many more stories from markets, side streets, and plastic stools around the world.</p>`
+  },
+  {
+    name: "Abandoned Places",
+    tag: "History & Mystery",
+    emoji: "🏚️",
+    task: "You have seen a photograph of a beautifully decayed, abandoned building overgrown with nature. <strong>Write a blog post</strong> exploring what abandoned places make us feel and think, and invite readers to follow your urban exploration journey.",
+    modelTitle: "The Beauty of Forgetting: What Abandoned Places Tell Us About Ourselves",
+    modelBody: `
+      <p class="model-para"><span class="section-label-pill pill-hook">HOOK</span><span class="model-annotation"><span class="anno-mark">There is something deeply unsettling about a place that has been left behind — and yet, strangely, beautiful.</span><span class="anno-tip">🎣 Contrast hook — introduces two contradictory emotions simultaneously. Creates intrigue and philosophical depth immediately.</span></span> We build things to last, and then we walk away. The building in this photograph was once someone's world. Today, nature is quietly, patiently taking it back.</p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 1</span>Abandoned places hold a particular power over the imagination. <span class="model-annotation"><span class="anno-mark">They freeze a moment in time — and force us to ask what happened next.</span><span class="anno-tip">📌 Short punchy sentence following a longer one — rhythmic variation keeps the reader engaged.</span></span> The peeling wallpaper, the overturned chair, the calendar still open to a month decades past — these details accumulate into a kind of ghost story, told in objects rather than words. <span class="model-annotation"><span class="anno-mark">What I find most compelling is not the decay itself, but what the decay reveals: that every place has a life before the silence.</span><span class="anno-tip">✍️ 'What I find most compelling' — emphasising your own perspective makes the writing feel authentic and personal, not generic.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 2</span><span class="model-annotation"><span class="anno-mark">Equally fascinating is the way nature responds to abandonment.</span><span class="anno-tip">🔗 'Equally fascinating' — smooth addition that introduces a second angle without 'Also' or 'Another thing'.</span></span> Within decades — sometimes within years — forests reclaim factories, moss carpets marble floors, and trees split concrete with quiet, relentless determination. It is, in its way, a kind of optimism: a reminder that the natural world does not mourn our absence. <span class="model-annotation"><span class="anno-mark">Nonetheless, as I walked through this particular building, I could not help feeling that something important had been lost — and that we had been too quick to let it go.</span><span class="anno-tip">⚖️ 'Nonetheless' — B2/C1 contrast connector that signals a personal counter-reflection. Much stronger than 'however'.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-cta">CLOSING + CTA</span><span class="model-annotation"><span class="anno-mark">Places like this remind us that history is not only found in museums — it is written into the walls of buildings we have chosen to forget.</span><span class="anno-tip">💡 Reflective, memorable closing line — elevates the article beyond description into genuine insight.</span></span> If this kind of quiet exploration interests you, I would love for you to join me. Subscribe below, and I'll take you somewhere new every week.</p>`
+  },
+  {
+    name: "Slow Travel",
+    tag: "Travel & Lifestyle",
+    emoji: "🚂",
+    task: "You have seen a photograph of a train winding through a mountain landscape. <strong>Write a blog post</strong> making the case for slow travel — taking time, going by train, and seeing the journey as the destination.",
+    modelTitle: "Why I Stopped Flying Everywhere — And Started Actually Seeing the World",
+    modelBody: `
+      <p class="model-para"><span class="section-label-pill pill-hook">HOOK</span><span class="model-annotation"><span class="anno-mark">We have become very good at arriving — and very bad at travelling.</span><span class="anno-tip">🎣 Bold paradoxical claim — immediately thought-provoking. The reader wants to know what you mean. Perfect hook.</span></span> At some point, air travel convinced us that the space between two places is an inconvenience to be minimised rather than an experience to be savoured. I used to believe that too. Then I took a train across a mountain range, and everything changed.</p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 1</span><span class="model-annotation"><span class="anno-mark">Slow travel — by train, by bus, by boat — forces you to actually inhabit the geography you're crossing.</span><span class="anno-tip">📌 Clear topic sentence that defines the concept immediately. The dash creates pace and informality — good for blog style.</span></span> You watch the landscape transform over hours: flat plains give way to foothills, foothills to peaks, peaks to valleys. You notice the point at which the architecture changes, where one language bleeds into another. <span class="model-annotation"><span class="anno-mark">None of this is visible from 30,000 feet.</span><span class="anno-tip">💥 Short, precise closing sentence that lands the argument. Contrasts nicely with the detail in the sentences before it.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 2</span><span class="model-annotation"><span class="anno-mark">Beyond the scenery, there is something to be said for the enforced stillness of a long journey.</span><span class="anno-tip">🔗 'Beyond the scenery' — transitions to a psychological/philosophical angle while feeling natural.</span></span> Without wifi, without obligations, you are left with nothing but time and the view. <span class="model-annotation"><span class="anno-mark">It is, I would argue, one of the last genuinely uninterrupted spaces left in modern life — and all the more valuable for it.</span><span class="anno-tip">✍️ 'I would argue' — signals a personal opinion with confidence. 'All the more valuable for it' = sophisticated concluding phrase.</span></span> Whilst the world rushes to compress experience into ever-shorter formats, the long journey quietly insists on its own pace.</p>
+      <p class="model-para"><span class="section-label-pill pill-cta">CLOSING + CTA</span>If this has made you reconsider your next trip, even slightly, then this post has done its job. <span class="model-annotation"><span class="anno-mark">The world looks completely different at ground level — and I think it's worth taking the time to see it.</span><span class="anno-tip">💌 Warm, convincing closing that summarises the whole argument in one sentence. Leaves the reader with something to think about.</span></span> Subscribe below, and I'll share more stories from the slower roads — the ones that rarely make it onto travel highlight reels, but that stay with you for life.</p>`
+  },
+  {
+    name: "Urban Rooftops",
+    tag: "City Life",
+    emoji: "🏙️",
+    task: "You have seen a photograph taken from a rooftop overlooking a city at night. <strong>Write a blog post</strong> about the experience of seeing a city from above — what it reveals, what it makes you feel, and why everyone should try it.",
+    modelTitle: "The City From Above: What a Rooftop Teaches You That the Streets Never Can",
+    modelBody: `
+      <p class="model-para"><span class="section-label-pill pill-hook">HOOK</span><span class="model-annotation"><span class="anno-mark">Cities make more sense from above.</span><span class="anno-tip">🎣 Extremely short, confident opening — bold claim that challenges the reader and demands explanation. Very effective.</span></span> From the street, a city is noise, crowds, and a thousand competing directions. But climb above it — find a rooftop, a terrace, a fire escape — and suddenly everything settles into pattern, light, and something that feels, unexpectedly, like peace.</p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 1</span>There is a particular quality to city light after dark that no photograph fully reproduces. <span class="model-annotation"><span class="anno-mark">The grid of streets becomes a river of amber; tower windows flicker like a vertical constellation; somewhere below, the city is alive with a million small dramas — none of which, from up here, you can hear.</span><span class="anno-tip">✍️ Extended visual description using metaphor: 'river of amber', 'vertical constellation'. Elevated descriptive writing — exactly what B2 tasks reward.</span></span> From a rooftop, you are close enough to feel the pulse of a city and far enough to feel something like serenity.</p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 2</span><span class="model-annotation"><span class="anno-mark">Equally striking, I find, is what height does to your sense of perspective — not just visually, but emotionally.</span><span class="anno-tip">🔗 'Equally striking' — adds a second angle (psychological) after the visual one. The qualifier 'I find' makes it personal and authentic.</span></span> The problems that felt pressing at street level — the delayed train, the difficult conversation, the endless to-do list — become, from up here, appropriately small. <span class="model-annotation"><span class="anno-mark">It is worth noting that almost every major city in the world has rooftops you can access legally — you simply have to know where to look.</span><span class="anno-tip">💡 Practical information embedded naturally — adds value for the reader and keeps the blog useful, not just reflective.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-cta">CLOSING + CTA</span><span class="model-annotation"><span class="anno-mark">Next time you find yourself in a city that feels overwhelming, go up.</span><span class="anno-tip">💌 Direct, actionable advice as a closing line — memorable and motivating. Much stronger than 'I hope you enjoyed this post'.</span></span> I promise the view will change something. And if it does — or if you're curious about where to find the best rooftops in cities across Europe — subscribe below. There are plenty more hidden viewpoints to share.</p>`
+  },
+  {
+    name: "Local Festivals",
+    tag: "Culture & Society",
+    emoji: "🎉",
+    task: "You have seen a photo of a colourful traditional festival in a small town. <strong>Write a blog post</strong> arguing that local festivals are worth seeking out — and explaining what they reveal about a culture that ordinary tourism misses.",
+    modelTitle: "Beyond the Guidebook: Why Local Festivals Are the Best Way to Understand a Culture",
+    modelBody: `
+      <p class="model-para"><span class="section-label-pill pill-hook">HOOK</span><span class="model-annotation"><span class="anno-mark">The best travel experiences rarely appear in guidebooks.</span><span class="anno-tip">🎣 Bold generalisation as a hook — immediately positions the blogger as an insider who knows something the reader doesn't.</span></span> They happen on a Tuesday afternoon in a village square, when the streets fill with colour and noise and you suddenly realise that you have stumbled into something that was not made for you — and is, for that very reason, completely unforgettable.</p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 1</span><span class="model-annotation"><span class="anno-mark">Local festivals, unlike the packaged experiences that fill most tourist itineraries, offer something genuinely irreplaceable: access to a culture on its own terms.</span><span class="anno-tip">📌 Topic sentence with a built-in contrast ('unlike'). Sets up the argument and introduces the key idea in one go.</span></span> The food is not adapted for foreign tastes; the music has not been performed for an audience; the rituals carry meanings that Google cannot fully explain. You are not a spectator — you are, however briefly, a participant. <span class="model-annotation"><span class="anno-mark">And that distinction, I would argue, is everything.</span><span class="anno-tip">💥 Short emphatic sentence to close the paragraph — punchy, confident, and memorable.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 2</span><span class="model-annotation"><span class="anno-mark">What is perhaps less obvious, nevertheless, is how much local festivals reveal about the anxieties and values of a community — not just its traditions.</span><span class="anno-tip">🔗 'What is perhaps less obvious, nevertheless' — sophisticated transition that introduces a deeper, more analytical angle. 'Nevertheless' at B2 level.</span></span> The way a community chooses to celebrate — what it commemorates, what it mourns, what it exaggerates into pageant — tells you more about its history than any museum exhibit. <span class="model-annotation"><span class="anno-mark">In fact, I would go so far as to say that a country's festivals are its autobiography.</span><span class="anno-tip">💡 Striking metaphor as a concluding thought: 'autobiography'. Memorable and original — exactly the kind of phrase that elevates a B2 article.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-cta">CLOSING + CTA</span>The next time you plan a trip, consider building your itinerary around a festival rather than a landmark. <span class="model-annotation"><span class="anno-mark">You might find that the most memorable moment of your holiday is one you hadn't planned at all.</span><span class="anno-tip">💌 Warm, experience-based closing — speaks directly to the reader's potential experience. Hopeful and inviting.</span></span> If this idea appeals to you, subscribe below — I've compiled a list of the most extraordinary local festivals in Europe that most travellers have never heard of, and I'll be sharing them over the coming weeks.</p>`
+  },
+  {
+    name: "The Ocean at Dawn",
+    tag: "Nature & Reflection",
+    emoji: "🌅",
+    task: "You have seen a photograph of a deserted beach at dawn, with the sea perfectly still. <strong>Write a blog post</strong> about the experience of being by the ocean alone — what it does to the mind and why it matters.",
+    modelTitle: "Five in the Morning by the Sea: On Solitude, Silence, and the Surprising Power of Dawn",
+    modelBody: `
+      <p class="model-para"><span class="section-label-pill pill-hook">HOOK</span><span class="model-annotation"><span class="anno-mark">I did not plan to become someone who gets up before sunrise.</span><span class="anno-tip">🎣 Unexpected, self-aware opening — funny and relatable. The reader immediately wants to know what changed. Great blog voice.</span></span> And yet, standing on a deserted beach at five in the morning, the sky the colour of diluted ink and the sea completely still, I find it increasingly difficult to imagine starting a day any other way.</p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 1</span><span class="model-annotation"><span class="anno-mark">There is a quality of attention that only silence can produce.</span><span class="anno-tip">📌 Abstract topic sentence — introduces a psychological/philosophical idea that the rest of the paragraph will develop.</span></span> In the absence of notifications, conversations, and the low background hum of ordinary life, the mind settles into something that feels, remarkably, like clarity. You notice things you normally walk past: the exact shade of the horizon, the way a wave organises itself before it breaks, the smell of salt and cold and open space. <span class="model-annotation"><span class="anno-mark">It is, I have come to believe, one of the few remaining antidotes to the permanent distraction of modern life.</span><span class="anno-tip">✍️ Strong concluding sentence with elevated vocabulary: 'antidote', 'permanent distraction'. Positions the experience as genuinely significant, not just pleasant.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 2</span><span class="model-annotation"><span class="anno-mark">What is perhaps harder to articulate — and yet equally real — is the effect that the ocean has on one's sense of proportion.</span><span class="anno-tip">🔗 'What is perhaps harder to articulate — and yet equally real' — sophisticated transition + concession within the same clause. Very strong B2/C1 style.</span></span> Standing before something vast and indifferent, the problems that seemed insurmountable the night before take on a different shape. Nonetheless, this is not the empty comfort of escapism — it is something more grounding: a reminder of scale, of permanence, of the fact that the sea was here long before your anxieties, and will be here long after. <span class="model-annotation"><span class="anno-mark">I find that hard to argue with.</span><span class="anno-tip">💡 Understated, dry closing — confident and witty without trying too hard. Shows voice and personality.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-cta">CLOSING + CTA</span><span class="model-annotation"><span class="anno-mark">If you have never watched the sun rise over the sea, I would encourage you to rearrange your schedule, just once, to make it happen.</span><span class="anno-tip">💌 Warm, direct recommendation — sounds like advice from a trusted friend. Specific and actionable without being preachy.</span></span> And if you'd like more of this kind of quiet, considered travel writing, subscribe below. I write about places and experiences that are worth slowing down for — no airports required.</p>`
+  },
+  {
+    name: "Hidden Villages",
+    tag: "Travel & Discovery",
+    emoji: "🏘️",
+    task: "You have seen a photograph of a tiny, ancient village perched on a hillside. <strong>Write a blog post</strong> about the appeal of discovering places that tourism has not yet found — and why they matter.",
+    modelTitle: "Off the Map: In Defence of the Places Nobody Has Heard Of",
+    modelBody: `
+      <p class="model-para"><span class="section-label-pill pill-hook">HOOK</span><span class="model-annotation"><span class="anno-mark">Somewhere between the second and third hour of driving down an unmarked road, something shifts.</span><span class="anno-tip">🎣 Scene-setter hook — drops the reader straight into a specific moment. Creates immediate atmosphere and intimacy.</span></span> The GPS has long since given up. The last town was forty minutes ago. And then, around a bend, a village appears — ancient, unhurried, and apparently entirely unaware that the rest of the world exists. This is the moment I travel for.</p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 1</span><span class="model-annotation"><span class="anno-mark">There is something fundamentally different about a place that has not yet been shaped by the expectations of visitors.</span><span class="anno-tip">📌 Topic sentence that introduces the core argument: authenticity vs. tourism. Clear and thought-provoking.</span></span> The streets were not widened for tour buses. The café has no English menu. The woman hanging laundry in the square is not performing local colour for your benefit — she is simply hanging laundry. <span class="model-annotation"><span class="anno-mark">And it is precisely this lack of performance that makes the place feel, in some way that is difficult to name, more real.</span><span class="anno-tip">✍️ 'Precisely this' — emphasis marker. The phrase 'difficult to name' acknowledges the limit of language in an elegant way.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 2</span><span class="model-annotation"><span class="anno-mark">What strikes me, equally, is the obligation that comes with finding such a place.</span><span class="anno-tip">🔗 'What strikes me, equally' — smooth addition of a second, more ethical angle. Elevates the article beyond simple enthusiasm.</span></span> There is a tension, which I do not think should be ignored, between the desire to share a discovery and the awareness that sharing it may, in time, destroy what made it worth sharing. <span class="model-annotation"><span class="anno-mark">Nonetheless, I believe that thoughtful, respectful travel — the kind that spends locally, moves slowly, and leaves things as it finds them — is not a contradiction.</span><span class="anno-tip">⚖️ 'Nonetheless' used to resolve a dilemma — very sophisticated use of contrast. Shows mature, nuanced thinking.</span></span> It is, in fact, the only kind worth doing.</p>
+      <p class="model-para"><span class="section-label-pill pill-cta">CLOSING + CTA</span><span class="model-annotation"><span class="anno-mark">The village I visited that afternoon had no Instagram account, no TripAdvisor listing, and no desire for either.</span><span class="anno-tip">💌 Specific, witty closing detail — funny and memorable. Much better than a generic summary.</span></span> It was, for that reason, one of the best places I have ever been. If you'd like to find your own version of it — wherever that might be — subscribe below. I'll keep sharing the unmarked roads.</p>`
+  },
+  {
+    name: "Ancient Ruins",
+    tag: "History & Travel",
+    emoji: "🏛️",
+    task: "You have seen a photograph of ancient ruins at sunset. <strong>Write a blog post</strong> about what standing among ruins makes you think and feel — and what the past has to say to the present.",
+    modelTitle: "Standing in the Ruins: On What We Build, and What We Leave Behind",
+    modelBody: `
+      <p class="model-para"><span class="section-label-pill pill-hook">HOOK</span><span class="model-annotation"><span class="anno-mark">Every civilisation, at its peak, was certain it would last.</span><span class="anno-tip">🎣 Big, philosophical opening — immediately raises the stakes and signals that this is not an ordinary travel post. Very engaging.</span></span> Standing among the ruins of one that did not, you feel that certainty as a kind of weight — the accumulated confidence of people who built for eternity, not knowing they were building for us to photograph.</p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 1</span><span class="model-annotation"><span class="anno-mark">What moves me most about ancient ruins is not their scale, but their detail.</span><span class="anno-tip">📌 Topic sentence with a built-in surprise — the reader expects 'scale'; you say 'detail'. Creates immediate interest.</span></span> The worn step tells you more about daily life than any textbook: someone climbed this, thousands of times, until their footsteps left their mark in stone. The carved inscription, half-erased by two thousand years of weather, was once someone's urgent message to the future. <span class="model-annotation"><span class="anno-mark">It is worth pausing — really pausing — to let that land.</span><span class="anno-tip">✍️ Direct address ('let that land') in informal, contemporary language — creates intimacy and urgency. Works well in blog style.</span></span></p>
+      <p class="model-para"><span class="section-label-pill pill-body">BODY 2</span><span class="model-annotation"><span class="anno-mark">Beyond the emotional response, there is an intellectual argument for spending time in ruins that I find genuinely compelling.</span><span class="anno-tip">🔗 'Beyond the emotional response' — pivots from feeling to thinking, adding an analytical dimension to the article.</span></span> They offer a corrective to the provincialism of the present — the assumption, which every era shares, that our own moment is uniquely significant. <span class="model-annotation"><span class="anno-mark">Nonetheless, I do not think this is cause for despair. Quite the opposite, in fact.</span><span class="anno-tip">⚖️ 'Nonetheless' followed by a reversal — sophisticated rhetorical move. Acknowledges the obvious response and immediately redirects it.</span></span> If these people built so beautifully knowing they would not see the end result, what might we build if we tried?</p>
+      <p class="model-para"><span class="section-label-pill pill-cta">CLOSING + CTA</span><span class="model-annotation"><span class="anno-mark">I left those ruins with the peculiar sensation of having been both humbled and encouraged — which is, I think, exactly what the past is for.</span><span class="anno-tip">💌 Original, reflective closing line — ends on an idea, not just a feeling. Memorable and quotable. Perfect blog ending.</span></span> If this kind of historically-minded travel interests you, subscribe below — there are many more ruins, and many more lessons, still to come.</p>`
+  }
+];
+
+let currentIndex = 0;
+let timerInterval = null;
+let timerSeconds = 25 * 60;
+let timerRunning = false;
+let examModeOn = false;
+
+function init() {
+  const list = document.getElementById('topicList');
+  TOPICS.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'topic-item' + (i === 0 ? ' active' : '');
+    div.innerHTML = `<div class="topic-item-name">${t.emoji} ${t.name}</div><div class="topic-item-tag">${t.tag}</div>`;
+    div.onclick = () => loadTopic(i, div);
+    list.appendChild(div);
+  });
+  loadTopic(0, list.children[0]);
+}
+
+function loadTopic(i, el) {
+  currentIndex = i;
+  document.querySelectorAll('.topic-item').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+
+  const t = TOPICS[i];
+  document.getElementById('promptEmoji').textContent = t.emoji;
+  document.getElementById('promptName').textContent = t.name;
+  document.getElementById('promptTask').innerHTML = t.task;
+  document.getElementById('modelTopicLabel').textContent = t.name;
+  document.getElementById('modelTitle').textContent = t.modelTitle;
+  document.getElementById('modelBody').innerHTML = t.modelBody;
+
+  // Close model
+  document.getElementById('modelArticle').classList.remove('open');
+  document.getElementById('modelToggleBar').classList.remove('open');
+
+  // Clear all textareas
+  ['ta-hook','ta-body1','ta-body2','ta-link','ta-cta'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+
+  // Clear checklists
+  document.querySelectorAll('.checklist li').forEach(li => li.classList.remove('checked'));
+
+  updateProgress();
+  updateWordCount();
+  resetTimer();
+}
+
+function toggleModel() {
+  const bar = document.getElementById('modelToggleBar');
+  const art = document.getElementById('modelArticle');
+  bar.classList.toggle('open');
+  art.classList.toggle('open');
+}
+
+function selectStrat(el) {
+  document.querySelectorAll('.strat-box').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function togglePB(id, btn) {
+  const list = document.getElementById(id);
+  list.classList.toggle('open');
+  btn.querySelector('span').textContent = list.classList.contains('open') ? '📖' : '📚';
+}
+
+function ins(taId, phrase) {
+  const ta = document.getElementById(taId);
+  ta.value = ta.value ? ta.value + ' ' + phrase : phrase;
+  ta.focus();
+  updateProgress();
+  updateWordCount();
+}
+
+function tc(li) { li.classList.toggle('checked'); }
+
+function updateProgress() {
+  const fields = ['ta-hook','ta-body1','ta-body2','ta-link','ta-cta'];
+  const filled = fields.filter(id => document.getElementById(id).value.trim().length > 15).length;
+  document.getElementById('progFill').style.width = (filled / 5 * 100) + '%';
+  document.getElementById('progLabel').textContent = `${filled} / 5 sections`;
+}
+
+function updateWordCount() {
+  const fields = ['ta-hook','ta-body1','ta-body2','ta-cta'];
+  const text = fields.map(id => document.getElementById(id).value).join(' ');
+  const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+  const el = document.getElementById('wordCount');
+  el.textContent = words;
+  el.className = 'word-count-display';
+  if (words >= 150 && words <= 220) el.classList.add('good');
+  else if (words > 220) el.classList.add('over');
+}
+
+// Timer
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timerBtn').textContent = '▶ Resume';
+  } else {
+    timerRunning = true;
+    document.getElementById('timerBtn').textContent = '⏸ Pause';
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      const m = Math.floor(timerSeconds / 60);
+      const s = timerSeconds % 60;
+      const disp = document.getElementById('timerDisplay');
+      disp.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      disp.className = 'timer-big';
+      if (timerSeconds <= 300) disp.classList.add('warning');
+      if (timerSeconds <= 0) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        disp.textContent = 'Time!';
+        document.getElementById('timerBtn').textContent = '▶ Start';
+      }
+    }, 1000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 25 * 60;
+  document.getElementById('timerDisplay').textContent = '25:00';
+  document.getElementById('timerDisplay').className = 'timer-big';
+  document.getElementById('timerBtn').textContent = '▶ Start';
+}
+
+function toggleExamMode() {
+  examModeOn = !examModeOn;
+  const btn = document.getElementById('examModeBtn');
+  document.body.classList.toggle('exam-mode', examModeOn);
+  btn.classList.toggle('active', examModeOn);
+  btn.textContent = examModeOn ? '🎓 Exam Mode — ON' : '🎓 Exam Mode — OFF';
+}
+
+init();
+</script>
+</body>
+</html>
