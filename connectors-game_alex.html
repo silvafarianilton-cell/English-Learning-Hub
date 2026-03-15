@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connectors Game — B2 Speaking</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;1,400&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e17;
+    --surface: #1a1927;
+    --card: #22213a;
+    --border: rgba(255,255,255,0.07);
+    --text: #fffffe;
+    --muted: #a7a9be;
+    --accent: #ff8906;
+    --green: #3da58a;
+    --red: #e53170;
+    --blue: #0d6efd;
+    --gold: #f3b61f;
+    --purple: #9b72cf;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Epilogue', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* SCREENS */
+  .screen { display: none; position: relative; z-index: 1; }
+  .screen.active { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* ── HOME SCREEN ── */
+  #home {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .home-inner { max-width: 560px; }
+
+  .home-tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(255,137,6,0.3);
+    padding: 4px 14px;
+    border-radius: 50px;
+    margin-bottom: 24px;
+    font-weight: 600;
+  }
+
+  .home-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 7vw, 60px);
+    line-height: 1.1;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .home-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .home-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 36px;
+    font-weight: 300;
+  }
+
+  .mode-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .mode-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mode-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: 14px;
+  }
+
+  .mode-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.15); }
+  .mode-card:hover::after { opacity: 1; }
+
+  .mode-card.gap::after { background: radial-gradient(circle at 50% 100%, rgba(255,137,6,0.08), transparent 70%); }
+  .mode-card.rewrite::after { background: radial-gradient(circle at 50% 100%, rgba(61,165,138,0.08), transparent 70%); }
+  .mode-card.timed::after { background: radial-gradient(circle at 50% 100%, rgba(229,49,112,0.08), transparent 70%); }
+
+  .mode-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+  .mode-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .mode-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+  .mode-card.gap .mode-name { color: var(--accent); }
+  .mode-card.rewrite .mode-name { color: var(--green); }
+  .mode-card.timed .mode-name { color: var(--red); }
+
+  .connector-preview {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+
+  .preview-chip {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 50px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-style: italic;
+    animation: fadeIn 0.5s ease both;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── GAME HEADER ── */
+  .game-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(15,14,23,0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .back-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .back-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  .mode-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 50px;
+    letter-spacing: 0.5px;
+  }
+
+  .mode-badge.gap { background: rgba(255,137,6,0.15); color: var(--accent); }
+  .mode-badge.rewrite { background: rgba(61,165,138,0.15); color: var(--green); }
+  .mode-badge.timed { background: rgba(229,49,112,0.15); color: var(--red); }
+
+  .score-display {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .score-num {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    color: var(--gold);
+  }
+
+  .score-label { font-size: 11px; color: var(--muted); }
+
+  .progress-dots {
+    display: flex; gap: 4px;
+  }
+
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+
+  .dot.done { background: var(--green); }
+  .dot.current { background: var(--accent); }
+
+  /* ── GAME BODY ── */
+  .game-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+  }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 620px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    opacity: 0.04;
+  }
+
+  .qcard-gap::before { background: var(--accent); }
+  .qcard-rewrite::before { background: var(--green); }
+  .qcard-timed::before { background: var(--red); }
+
+  .q-num {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 18px;
+    font-weight: 600;
+  }
+
+  /* Function label */
+  .function-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+  }
+
+  .fn-contrast { background: rgba(155,114,207,0.2); color: var(--purple); }
+  .fn-cause { background: rgba(255,137,6,0.15); color: var(--accent); }
+  .fn-addition { background: rgba(61,165,138,0.15); color: var(--green); }
+  .fn-example { background: rgba(243,182,31,0.15); color: var(--gold); }
+  .fn-emphasis { background: rgba(229,49,112,0.15); color: var(--red); }
+  .fn-structure { background: rgba(13,110,253,0.2); color: #6ea8fe; }
+  .fn-summary { background: rgba(255,255,255,0.07); color: var(--muted); }
+
+  /* GAP FILL */
+  .gap-sentence {
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 24px;
+    font-weight: 300;
+  }
+
+  .gap-blank {
+    display: inline-block;
+    min-width: 120px;
+    border-bottom: 2px solid var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+    text-align: center;
+    padding: 0 8px;
+    transition: all 0.3s;
+  }
+
+  .gap-blank.correct { border-color: var(--green); color: var(--green); }
+  .gap-blank.wrong { border-color: var(--red); color: var(--red); }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .option-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 14px;
+    font-style: italic;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.05);
+  }
+
+  .option-btn.correct { background: rgba(61,165,138,0.15); border-color: var(--green); color: var(--green); }
+  .option-btn.wrong { background: rgba(229,49,112,0.12); border-color: var(--red); color: var(--red); }
+  .option-btn.reveal { background: rgba(61,165,138,0.08); border-color: rgba(61,165,138,0.4); color: rgba(61,165,138,0.7); }
+  .option-btn:disabled { cursor: default; }
+
+  /* FEEDBACK BOX */
+  .feedback-box {
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    display: none;
+    animation: slideUp 0.25s ease;
+  }
+
+  @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .feedback-box.show { display: block; }
+  .feedback-box.correct-fb { background: rgba(61,165,138,0.1); border: 1px solid rgba(61,165,138,0.3); }
+  .feedback-box.wrong-fb { background: rgba(229,49,112,0.1); border: 1px solid rgba(229,49,112,0.3); }
+
+  .fb-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .feedback-box.correct-fb .fb-title { color: var(--green); }
+  .feedback-box.wrong-fb .fb-title { color: var(--red); }
+  .fb-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .fb-text strong { color: var(--text); }
+
+  .next-btn {
+    margin-top: 16px;
+    width: 100%;
+    padding: 13px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: none;
+  }
+
+  .next-btn.show { display: block; }
+  .next-btn:hover { background: #ff9e20; }
+
+  /* REWRITE */
+  .basic-sentence {
+    font-size: 15px;
+    color: var(--muted);
+    font-style: italic;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-radius: 8px;
+    border-left: 3px solid var(--border);
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .rewrite-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .rewrite-hint span {
+    color: var(--green);
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  .rewrite-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    resize: none;
+    min-height: 80px;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+
+  .rewrite-input:focus { outline: none; border-color: var(--green); }
+  .rewrite-input::placeholder { color: #555; }
+
+  .check-btn {
+    margin-top: 12px;
+    width: 100%;
+    padding: 13px;
+    background: var(--green);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .check-btn:hover { background: #4ebfa6; }
+  .check-btn:disabled { background: var(--surface); color: var(--muted); cursor: default; }
+
+  /* TIMED */
+  .timed-timer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .t-countdown {
+    font-family: 'Fraunces', serif;
+    font-size: 40px;
+    color: var(--text);
+    transition: color 0.3s;
+  }
+
+  .t-countdown.warning { color: var(--red); }
+
+  .t-bar-wrap {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 16px;
+    overflow: hidden;
+  }
+
+  .t-bar {
+    height: 100%;
+    background: var(--red);
+    border-radius: 2px;
+    transition: width 1s linear;
+    width: 100%;
+  }
+
+  .connector-prompt {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    color: var(--accent);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
+  .connector-function {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .timed-instruction {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
+    padding: 12px;
+    background: var(--surface);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+  }
+
+  .timed-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    resize: none;
+    min-height: 70px;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+
+  .timed-input:focus { outline: none; border-color: var(--accent); }
+  .timed-input::placeholder { color: #444; }
+
+  .submit-timed {
+    margin-top: 12px;
+    width: 100%;
+    padding: 13px;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .submit-timed:hover { background: #ff3d82; }
+
+  .example-answer {
+    margin-top: 12px;
+    background: rgba(229,49,112,0.08);
+    border: 1px solid rgba(229,49,112,0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: none;
+    animation: slideUp 0.2s ease;
+  }
+
+  .example-answer.show { display: block; }
+  .ea-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--red); font-weight: 600; margin-bottom: 8px; }
+  .ea-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .ea-text strong { color: var(--text); }
+
+  /* ── RESULTS SCREEN ── */
+  #results {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .results-inner { max-width: 500px; }
+
+  .results-emoji { font-size: 56px; margin-bottom: 16px; }
+
+  .results-title {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    margin-bottom: 8px;
+  }
+
+  .results-sub { font-size: 15px; color: var(--muted); margin-bottom: 32px; }
+
+  .score-breakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .score-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .score-box-num {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    margin-bottom: 4px;
+  }
+
+  .score-box-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  .score-box.gap .score-box-num { color: var(--accent); }
+  .score-box.rewrite .score-box-num { color: var(--green); }
+  .score-box.timed .score-box-num { color: var(--red); }
+
+  .play-again-btn {
+    padding: 14px 36px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-right: 10px;
+  }
+
+  .play-again-btn:hover { background: #ff9e20; }
+
+  .home-again-btn {
+    padding: 14px 24px;
+    background: var(--card);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .home-again-btn:hover { color: var(--text); }
+
+  /* Responsive */
+  @media (max-width: 500px) {
+    .mode-cards { grid-template-columns: 1fr; }
+    .options-grid { grid-template-columns: 1fr; }
+    .score-breakdown { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="home">
+  <div class="home-inner">
+    <div class="home-tag">B2 Speaking · Linkers & Connectors</div>
+    <h1 class="home-title">Stop <em>recognising.</em><br>Start using.</h1>
+    <p class="home-desc">Three game modes to push connectors from passive knowledge into active, spontaneous speech. Choose a mode to begin.</p>
+
+    <div class="mode-cards">
+      <div class="mode-card gap" onclick="startMode('gap')">
+        <span class="mode-icon">🎯</span>
+        <div class="mode-name">Fill the Gap</div>
+        <div class="mode-desc">Choose the right connector in context. Instant feedback with explanations.</div>
+      </div>
+      <div class="mode-card rewrite" onclick="startMode('rewrite')">
+        <span class="mode-icon">✍️</span>
+        <div class="mode-name">Rewrite It</div>
+        <div class="mode-desc">Upgrade a basic sentence using the right linker. Open-ended production.</div>
+      </div>
+      <div class="mode-card timed" onclick="startMode('timed')">
+        <span class="mode-icon">⚡</span>
+        <div class="mode-name">Timed Challenge</div>
+        <div class="mode-desc">You have 20 seconds. Use the connector in a spontaneous sentence. No safety net.</div>
+      </div>
+    </div>
+
+    <div class="connector-preview" id="previewChips"></div>
+  </div>
+</div>
+
+<!-- GAP FILL SCREEN -->
+<div class="screen" id="gap-screen">
+  <div class="game-header">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <div class="mode-badge gap">🎯 Fill the Gap</div>
+    <div class="progress-dots" id="gap-dots"></div>
+    <div class="score-display">
+      <div><div class="score-num" id="gap-score">0</div><div class="score-label">pts</div></div>
+    </div>
+  </div>
+  <div class="game-body">
+    <div class="question-card qcard-gap">
+      <div class="q-num" id="gap-qnum">Question 1 of 10</div>
+      <div class="function-tag" id="gap-fn-tag"></div>
+      <div class="gap-sentence" id="gap-sentence"></div>
+      <div class="options-grid" id="gap-options"></div>
+      <div class="feedback-box" id="gap-feedback">
+        <div class="fb-title" id="gap-fb-title"></div>
+        <div class="fb-text" id="gap-fb-text"></div>
+      </div>
+      <button class="next-btn" id="gap-next" onclick="nextGap()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- REWRITE SCREEN -->
+<div class="screen" id="rewrite-screen">
+  <div class="game-header">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <div class="mode-badge rewrite">✍️ Rewrite It</div>
+    <div class="progress-dots" id="rewrite-dots"></div>
+    <div class="score-display">
+      <div><div class="score-num" id="rewrite-score">0</div><div class="score-label">pts</div></div>
+    </div>
+  </div>
+  <div class="game-body">
+    <div class="question-card qcard-rewrite">
+      <div class="q-num" id="rewrite-qnum">Question 1 of 8</div>
+      <div class="function-tag" id="rewrite-fn-tag"></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Basic version:</p>
+      <div class="basic-sentence" id="rewrite-basic"></div>
+      <div class="rewrite-hint">Use: <span id="rewrite-connector"></span></div>
+      <textarea class="rewrite-input" id="rewrite-input" placeholder="Rewrite the sentence using the connector above..." rows="3"></textarea>
+      <button class="check-btn" onclick="checkRewrite()">Check my answer ✓</button>
+      <div class="feedback-box" id="rewrite-feedback">
+        <div class="fb-title" id="rewrite-fb-title"></div>
+        <div class="fb-text" id="rewrite-fb-text"></div>
+      </div>
+      <button class="next-btn" id="rewrite-next" onclick="nextRewrite()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TIMED SCREEN -->
+<div class="screen" id="timed-screen">
+  <div class="game-header">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <div class="mode-badge timed">⚡ Timed Challenge</div>
+    <div class="progress-dots" id="timed-dots"></div>
+    <div class="score-display">
+      <div><div class="score-num" id="timed-score">0</div><div class="score-label">pts</div></div>
+    </div>
+  </div>
+  <div class="game-body">
+    <div class="question-card qcard-timed">
+      <div class="q-num" id="timed-qnum">Round 1 of 8</div>
+      <div class="timed-timer">
+        <div class="t-countdown" id="t-countdown">20</div>
+        <div class="t-bar-wrap"><div class="t-bar" id="t-bar"></div></div>
+        <div class="function-tag" id="timed-fn-tag" style="margin-bottom:0;"></div>
+      </div>
+      <div class="connector-prompt" id="timed-connector"></div>
+      <div class="connector-function" id="timed-fn-desc"></div>
+      <div class="timed-instruction" id="timed-instruction"></div>
+      <textarea class="timed-input" id="timed-input" placeholder="Write your sentence here..." rows="3"></textarea>
+      <button class="submit-timed" onclick="submitTimed()">Submit & see example →</button>
+      <div class="example-answer" id="timed-example">
+        <div class="ea-label">Example answer</div>
+        <div class="ea-text" id="timed-example-text"></div>
+      </div>
+      <button class="next-btn" id="timed-next" onclick="nextTimed()" style="background:var(--red);">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="screen" id="results">
+  <div class="results-inner">
+    <div class="results-emoji" id="results-emoji">🎉</div>
+    <div class="results-title" id="results-title">Well done!</div>
+    <div class="results-sub" id="results-sub"></div>
+    <div class="score-breakdown">
+      <div class="score-box gap"><div class="score-box-num" id="r-gap">—</div><div class="score-box-label">Fill the Gap</div></div>
+      <div class="score-box rewrite"><div class="score-box-num" id="r-rewrite">—</div><div class="score-box-label">Rewrite</div></div>
+      <div class="score-box timed"><div class="score-box-num" id="r-timed">—</div><div class="score-box-label">Timed</div></div>
+    </div>
+    <button class="play-again-btn" onclick="playAgain()">Play again</button>
+    <button class="home-again-btn" onclick="goHome()">Change mode</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+const GAP_QUESTIONS = [
+  {
+    sentence: "___ social media offers great opportunities, it also raises serious concerns about privacy.",
+    blank: "___",
+    answer: "Although",
+    options: ["Although", "Because", "Therefore", "In addition"],
+    fn: "contrast", fnClass: "fn-contrast",
+    explanation: "<strong>Although</strong> introduces a contrast between two ideas within the same sentence. 'Because' shows cause, 'Therefore' shows result, and 'In addition' adds information — none of these create the contrast needed here."
+  },
+  {
+    sentence: "Many young people struggle to find work. ___, a growing number are choosing to work abroad.",
+    blank: "___",
+    answer: "As a result,",
+    options: ["As a result,", "Nevertheless,", "In addition,", "Although"],
+    fn: "cause & effect", fnClass: "fn-cause",
+    explanation: "<strong>As a result</strong> signals that what follows is a consequence of what came before. Young people can't find work → therefore they go abroad. 'Nonetheless' would introduce a contrast, which doesn't fit the logic here — the second sentence is a direct consequence, not a surprising counter-point."
+  },
+  {
+    sentence: "Tourism brings enormous economic benefits. ___, it can put local communities under serious strain.",
+    blank: "___",
+    answer: "Nevertheless,",
+    options: ["Therefore,", "Nevertheless,", "In fact,", "What's more,"],
+    fn: "contrast", fnClass: "fn-contrast",
+    explanation: "<strong>Nevertheless</strong> is a sophisticated B2/C1 contrast connector meaning 'in spite of what was just said.' It carries more weight than 'however' — it acknowledges the previous point fully before pivoting. Use it when the contrast feels significant, not just incidental."
+  },
+  {
+    sentence: "Remote work improves work-life balance. ___, it allows companies to reduce office costs.",
+    blank: "___",
+    answer: "What's more,",
+    options: ["Despite this,", "What's more,", "Consequently,", "Although"],
+    fn: "addition", fnClass: "fn-addition",
+    explanation: "<strong>What's more</strong> adds another positive point in the same direction. Both sentences support remote work — this is an addition, not a contrast or result. 'Despite this' would introduce a concession, which breaks the logic."
+  },
+  {
+    sentence: "Fast fashion has a devastating environmental impact. ___, studies show that a single pair of jeans requires 7,000 litres of water to produce.",
+    blank: "___",
+    answer: "To illustrate this,",
+    options: ["Nonetheless,", "Therefore,", "To illustrate this,", "In spite of this,"],
+    fn: "example", fnClass: "fn-example",
+    explanation: "<strong>To illustrate this</strong> introduces a specific example to support the previous claim. The jeans statistic is evidence for the general statement made before. 'Therefore' introduces a conclusion, not an example. 'Nonetheless' would introduce a contrast — but there is no contrast here, just evidence."
+  },
+  {
+    sentence: "___ the rising cost of living, many young Spaniards are choosing to stay in education longer.",
+    blank: "___",
+    answer: "Due to",
+    options: ["Due to", "Despite", "Nonetheless,", "What's more,"],
+    fn: "cause & effect", fnClass: "fn-cause",
+    explanation: "<strong>Due to</strong> introduces the cause of something (followed by a noun phrase). Rising costs → staying in education longer. 'Despite' would introduce a contrast ('despite the cost, they study' — possible, but changes the meaning entirely). 'Nonetheless' is a sentence connector and cannot precede a noun phrase."
+  },
+  {
+    sentence: "___ its many advantages, social media has been linked to rising rates of anxiety in teenagers.",
+    blank: "___",
+    answer: "Despite",
+    options: ["Because of", "Despite", "Therefore,", "As a result of"],
+    fn: "contrast", fnClass: "fn-contrast",
+    explanation: "<strong>Despite</strong> introduces a concession — acknowledging something positive before showing a negative reality. 'Because of its advantages, it causes anxiety' would be illogical. 'Despite' = 'even though it has advantages, there are still problems.'"
+  },
+  {
+    sentence: "The government has invested heavily in cycling infrastructure. ___, air quality in the city has significantly improved.",
+    blank: "___",
+    answer: "Consequently,",
+    options: ["By contrast,", "Consequently,", "In spite of this,", "What's more,"],
+    fn: "cause & effect", fnClass: "fn-cause",
+    explanation: "<strong>Consequently</strong> shows a result or effect. Investment in cycling → better air quality. This is a logical cause-effect chain. 'By contrast' would introduce a comparison with something different — but no second subject has been mentioned, so it doesn't fit."
+  },
+  {
+    sentence: "It is ___ mentioning that Spain has one of the highest rates of youth unemployment in Europe.",
+    blank: "___",
+    answer: "worth",
+    options: ["worth", "good", "important", "useful"],
+    fn: "emphasis", fnClass: "fn-emphasis",
+    explanation: "<strong>It is worth mentioning that</strong> is a fixed expression used to emphasise a point that the speaker wants to highlight. This is a collocation — only 'worth' works grammatically and idiomatically in this structure."
+  },
+  {
+    sentence: "Many people believe social media brings communities closer together. ___, studies consistently point to increased loneliness among heavy users.",
+    blank: "___",
+    answer: "Nonetheless,",
+    options: ["Nonetheless,", "Because,", "In addition,", "For instance,"],
+    fn: "contrast (B2/C1)", fnClass: "fn-contrast",
+    explanation: "<strong>Nonetheless</strong> (like 'nevertheless') is a B2/C1 upgrade on 'however.' It means 'despite everything just said, this is still true.' It gives more weight to the contrast — ideal when the two ideas are genuinely surprising or counterintuitive. Avoid 'however' in your exam and use these instead."
+  },
+  {
+    sentence: "University degrees are still highly valued. ___, vocational training is increasingly seen as an equally valid path.",
+    blank: "___",
+    answer: "That said,",
+    options: ["That said,", "As a result,", "In addition,", "For instance,"],
+    fn: "contrast", fnClass: "fn-contrast",
+    explanation: "<strong>That said</strong> is a sophisticated way to introduce a qualification or contrast after a positive statement. It means 'having acknowledged that, here is another perspective.' Very natural in B2/C1 speaking."
+  }
+];
+
+const REWRITE_QUESTIONS = [
+  {
+    basic: "I think technology is good and bad.",
+    connector: "On the one hand… on the other hand…",
+    fn: "contrast", fnClass: "fn-contrast",
+    model: "<strong>On the one hand,</strong> technology has transformed our lives for the better. <strong>On the other hand,</strong> it has also created new problems, such as addiction and loss of privacy.",
+    explanation: "This structure signals a balanced argument clearly. The examiner sees immediately that you are considering both sides — a key B2 skill."
+  },
+  {
+    basic: "People don't exercise enough. They have health problems.",
+    connector: "As a result,",
+    fn: "cause & effect", fnClass: "fn-cause",
+    model: "Many people lead increasingly sedentary lifestyles, and <strong>as a result,</strong> rates of obesity and cardiovascular disease are rising sharply.",
+    explanation: "'As a result' connects cause and effect in a single, fluid sentence. Avoid starting a new sentence every time — link your ideas."
+  },
+  {
+    basic: "Remote work is convenient. It can be lonely.",
+    connector: "Whilst… it also…",
+    fn: "contrast", fnClass: "fn-contrast",
+    model: "<strong>Whilst</strong> remote work undoubtedly offers genuine convenience and flexibility, <strong>it also</strong> carries a real risk of social isolation — something that should not be underestimated.",
+    explanation: "'Whilst' is a more formal and sophisticated alternative to 'although' or 'even though', particularly common in B2/C1 writing and speaking. It signals an immediate contrast within the same sentence. Examiners notice the difference."
+  },
+  {
+    basic: "Social media is popular. Also it is addictive.",
+    connector: "Not only… but also…",
+    fn: "addition", fnClass: "fn-addition",
+    model: "Social media is <strong>not only</strong> enormously popular among all age groups, <strong>but it also</strong> has a highly addictive design that keeps users scrolling for hours.",
+    explanation: "'Not only… but also' is a powerful addition structure that emphasises both points. Note that when 'not only' starts the sentence, you need inversion: 'Not only is it popular, but it also…'"
+  },
+  {
+    basic: "Spain has a lot of tourists. It causes problems for people who live there.",
+    connector: "Nevertheless,",
+    fn: "contrast", fnClass: "fn-contrast",
+    model: "Tourism is undeniably one of the pillars of Spain's economy and cultural exchange. <strong>Nevertheless,</strong> the pressure it places on local housing markets and daily life is becoming increasingly difficult for residents to ignore.",
+    explanation: "'Nevertheless' is stronger and more formal than 'however.' It fully acknowledges the previous point before pivoting — signalling that you have considered both sides seriously. Perfect for monolog conclusions and transitions."
+  },
+  {
+    basic: "For example, in France they fund films.",
+    connector: "A clear illustration of this is",
+    fn: "example", fnClass: "fn-example",
+    model: "<strong>A clear illustration of this is</strong> France, where generous government subsidies have helped create a thriving domestic film industry that competes internationally.",
+    explanation: "Replacing 'for example' with 'a clear illustration of this is' immediately elevates the register. It sounds more deliberate and academic — exactly what examiners want to hear."
+  },
+  {
+    basic: "It is important to say that young people face a lot of pressure.",
+    connector: "It is worth highlighting that",
+    fn: "emphasis", fnClass: "fn-emphasis",
+    model: "<strong>It is worth highlighting that</strong> young people today face levels of academic, financial, and social pressure that previous generations simply did not experience.",
+    explanation: "'It is worth highlighting / mentioning / noting that' are all B2/C1 emphasis expressions. They signal that you are about to make an important point — use them to frame your strongest ideas."
+  },
+  {
+    basic: "In conclusion, I talked about the pros and cons.",
+    connector: "To sum up / Overall",
+    fn: "summary", fnClass: "fn-summary",
+    model: "<strong>To sum up,</strong> we have seen that while fast fashion offers affordability and choice, its environmental and social costs are simply too high to ignore. <strong>Overall,</strong> I would argue that a shift towards more conscious consumption is both necessary and achievable.",
+    explanation: "Never end with 'I talked about…' — this is a summary of what you did, not what you argued. Use 'To sum up' + the content of your points, then 'Overall, I would argue that' for your final opinion."
+  }
+];
+
+const TIMED_QUESTIONS = [
+  {
+    connector: "Nevertheless,",
+    fn: "Contrast (B2)", fnClass: "fn-contrast",
+    instruction: "You said: 'Social media has transformed the way people communicate and stay connected.' Now add a significant contrasting idea using NEVERTHELESS.",
+    example: "<strong>Nevertheless,</strong> it can also create a distorted sense of reality, encouraging people to compare their lives with carefully curated highlights rather than honest, everyday experience."
+  },
+  {
+    connector: "As a result,",
+    fn: "Cause & Effect", fnClass: "fn-cause",
+    instruction: "You said: 'Many young people can't afford to buy a home.' Now show the consequence using AS A RESULT.",
+    example: "<strong>As a result,</strong> more and more people in their thirties are still living with their parents, which is having a significant impact on their independence and life choices."
+  },
+  {
+    connector: "What's more,",
+    fn: "Addition", fnClass: "fn-addition",
+    instruction: "You said: 'Remote work saves time on commuting.' Now add another advantage using WHAT'S MORE.",
+    example: "<strong>What's more,</strong> it gives employees the flexibility to design their own working environment, which many studies suggest leads to higher levels of creativity and job satisfaction."
+  },
+  {
+    connector: "Nonetheless,",
+    fn: "Contrast (B2/C1)", fnClass: "fn-contrast",
+    instruction: "You said: 'Fast fashion has been heavily criticised for its environmental impact, and awareness campaigns have been widespread.' Now introduce a frustrating reality using NONETHELESS.",
+    example: "<strong>Nonetheless,</strong> consumer demand for cheap, disposable clothing shows no sign of slowing down — which suggests that awareness alone, without structural change, is simply not enough."
+  },
+  {
+    connector: "Yet",
+    fn: "Contrast (dramatic)", fnClass: "fn-contrast",
+    instruction: "You said: 'Mental health is finally being discussed more openly in schools and workplaces.' Add a dramatic contrast using YET — put it at the start of your sentence.",
+    example: "<strong>Yet</strong> in practice, access to professional mental health support in Spain remains severely limited, with waiting times in the public system often stretching to months."
+  },
+  {
+    connector: "To illustrate this,",
+    fn: "Example", fnClass: "fn-example",
+    instruction: "You just said: 'Tourism can put enormous pressure on local communities.' Now give a specific example using TO ILLUSTRATE THIS.",
+    example: "<strong>To illustrate this,</strong> in Barcelona, local residents have organised large-scale protests against mass tourism, arguing that their neighbourhoods have become unliveable due to overcrowding and rising rents."
+  },
+  {
+    connector: "By contrast,",
+    fn: "Comparison / Contrast", fnClass: "fn-contrast",
+    instruction: "You said: 'In Spain, mental health is rarely discussed in schools.' Now compare this with another country using BY CONTRAST.",
+    example: "<strong>By contrast,</strong> countries like the UK and the Netherlands have introduced dedicated mental health education programmes at secondary level, with measurable improvements in student wellbeing."
+  },
+  {
+    connector: "It is worth highlighting that",
+    fn: "Emphasis", fnClass: "fn-emphasis",
+    instruction: "You are talking about youth unemployment in Spain. Introduce an important fact using IT IS WORTH HIGHLIGHTING THAT.",
+    example: "<strong>It is worth highlighting that</strong> Spain consistently records one of the highest youth unemployment rates in the European Union — a structural problem that no government has yet managed to resolve effectively."
+  },
+  {
+    connector: "Consequently,",
+    fn: "Cause & Effect", fnClass: "fn-cause",
+    instruction: "You said: 'The government has invested heavily in renewable energy.' Show the result using CONSEQUENTLY.",
+    example: "<strong>Consequently,</strong> Spain now generates a significant proportion of its electricity from wind and solar power, making it one of the leading countries in Europe for clean energy production."
+  },
+  {
+    connector: "That said,",
+    fn: "Qualification (B2)", fnClass: "fn-contrast",
+    instruction: "You said: 'University degrees are still highly valued by employers.' Now qualify this with a nuanced contrasting point using THAT SAID.",
+    example: "<strong>That said,</strong> in rapidly evolving fields like technology and digital marketing, practical skills and a strong portfolio are often considered far more valuable than a formal academic qualification."
+  }
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────────────
+let currentMode = '';
+let gapIndex = 0, gapScore = 0;
+let rewriteIndex = 0, rewriteScore = 0;
+let timedIndex = 0, timedScore = 0;
+let timedInterval = null;
+let timedSeconds = 20;
+let scores = { gap: null, rewrite: null, timed: null };
+let shuffledGap = [], shuffledRewrite = [], shuffledTimed = [];
+
+// ── UTILS ──────────────────────────────────────────────────────────────────────
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function makeDots(containerId, total, current) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < current ? ' done' : i === current ? ' current' : '');
+    el.appendChild(d);
+  }
+}
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+(function initPreview() {
+  const chips = ["Nevertheless,","Nonetheless,","Yet","Whilst","By contrast,","As a result,","What's more,","Despite this,","To illustrate this,","Consequently,","That said,","It is worth highlighting that","Not only… but also","Due to","Whilst","Having said that,"];
+  const el = document.getElementById('previewChips');
+  chips.forEach((c, i) => {
+    const span = document.createElement('span');
+    span.className = 'preview-chip';
+    span.textContent = c;
+    span.style.animationDelay = (i * 0.05) + 's';
+    el.appendChild(span);
+  });
+})();
+
+function goHome() {
+  clearInterval(timedInterval);
+  showScreen('home');
+}
+
+function startMode(mode) {
+  currentMode = mode;
+  if (mode === 'gap') {
+    shuffledGap = shuffle(GAP_QUESTIONS);
+    gapIndex = 0; gapScore = 0;
+    document.getElementById('gap-score').textContent = 0;
+    loadGap();
+    showScreen('gap-screen');
+  } else if (mode === 'rewrite') {
+    shuffledRewrite = shuffle(REWRITE_QUESTIONS);
+    rewriteIndex = 0; rewriteScore = 0;
+    document.getElementById('rewrite-score').textContent = 0;
+    loadRewrite();
+    showScreen('rewrite-screen');
+  } else if (mode === 'timed') {
+    shuffledTimed = shuffle(TIMED_QUESTIONS);
+    timedIndex = 0; timedScore = 0;
+    document.getElementById('timed-score').textContent = 0;
+    loadTimed();
+    showScreen('timed-screen');
+  }
+}
+
+// ── GAP FILL ──────────────────────────────────────────────────────────────────
+function loadGap() {
+  const q = shuffledGap[gapIndex];
+  const total = shuffledGap.length;
+  document.getElementById('gap-qnum').textContent = `Question ${gapIndex + 1} of ${total}`;
+  makeDots('gap-dots', total, gapIndex);
+
+  const fnTag = document.getElementById('gap-fn-tag');
+  fnTag.textContent = q.fn.toUpperCase();
+  fnTag.className = 'function-tag ' + q.fnClass;
+
+  document.getElementById('gap-sentence').innerHTML = q.sentence.replace('___', `<span class="gap-blank" id="gap-blank-span">___</span>`);
+
+  const opts = shuffle(q.options);
+  const grid = document.getElementById('gap-options');
+  grid.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectGap(btn, opt, q);
+    grid.appendChild(btn);
+  });
+
+  const fb = document.getElementById('gap-feedback');
+  fb.className = 'feedback-box';
+  document.getElementById('gap-next').className = 'next-btn';
+}
+
+function selectGap(btn, chosen, q) {
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  const blank = document.getElementById('gap-blank-span');
+  const fb = document.getElementById('gap-feedback');
+  const fbTitle = document.getElementById('gap-fb-title');
+  const fbText = document.getElementById('gap-fb-text');
+
+  if (chosen === q.answer) {
+    btn.classList.add('correct');
+    blank.textContent = chosen;
+    blank.classList.add('correct');
+    gapScore += 10;
+    document.getElementById('gap-score').textContent = gapScore;
+    fb.className = 'feedback-box correct-fb show';
+    fbTitle.textContent = '✓ Correct! +10 pts';
+    fbText.innerHTML = q.explanation;
+  } else {
+    btn.classList.add('wrong');
+    blank.textContent = q.answer;
+    blank.classList.add('correct');
+    document.querySelectorAll('.option-btn').forEach(b => {
+      if (b.textContent === q.answer) b.classList.add('reveal');
+    });
+    fb.className = 'feedback-box wrong-fb show';
+    fbTitle.textContent = '✗ Not quite.';
+    fbText.innerHTML = `The correct answer is <strong>${q.answer}</strong>. ${q.explanation}`;
+  }
+
+  document.getElementById('gap-next').className = 'next-btn show';
+}
+
+function nextGap() {
+  gapIndex++;
+  if (gapIndex >= shuffledGap.length) {
+    scores.gap = gapScore;
+    showResults('gap');
+  } else {
+    loadGap();
+  }
+}
+
+// ── REWRITE ──────────────────────────────────────────────────────────────────
+function loadRewrite() {
+  const q = shuffledRewrite[rewriteIndex];
+  const total = shuffledRewrite.length;
+  document.getElementById('rewrite-qnum').textContent = `Question ${rewriteIndex + 1} of ${total}`;
+  makeDots('rewrite-dots', total, rewriteIndex);
+
+  const fnTag = document.getElementById('rewrite-fn-tag');
+  fnTag.textContent = q.fn.toUpperCase();
+  fnTag.className = 'function-tag ' + q.fnClass;
+
+  document.getElementById('rewrite-basic').textContent = q.basic;
+  document.getElementById('rewrite-connector').textContent = q.connector;
+  document.getElementById('rewrite-input').value = '';
+  document.getElementById('rewrite-input').disabled = false;
+
+  const fb = document.getElementById('rewrite-feedback');
+  fb.className = 'feedback-box';
+  document.getElementById('rewrite-next').className = 'next-btn';
+
+  const checkBtn = document.querySelector('#rewrite-screen .check-btn');
+  checkBtn.disabled = false;
+  checkBtn.textContent = 'Check my answer ✓';
+}
+
+function checkRewrite() {
+  const q = shuffledRewrite[rewriteIndex];
+  const val = document.getElementById('rewrite-input').value.trim();
+  const fb = document.getElementById('rewrite-feedback');
+  const fbTitle = document.getElementById('rewrite-fb-title');
+  const fbText = document.getElementById('rewrite-fb-text');
+  const checkBtn = document.querySelector('#rewrite-screen .check-btn');
+
+  checkBtn.disabled = true;
+  document.getElementById('rewrite-input').disabled = true;
+
+  // Check if connector is used (case-insensitive, partial match for flexibility)
+  const connectorCore = q.connector.replace(/…/g,'').replace(/\//g,'|').split('|')[0].trim().toLowerCase();
+  const used = val.toLowerCase().includes(connectorCore);
+
+  if (val.length < 15) {
+    fb.className = 'feedback-box wrong-fb show';
+    fbTitle.textContent = 'Try harder!';
+    fbText.innerHTML = 'Your sentence is too short. Write a full, developed sentence using the connector. Here is a model: ' + q.model;
+  } else if (!used) {
+    fb.className = 'feedback-box wrong-fb show';
+    fbTitle.textContent = `✗ The connector wasn't used.`;
+    fbText.innerHTML = `Remember to include <strong>${q.connector}</strong>. ${q.explanation}<br><br>Model answer: ${q.model}`;
+  } else {
+    rewriteScore += 10;
+    document.getElementById('rewrite-score').textContent = rewriteScore;
+    fb.className = 'feedback-box correct-fb show';
+    fbTitle.textContent = '✓ Great! +10 pts';
+    fbText.innerHTML = `${q.explanation}<br><br>Model answer: ${q.model}`;
+  }
+
+  document.getElementById('rewrite-next').className = 'next-btn show';
+}
+
+function nextRewrite() {
+  rewriteIndex++;
+  if (rewriteIndex >= shuffledRewrite.length) {
+    scores.rewrite = rewriteScore;
+    showResults('rewrite');
+  } else {
+    loadRewrite();
+  }
+}
+
+// ── TIMED ──────────────────────────────────────────────────────────────────────
+function loadTimed() {
+  const q = shuffledTimed[timedIndex];
+  const total = shuffledTimed.length;
+  document.getElementById('timed-qnum').textContent = `Round ${timedIndex + 1} of ${total}`;
+  makeDots('timed-dots', total, timedIndex);
+
+  const fnTag = document.getElementById('timed-fn-tag');
+  fnTag.textContent = q.fn.toUpperCase();
+  fnTag.className = 'function-tag ' + q.fnClass;
+
+  document.getElementById('timed-connector').textContent = q.connector;
+  document.getElementById('timed-fn-desc').textContent = 'Function: ' + q.fn;
+  document.getElementById('timed-instruction').textContent = q.instruction;
+  document.getElementById('timed-input').value = '';
+  document.getElementById('timed-input').disabled = false;
+
+  document.getElementById('timed-example').className = 'example-answer';
+  document.getElementById('timed-next').className = 'next-btn';
+  document.querySelector('#timed-screen .submit-timed').disabled = false;
+
+  timedSeconds = 20;
+  const bar = document.getElementById('t-bar');
+  const countdown = document.getElementById('t-countdown');
+  bar.style.width = '100%';
+  countdown.textContent = '20';
+  countdown.className = 't-countdown';
+
+  clearInterval(timedInterval);
+  timedInterval = setInterval(() => {
+    timedSeconds--;
+    countdown.textContent = timedSeconds;
+    bar.style.width = (timedSeconds / 20 * 100) + '%';
+    if (timedSeconds <= 7) countdown.className = 't-countdown warning';
+    if (timedSeconds <= 0) {
+      clearInterval(timedInterval);
+      autoSubmitTimed();
+    }
+  }, 1000);
+}
+
+function autoSubmitTimed() {
+  submitTimed(true);
+}
+
+function submitTimed(auto = false) {
+  clearInterval(timedInterval);
+  const q = shuffledTimed[timedIndex];
+  const val = document.getElementById('timed-input').value.trim();
+  document.getElementById('timed-input').disabled = true;
+  document.querySelector('#timed-screen .submit-timed').disabled = true;
+
+  const connectorCore = q.connector.replace(/,/g,'').replace(/…/g,'').toLowerCase().trim();
+  const used = val.toLowerCase().includes(connectorCore);
+
+  if (used && val.length > 15) {
+    timedScore += 10;
+    document.getElementById('timed-score').textContent = timedScore;
+    document.getElementById('timed-example-text').innerHTML = `✓ You used the connector! Here's a model for comparison:<br><br>${q.example}`;
+  } else {
+    document.getElementById('timed-example-text').innerHTML = `${auto ? "⏱ Time's up! " : ""}${!used ? 'The connector was not used. ' : ''}Here's a model answer:<br><br>${q.example}`;
+  }
+
+  document.getElementById('timed-example').className = 'example-answer show';
+  document.getElementById('timed-next').className = 'next-btn show';
+}
+
+function nextTimed() {
+  timedIndex++;
+  if (timedIndex >= shuffledTimed.length) {
+    scores.timed = timedScore;
+    showResults('timed');
+  } else {
+    loadTimed();
+  }
+}
+
+// ── RESULTS ──────────────────────────────────────────────────────────────────
+function showResults(mode) {
+  const score = scores[mode];
+  const maxScores = { gap: GAP_QUESTIONS.length * 10, rewrite: REWRITE_QUESTIONS.length * 10, timed: TIMED_QUESTIONS.length * 10 };
+  const max = maxScores[mode];
+  const pct = Math.round((score / max) * 100);
+
+  document.getElementById('r-gap').textContent = scores.gap !== null ? scores.gap + ' pts' : '—';
+  document.getElementById('r-rewrite').textContent = scores.rewrite !== null ? scores.rewrite + ' pts' : '—';
+  document.getElementById('r-timed').textContent = scores.timed !== null ? scores.timed + ' pts' : '—';
+
+  let emoji, title, sub;
+  if (pct >= 80) { emoji = '🏆'; title = 'Excellent!'; sub = `You scored ${score}/${max} — you're producing connectors with real confidence.`; }
+  else if (pct >= 60) { emoji = '👏'; title = 'Good work!'; sub = `You scored ${score}/${max} — keep practising the ones you missed.`; }
+  else if (pct >= 40) { emoji = '💪'; title = 'Keep going!'; sub = `You scored ${score}/${max} — review the explanations and try again.`; }
+  else { emoji = '📖'; title = 'Study first!'; sub = `You scored ${score}/${max} — revisit the connector list and try again.`; }
+
+  document.getElementById('results-emoji').textContent = emoji;
+  document.getElementById('results-title').textContent = title;
+  document.getElementById('results-sub').textContent = sub;
+
+  showScreen('results');
+}
+
+function playAgain() {
+  startMode(currentMode);
+}
+</script>
+</body>
+</html>
