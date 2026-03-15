@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App World — A2 English Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f13;
+  --card: #18181f;
+  --card2: #1e1e28;
+  --border: rgba(255,255,255,0.07);
+  --text: #f0f0f5;
+  --muted: #8888a0;
+  --cyan: #00e5ff;
+  --pink: #ff4d8d;
+  --yellow: #ffd93d;
+  --green: #00e096;
+  --purple: #b66eff;
+  --red: #ff5c5c;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Ambient glow blobs */
+body::before {
+  content: '';
+  position: fixed;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
+  top: -200px; left: -200px;
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(182,110,255,0.07) 0%, transparent 70%);
+  bottom: -100px; right: -100px;
+  pointer-events: none; z-index: 0;
+}
+
+/* ── HEADER ── */
+header {
+  position: relative; z-index: 2;
+  padding: 2.5rem 1.5rem 1.5rem;
+  max-width: 760px; margin: 0 auto;
+  display: flex; align-items: center; gap: 1.2rem;
+}
+.header-icon {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  box-shadow: 0 0 24px rgba(0,229,255,0.3);
+}
+.header-text h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  font-weight: 800;
+  line-height: 1.1;
+}
+.header-text h1 span { color: var(--cyan); }
+.header-text p { color: var(--muted); font-size: 0.9rem; margin-top: 0.2rem; }
+
+/* Level badge */
+.level-row {
+  max-width: 760px; margin: 0 auto;
+  padding: 0 1.5rem 1.5rem;
+  display: flex; gap: 0.6rem; flex-wrap: wrap;
+  position: relative; z-index: 2;
+}
+.badge {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid;
+}
+.badge-cyan { color: var(--cyan); border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.07); }
+.badge-pink { color: var(--pink); border-color: rgba(255,77,141,0.3); background: rgba(255,77,141,0.07); }
+.badge-yellow { color: var(--yellow); border-color: rgba(255,217,61,0.3); background: rgba(255,217,61,0.07); }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap {
+  max-width: 760px; margin: 0 auto;
+  padding: 0 1.5rem 2rem;
+  position: relative; z-index: 2;
+}
+.progress-label {
+  display: flex; justify-content: space-between;
+  font-size: 0.75rem; color: var(--muted);
+  margin-bottom: 0.4rem;
+  font-family: 'Syne', sans-serif; font-weight: 600;
+}
+.progress-track {
+  height: 6px; background: rgba(255,255,255,0.06);
+  border-radius: 3px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  border-radius: 3px;
+  transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  width: 0%;
+  box-shadow: 0 0 10px rgba(0,229,255,0.4);
+}
+
+/* ── SECTION TABS ── */
+.tabs {
+  max-width: 760px; margin: 0 auto;
+  padding: 0 1.5rem 1.5rem;
+  display: flex; gap: 0.5rem;
+  position: relative; z-index: 2;
+}
+.tab {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.tab .tab-icon { display: block; font-size: 1.3rem; margin-bottom: 0.3rem; }
+.tab.active { color: var(--text); border-color: rgba(0,229,255,0.4); background: rgba(0,229,255,0.06); }
+.tab:hover:not(.active) { border-color: rgba(255,255,255,0.12); color: var(--text); }
+
+/* ── MAIN CONTENT ── */
+main {
+  max-width: 760px; margin: 0 auto;
+  padding: 0 1.5rem 5rem;
+  position: relative; z-index: 2;
+}
+.section { display: none; animation: fadeUp 0.35s ease; }
+.section.active { display: block; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  margin-bottom: 1.2rem;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem; font-weight: 800;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.section-title .dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.section-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.3rem; }
+
+/* ── GRAMMAR CARD ── */
+.grammar-tip {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--cyan);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.grammar-tip strong { color: var(--cyan); font-weight: 600; }
+.grammar-tip em { color: var(--text); font-style: normal; font-weight: 500; }
+
+/* ── QUESTION CARD ── */
+.q-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.3rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+.q-card.correct { border-color: rgba(0,224,150,0.4); }
+.q-card.wrong { border-color: rgba(255,92,92,0.4); }
+
+.q-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.65rem; font-weight: 700;
+  color: var(--muted); letter-spacing: 0.12em;
+  margin-bottom: 0.6rem;
+}
+.q-prompt {
+  font-size: 1rem; line-height: 1.6;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+.q-prompt strong { color: var(--yellow); }
+
+/* Multiple choice */
+.mc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+@media (max-width: 480px) { .mc-grid { grid-template-columns: 1fr; } }
+
+.mc-btn {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.9rem;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s;
+  position: relative;
+}
+.mc-btn:hover:not(:disabled) {
+  border-color: rgba(0,229,255,0.35);
+  background: rgba(0,229,255,0.05);
+  transform: translateY(-1px);
+}
+.mc-btn.correct { border-color: var(--green); background: rgba(0,224,150,0.08); color: var(--green); }
+.mc-btn.wrong { border-color: var(--red); background: rgba(255,92,92,0.08); color: var(--red); }
+.mc-btn:disabled { cursor: default; }
+
+/* Feedback */
+.q-feedback {
+  margin-top: 0.8rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  display: none;
+  animation: fadeUp 0.25s ease;
+}
+.q-feedback.show { display: block; }
+.q-feedback.ok { background: rgba(0,224,150,0.08); border: 1px solid rgba(0,224,150,0.3); color: var(--green); }
+.q-feedback.bad { background: rgba(255,92,92,0.08); border: 1px solid rgba(255,92,92,0.3); color: var(--red); }
+
+/* ── VOCAB SECTION ── */
+.vocab-intro {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--pink);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.vocab-intro strong { color: var(--pink); }
+
+.vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+.vocab-chip {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.9rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.vocab-chip:hover { border-color: rgba(255,77,141,0.4); background: rgba(255,77,141,0.05); }
+.vocab-chip.selected { border-color: var(--pink); background: rgba(255,77,141,0.1); }
+.vocab-chip .v-word { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--text); }
+.vocab-chip .v-emoji { font-size: 1.4rem; display: block; margin-bottom: 0.3rem; }
+
+.match-zone {
+  display: flex; flex-direction: column; gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+.match-row {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1rem;
+  display: flex; align-items: center; gap: 0.8rem;
+  font-size: 0.9rem;
+}
+.match-def { color: var(--muted); flex: 1; }
+.match-answer {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: 0.85rem;
+  min-width: 90px; text-align: right;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.match-row.matched .match-answer { color: var(--pink); }
+.match-row.correct-match { border-color: rgba(0,224,150,0.4); }
+.match-row.correct-match .match-answer { color: var(--green); }
+.match-row.wrong-match { border-color: rgba(255,92,92,0.4); }
+.match-row.wrong-match .match-answer { color: var(--red); }
+
+/* ── WRITING SECTION ── */
+.writing-intro {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.writing-intro strong { color: var(--purple); }
+
+.writing-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.3rem;
+  margin-bottom: 1rem;
+}
+.writing-prompt {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 0.4rem;
+}
+.writing-prompt strong { color: var(--yellow); }
+.writing-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 0.9rem;
+  font-style: italic;
+}
+.writing-hint span { color: var(--purple); font-style: normal; font-weight: 500; }
+
+textarea {
+  width: 100%;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1rem;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 90px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+textarea:focus { border-color: rgba(182,110,255,0.5); }
+textarea::placeholder { color: var(--muted); font-style: italic; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.65rem 1.3rem;
+  border-radius: var(--radius-sm);
+  border: none; cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+}
+.btn-cyan { background: rgba(0,229,255,0.12); color: var(--cyan); border: 1px solid rgba(0,229,255,0.3); }
+.btn-cyan:hover { background: rgba(0,229,255,0.2); box-shadow: 0 0 16px rgba(0,229,255,0.2); }
+.btn-purple { background: rgba(182,110,255,0.12); color: var(--purple); border: 1px solid rgba(182,110,255,0.3); }
+.btn-purple:hover { background: rgba(182,110,255,0.2); box-shadow: 0 0 16px rgba(182,110,255,0.2); }
+.btn-pink { background: rgba(255,77,141,0.12); color: var(--pink); border: 1px solid rgba(255,77,141,0.3); }
+.btn-pink:hover { background: rgba(255,77,141,0.2); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-row { display: flex; gap: 0.6rem; margin-top: 0.9rem; flex-wrap: wrap; }
+
+/* ── AI FEEDBACK BOX ── */
+.ai-box {
+  background: var(--card2);
+  border: 1px solid rgba(182,110,255,0.25);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+  margin-top: 0.9rem;
+  display: none;
+  animation: fadeUp 0.3s ease;
+}
+.ai-box.show { display: block; }
+.ai-box-header {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.72rem; font-weight: 700;
+  color: var(--purple);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.7rem;
+}
+.ai-spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(182,110,255,0.2);
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+.ai-spinner.active { display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-content { font-size: 0.88rem; line-height: 1.7; color: var(--text); }
+.ai-content .good { color: var(--green); }
+.ai-content .fix { color: var(--yellow); }
+.ai-content .tip { color: var(--cyan); }
+
+/* ── SCORE CARD ── */
+.score-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  display: none;
+}
+.score-card.show { display: block; animation: fadeUp 0.4s ease; }
+.score-big {
+  font-family: 'Syne', sans-serif;
+  font-size: 3rem; font-weight: 800;
+  line-height: 1;
+}
+.score-label { color: var(--muted); font-size: 0.85rem; margin-top: 0.3rem; }
+.score-stars { font-size: 1.8rem; margin: 0.8rem 0; }
+
+/* ── TOAST ── */
+.toast-wrap { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 99; display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-end; }
+.toast {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1rem;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.78rem; font-weight: 600;
+  color: var(--text);
+  animation: slideUp 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+  max-width: 220px;
+}
+@keyframes slideUp { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
+@keyframes fadeOut { to { opacity:0; transform:translateY(-6px) } }
+
+/* ── PHONE MOCKUP DECORATION ── */
+.phone-deco {
+  float: right;
+  margin: 0 0 0.5rem 1rem;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.6rem;
+  font-size: 1.6rem;
+  line-height: 1;
+  display: flex; flex-direction: column; gap: 0.3rem;
+  align-items: center;
+}
+@media (max-width: 500px) { .phone-deco { display: none; } }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+</style>
+</head>
+<body>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-icon">📱</div>
+  <div class="header-text">
+    <h1>App <span>World</span></h1>
+    <p>A2 English Challenge — Apps, verbs & everyday life</p>
+  </div>
+</header>
+
+<div class="level-row">
+  <div class="badge badge-cyan">A2 LEVEL</div>
+  <div class="badge badge-pink">PRESENT & PAST SIMPLE</div>
+  <div class="badge badge-yellow">✍️ AI WRITING CHECK</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>YOUR PROGRESS</span>
+    <span id="prog-text">0 / 3 sections</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="prog-bar"></div></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="openTab(0)">
+    <span class="tab-icon">📖</span>GRAMMAR
+  </div>
+  <div class="tab" onclick="openTab(1)">
+    <span class="tab-icon">🔤</span>VOCAB
+  </div>
+  <div class="tab" onclick="openTab(2)">
+    <span class="tab-icon">✍️</span>WRITING
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════════════════════════
+     SECTION 1 — GRAMMAR
+══════════════════════════════ -->
+<div class="section active" id="sec-0">
+
+  <div class="section-header">
+    <div class="section-title">
+      <div class="dot" style="background:var(--cyan)"></div>
+      Grammar Challenge
+    </div>
+    <div class="section-sub">Present Simple &amp; Past Simple — choose the right form</div>
+  </div>
+
+  <div class="grammar-tip">
+    <strong>Present Simple</strong> → things that are always true or happen regularly.<br>
+    <em>I use Instagram every day. / She downloads apps on her phone.</em><br><br>
+    <strong>Past Simple</strong> → things that happened and finished in the past.<br>
+    <em>I downloaded TikTok last week. / He sent a message yesterday.</em>
+  </div>
+
+  <!-- Q1 -->
+  <div class="q-card" id="gq0">
+    <div class="q-num">QUESTION 1 OF 6</div>
+    <div class="q-prompt">Maria _____ a new app every Monday. She loves trying new things!</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="checkG(0,0,1)">download</button>
+      <button class="mc-btn" onclick="checkG(0,1,1)">downloads</button>
+      <button class="mc-btn" onclick="checkG(0,2,1)">downloaded</button>
+      <button class="mc-btn" onclick="checkG(0,3,1)">is download</button>
+    </div>
+    <div class="q-feedback" id="gf0"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card" id="gq1">
+    <div class="q-num">QUESTION 2 OF 6</div>
+    <div class="q-prompt">I _____ my password last night. Now I can't open the app!</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="checkG(1,0,2)">forget</button>
+      <button class="mc-btn" onclick="checkG(1,1,2)">forgets</button>
+      <button class="mc-btn" onclick="checkG(1,2,2)">forgot</button>
+      <button class="mc-btn" onclick="checkG(1,3,2)">forgetted</button>
+    </div>
+    <div class="q-feedback" id="gf1"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card" id="gq2">
+    <div class="q-num">QUESTION 3 OF 6</div>
+    <div class="q-prompt">Tom _____ his phone at home yesterday, so he couldn't check his messages.</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="checkG(2,0,2)">leave</button>
+      <button class="mc-btn" onclick="checkG(2,1,2)">leaves</button>
+      <button class="mc-btn" onclick="checkG(2,2,2)">left</button>
+      <button class="mc-btn" onclick="checkG(2,3,2)">leaved</button>
+    </div>
+    <div class="q-feedback" id="gf2"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card" id="gq3">
+    <div class="q-num">QUESTION 4 OF 6</div>
+    <div class="q-prompt">My brother _____ videos on YouTube every evening after dinner.</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="checkG(3,0,1)">watched</button>
+      <button class="mc-btn" onclick="checkG(3,1,1)">watch</button>
+      <button class="mc-btn" onclick="checkG(3,2,1)">watches</button>
+      <button class="mc-btn" onclick="checkG(3,3,1)">watching</button>
+    </div>
+    <div class="q-feedback" id="gf3"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card" id="gq4">
+    <div class="q-num">QUESTION 5 OF 6</div>
+    <div class="q-prompt">We _____ a food delivery app for the first time two days ago. The food was great!</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="checkG(4,0,2)">use</button>
+      <button class="mc-btn" onclick="checkG(4,1,2)">uses</button>
+      <button class="mc-btn" onclick="checkG(4,2,2)">used</button>
+      <button class="mc-btn" onclick="checkG(4,3,2)">using</button>
+    </div>
+    <div class="q-feedback" id="gf4"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-card" id="gq5">
+    <div class="q-num">QUESTION 6 OF 6</div>
+    <div class="q-prompt">She _____ music on Spotify while she _____ to school every morning.</div>
+    <div class="mc-grid">
+      <button class="mc-btn" onclick="checkG(5,0,1)">listened / walked</button>
+      <button class="mc-btn" onclick="checkG(5,1,1)">listens / walks</button>
+      <button class="mc-btn" onclick="checkG(5,2,1)">listen / walk</button>
+      <button class="mc-btn" onclick="checkG(5,3,1)">listens / walked</button>
+    </div>
+    <div class="q-feedback" id="gf5"></div>
+  </div>
+
+  <div class="score-card" id="g-score">
+    <div class="score-big" id="g-score-num" style="color:var(--cyan)">0/6</div>
+    <div class="score-label">Grammar Score</div>
+    <div class="score-stars" id="g-stars">—</div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-cyan" id="g-next-btn" onclick="openTab(1)" style="display:none">Next: Vocabulary →</button>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     SECTION 2 — VOCABULARY
+══════════════════════════════ -->
+<div class="section" id="sec-1">
+
+  <div class="section-header">
+    <div class="section-title">
+      <div class="dot" style="background:var(--pink)"></div>
+      Vocabulary Match
+    </div>
+    <div class="section-sub">Match each app word to its meaning — tap a word, then tap its definition</div>
+  </div>
+
+  <div class="vocab-intro">
+    <strong>App vocabulary:</strong> These are common words we use when we talk about phones and apps.
+    Tap a word card, then tap the definition it matches. Good luck!
+  </div>
+
+  <div class="vocab-grid" id="vocab-words">
+    <div class="vocab-chip" data-word="notification" onclick="selectWord(this)">
+      <span class="v-emoji">🔔</span>
+      <div class="v-word">notification</div>
+    </div>
+    <div class="vocab-chip" data-word="update" onclick="selectWord(this)">
+      <span class="v-emoji">🔄</span>
+      <div class="v-word">update</div>
+    </div>
+    <div class="vocab-chip" data-word="username" onclick="selectWord(this)">
+      <span class="v-emoji">👤</span>
+      <div class="v-word">username</div>
+    </div>
+    <div class="vocab-chip" data-word="upload" onclick="selectWord(this)">
+      <span class="v-emoji">☁️</span>
+      <div class="v-word">upload</div>
+    </div>
+    <div class="vocab-chip" data-word="log out" onclick="selectWord(this)">
+      <span class="v-emoji">🚪</span>
+      <div class="v-word">log out</div>
+    </div>
+    <div class="vocab-chip" data-word="storage" onclick="selectWord(this)">
+      <span class="v-emoji">💾</span>
+      <div class="v-word">storage</div>
+    </div>
+  </div>
+
+  <div class="match-zone" id="match-defs">
+    <div class="match-row" data-def="notification" onclick="matchDef(this)">
+      <div class="match-def">A message your phone shows to tell you something new</div>
+      <div class="match-answer" id="ma-notification">—</div>
+    </div>
+    <div class="match-row" data-def="update" onclick="matchDef(this)">
+      <div class="match-def">To install a newer version of an app</div>
+      <div class="match-answer" id="ma-update">—</div>
+    </div>
+    <div class="match-row" data-def="username" onclick="matchDef(this)">
+      <div class="match-def">The name you use to log in to an app</div>
+      <div class="match-answer" id="ma-username">—</div>
+    </div>
+    <div class="match-row" data-def="upload" onclick="matchDef(this)">
+      <div class="match-def">To send a photo or file from your phone to the internet</div>
+      <div class="match-answer" id="ma-upload">—</div>
+    </div>
+    <div class="match-row" data-def="log out" onclick="matchDef(this)">
+      <div class="match-def">To leave or exit your account in an app</div>
+      <div class="match-answer" id="ma-log out">—</div>
+    </div>
+    <div class="match-row" data-def="storage" onclick="matchDef(this)">
+      <div class="match-def">The space on your phone where you save files and photos</div>
+      <div class="match-answer" id="ma-storage">—</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-pink" onclick="checkVocab()" id="v-check-btn">Check Matches ✓</button>
+  </div>
+
+  <div class="score-card" id="v-score">
+    <div class="score-big" id="v-score-num" style="color:var(--pink)">0/6</div>
+    <div class="score-label">Vocabulary Score</div>
+    <div class="score-stars" id="v-stars">—</div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-cyan" id="v-next-btn" onclick="openTab(2)" style="display:none">Next: Writing →</button>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     SECTION 3 — WRITING
+══════════════════════════════ -->
+<div class="section" id="sec-2">
+
+  <div class="section-header">
+    <div class="section-title">
+      <div class="dot" style="background:var(--purple)"></div>
+      Writing Challenge
+    </div>
+    <div class="section-sub">Complete each sentence in your own words — AI will check your answer!</div>
+  </div>
+
+  <div class="writing-intro">
+    <strong>How it works:</strong> Read the sentence starter and complete it with your own idea.
+    Use the words in the hint to help you. When you're ready, click <strong>Check with AI</strong>
+    and Claude will give you feedback on your grammar and vocabulary!
+  </div>
+
+  <!-- W1 -->
+  <div class="writing-card">
+    <div class="writing-prompt">1. Every day, I use my phone to <strong>_______________</strong></div>
+    <div class="writing-hint">💡 Use: <span>present simple</span> + an app activity (e.g. check, send, watch, play)</div>
+    <textarea id="w0" placeholder="Every day, I use my phone to ..."></textarea>
+    <div class="btn-row">
+      <button class="btn btn-purple" onclick="checkWriting(0)" id="wb0">✨ Check with AI</button>
+    </div>
+    <div class="ai-box" id="ai0">
+      <div class="ai-box-header">
+        <div class="ai-spinner" id="sp0"></div>
+        <span>✦ AI FEEDBACK</span>
+      </div>
+      <div class="ai-content" id="aic0"></div>
+    </div>
+  </div>
+
+  <!-- W2 -->
+  <div class="writing-card">
+    <div class="writing-prompt">2. Yesterday, I <strong>_______________</strong> on my phone.</div>
+    <div class="writing-hint">💡 Use: <span>past simple</span> + an app or activity (e.g. downloaded, watched, sent, played)</div>
+    <textarea id="w1" placeholder="Yesterday, I ... on my phone."></textarea>
+    <div class="btn-row">
+      <button class="btn btn-purple" onclick="checkWriting(1)" id="wb1">✨ Check with AI</button>
+    </div>
+    <div class="ai-box" id="ai1">
+      <div class="ai-box-header">
+        <div class="ai-spinner" id="sp1"></div>
+        <span>✦ AI FEEDBACK</span>
+      </div>
+      <div class="ai-content" id="aic1"></div>
+    </div>
+  </div>
+
+  <!-- W3 -->
+  <div class="writing-card">
+    <div class="writing-prompt">3. My favourite app is <strong>_______________</strong> because <strong>_______________</strong></div>
+    <div class="writing-hint">💡 Use: <span>present simple</span> — name an app and give a reason (it helps me / I can / I use it to...)</div>
+    <textarea id="w2" placeholder="My favourite app is ... because ..."></textarea>
+    <div class="btn-row">
+      <button class="btn btn-purple" onclick="checkWriting(2)" id="wb2">✨ Check with AI</button>
+    </div>
+    <div class="ai-box" id="ai2">
+      <div class="ai-box-header">
+        <div class="ai-spinner" id="sp2"></div>
+        <span>✦ AI FEEDBACK</span>
+      </div>
+      <div class="ai-content" id="aic2"></div>
+    </div>
+  </div>
+
+  <!-- W4 -->
+  <div class="writing-card">
+    <div class="writing-prompt">4. Last week, I <strong>_______________</strong> and it was <strong>_______________</strong></div>
+    <div class="writing-hint">💡 Use: <span>past simple</span> — tell a short story about something you did with your phone</div>
+    <textarea id="w3" placeholder="Last week, I ... and it was ..."></textarea>
+    <div class="btn-row">
+      <button class="btn btn-purple" onclick="checkWriting(3)" id="wb3">✨ Check with AI</button>
+    </div>
+    <div class="ai-box" id="ai3">
+      <div class="ai-box-header">
+        <div class="ai-spinner" id="sp3"></div>
+        <span>✦ AI FEEDBACK</span>
+      </div>
+      <div class="ai-content" id="aic3"></div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<script>
+// ══════════════════════════════
+// TOAST
+// ══════════════════════════════
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(() => t.remove(), 3100);
+}
+
+// ══════════════════════════════
+// PROGRESS
+// ══════════════════════════════
+const sectionsDone = [false, false, false];
+function markDone(i) {
+  sectionsDone[i] = true;
+  const done = sectionsDone.filter(Boolean).length;
+  document.getElementById('prog-text').textContent = done + ' / 3 sections';
+  document.getElementById('prog-bar').style.width = (done / 3 * 100) + '%';
+}
+
+// ══════════════════════════════
+// TABS
+// ══════════════════════════════
+function openTab(i) {
+  document.querySelectorAll('.tab').forEach((t, idx) => t.classList.toggle('active', idx === i));
+  document.querySelectorAll('.section').forEach((s, idx) => s.classList.toggle('active', idx === i));
+}
+
+// ══════════════════════════════
+// GRAMMAR
+// ══════════════════════════════
+const grammarData = [
+  { answer: 1, correct: "downloads — Present Simple with she/he/it → verb + <strong>s</strong>. Every Monday = regular habit.", wrong: "❌ Try again! 'Every Monday' tells us it's a regular habit → use Present Simple. She/he/it needs <strong>-s</strong>: <em>downloads</em>." },
+  { answer: 2, correct: "forgot — Past Simple of <em>forget</em> (irregular). 'Last night' = finished time in the past.", wrong: "❌ Try again! 'Last night' = finished past time → use Past Simple. <em>Forget</em> is irregular: <em>forgot</em>. Watch out: <em>forgetted</em> doesn't exist!" },
+  { answer: 2, correct: "left — Past Simple of <em>leave</em> (irregular). 'Yesterday' = finished past time.", wrong: "❌ Try again! 'Yesterday' = Past Simple. <em>Leave</em> is irregular: <em>left</em>. There is no <em>leaved</em>!" },
+  { answer: 2, correct: "watches — Present Simple with my brother (he) → verb + <strong>es</strong>. Every evening = regular habit.", wrong: "❌ Try again! 'Every evening' = regular habit → Present Simple. He/she/it + watch → <em>watches</em> (add -es after ch/sh/x/o)." },
+  { answer: 2, correct: "used — Past Simple of <em>use</em>. 'Two days ago' = finished past time.", wrong: "❌ Try again! 'Two days ago' = Past Simple. <em>Use</em> is regular: <em>used</em>." },
+  { answer: 1, correct: "listens / walks — Both Present Simple with <em>she</em>. 'Every morning' = regular habit. Both verbs need <strong>-s</strong>.", wrong: "❌ Try again! 'Every morning' = regular habit → Present Simple. She needs -s on both verbs: <em>listens</em> and <em>walks</em>." }
+];
+
+let gAnswered = 0;
+let gCorrect = 0;
+
+function checkG(qIdx, chosen, correct) {
+  const card = document.getElementById('gq' + qIdx);
+  const fb = document.getElementById('gf' + qIdx);
+  const btns = card.querySelectorAll('.mc-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const data = grammarData[qIdx];
+  const isRight = chosen === data.answer;
+
+  btns[chosen].classList.add(isRight ? 'correct' : 'wrong');
+  if (!isRight) btns[data.answer].classList.add('correct');
+
+  fb.classList.add('show', isRight ? 'ok' : 'bad');
+  fb.innerHTML = isRight
+    ? '✅ ' + data.correct
+    : data.wrong;
+
+  card.classList.add(isRight ? 'correct' : 'wrong');
+
+  if (isRight) { gCorrect++; toast('✅ +1 point!'); }
+  else toast('💡 Read the feedback below!');
+
+  gAnswered++;
+  if (gAnswered === 6) showGScore();
+}
+
+function showGScore() {
+  const sc = document.getElementById('g-score');
+  sc.classList.add('show');
+  document.getElementById('g-score-num').textContent = gCorrect + '/6';
+  const pct = gCorrect / 6;
+  document.getElementById('g-stars').textContent = pct === 1 ? '⭐⭐⭐' : pct >= 0.66 ? '⭐⭐' : '⭐';
+  document.getElementById('g-next-btn').style.display = 'inline-flex';
+  markDone(0);
+  toast('📖 Grammar done! Move to Vocabulary →');
+}
+
+// ══════════════════════════════
+// VOCABULARY MATCH
+// ══════════════════════════════
+let selectedWord = null;
+let matchedPairs = {};
+
+function selectWord(chip) {
+  if (chip.dataset.matched) return;
+  document.querySelectorAll('.vocab-chip').forEach(c => c.classList.remove('selected'));
+  if (selectedWord === chip) { selectedWord = null; return; }
+  selectedWord = chip;
+  chip.classList.add('selected');
+}
+
+function matchDef(row) {
+  if (!selectedWord) { toast('👆 First tap a word card!'); return; }
+  if (row.dataset.matched) return;
+
+  const word = selectedWord.dataset.word;
+  const def = row.dataset.def;
+
+  row.querySelector('.match-answer').textContent = word;
+  row.classList.add('matched');
+  matchedPairs[def] = word;
+
+  selectedWord.dataset.matched = 'true';
+  selectedWord.classList.remove('selected');
+  selectedWord.style.opacity = '0.4';
+  selectedWord.style.pointerEvents = 'none';
+  selectedWord = null;
+
+  if (Object.keys(matchedPairs).length === 6) {
+    document.getElementById('v-check-btn').style.background = 'rgba(255,77,141,0.25)';
+  }
+}
+
+function checkVocab() {
+  if (Object.keys(matchedPairs).length < 6) { toast('👆 Match all 6 words first!'); return; }
+
+  let correct = 0;
+  document.querySelectorAll('.match-row').forEach(row => {
+    const def = row.dataset.def;
+    const given = matchedPairs[def];
+    if (given === def) {
+      row.classList.add('correct-match');
+      correct++;
+    } else {
+      row.classList.add('wrong-match');
+      row.querySelector('.match-answer').textContent = given + ' ✗ → ' + def;
+    }
+  });
+
+  const sc = document.getElementById('v-score');
+  sc.classList.add('show');
+  document.getElementById('v-score-num').textContent = correct + '/6';
+  const pct = correct / 6;
+  document.getElementById('v-stars').textContent = pct === 1 ? '⭐⭐⭐' : pct >= 0.66 ? '⭐⭐' : '⭐';
+  document.getElementById('v-check-btn').disabled = true;
+  document.getElementById('v-next-btn').style.display = 'inline-flex';
+  markDone(1);
+  toast('🔤 Vocabulary done! Time to write →');
+}
+
+// ══════════════════════════════
+// WRITING + AI FEEDBACK
+// ══════════════════════════════
+const writingPrompts = [
+  {
+    starter: "Every day, I use my phone to",
+    tense: "Present Simple",
+    task: "complete a sentence about a daily phone habit using Present Simple"
+  },
+  {
+    starter: "Yesterday, I ... on my phone",
+    tense: "Past Simple",
+    task: "complete a sentence about something they did on their phone yesterday using Past Simple"
+  },
+  {
+    starter: "My favourite app is ... because ...",
+    tense: "Present Simple",
+    task: "name their favourite app and give a reason using Present Simple"
+  },
+  {
+    starter: "Last week, I ... and it was ...",
+    tense: "Past Simple",
+    task: "tell a short story about something they did with their phone using Past Simple"
+  }
+];
+
+async function checkWriting(idx) {
+  const textarea = document.getElementById('w' + idx);
+  const text = textarea.value.trim();
+  if (text.length < 5) { toast('✏️ Please write something first!'); return; }
+
+  const btn = document.getElementById('wb' + idx);
+  const box = document.getElementById('ai' + idx);
+  const spinner = document.getElementById('sp' + idx);
+  const content = document.getElementById('aic' + idx);
+  const p = writingPrompts[idx];
+
+  btn.disabled = true;
+  box.classList.add('show');
+  spinner.classList.add('active');
+  content.innerHTML = '<span style="color:var(--muted)">Checking your answer...</span>';
+
+  const systemPrompt = `You are a friendly English teacher for A2-level students. 
+Your job is to give SHORT, encouraging, and clear feedback on a student's writing.
+
+Rules:
+- Keep feedback under 80 words total.
+- Always start with something positive.
+- Point out 1-2 grammar issues MAX (don't overwhelm).
+- Suggest a corrected version if needed.
+- Use simple English — the student is A2 level.
+- Format your response in 3 short parts using these labels on separate lines:
+  ✅ GOOD: [what they did well]
+  🔧 FIX: [one correction if needed, or "Nothing to fix!"]
+  💡 TIP: [one short grammar tip]
+- Do not use markdown bold or asterisks.`;
+
+  const userMsg = `The student is completing this sentence starter: "${p.starter}"
+They should use: ${p.tense}
+Their answer: "${text}"
+
+Give them brief, friendly feedback.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || 'Could not get feedback. Please try again.';
+
+    spinner.classList.remove('active');
+    content.innerHTML = raw
+      .replace(/✅ GOOD:/g, '<div class="good">✅ <strong>GOOD:</strong>')
+      .replace(/🔧 FIX:/g, '</div><div class="fix">🔧 <strong>FIX:</strong>')
+      .replace(/💡 TIP:/g, '</div><div class="tip">💡 <strong>TIP:</strong>')
+      + '</div>';
+
+    markDone(2);
+    toast('✨ AI feedback ready!');
+
+  } catch (err) {
+    spinner.classList.remove('active');
+    content.innerHTML = '<span style="color:var(--red)">Connection error. Please try again.</span>';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
