@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Shopping Report — Comparatives & Superlatives Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#0f0f0f;
+  --ink2:#3a3a3a;
+  --ink3:#7a7a7a;
+  --paper:#faf8f3;
+  --paper2:#f0ede4;
+  --paper3:#e8e3d8;
+  --accent:#d4342a;
+  --accent2:#f5e6e5;
+  --rule:rgba(15,15,15,0.12);
+  --rule2:rgba(15,15,15,0.06);
+  --online:#1a4fa0;
+  --online-bg:#eef2fa;
+  --store:#2a6e3f;
+  --store-bg:#eaf4ee;
+  --gold:#b8860b;
+  --gold-bg:#fdf6e3;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* ---- MASTHEAD ---- */
+.masthead{
+  border-bottom:3px solid var(--ink);
+  padding:1.5rem 0 1rem;
+  text-align:center;
+  position:relative;
+  background:var(--paper);
+}
+.masthead::after{content:'';display:block;height:1px;background:var(--ink);margin-top:0.6rem;}
+.issue-line{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.18em;color:var(--ink3);margin-bottom:0.5rem;}
+.mag-title{font-family:'Playfair Display',serif;font-size:clamp(32px,8vw,72px);font-weight:900;line-height:1;letter-spacing:-0.02em;color:var(--ink);}
+.mag-title span{color:var(--accent);}
+.mag-kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.14em;color:var(--ink3);margin-top:0.5rem;}
+
+/* ---- LAYOUT ---- */
+.wrap{max-width:780px;margin:0 auto;padding:0 1.25rem 5rem;}
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ---- INTRO ---- */
+.intro-spread{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  border-bottom:1px solid var(--rule);
+  margin:2rem 0 0;
+}
+.intro-col{padding:2rem 1.5rem;}
+.intro-col:first-child{border-right:1px solid var(--rule);}
+.drop-cap{
+  font-family:'Playfair Display',serif;
+  font-size:72px;
+  font-weight:900;
+  line-height:0.8;
+  float:left;
+  margin:0.1em 0.12em 0 0;
+  color:var(--accent);
+}
+.intro-body{font-size:15px;line-height:1.8;color:var(--ink2);}
+.intro-body p{margin-bottom:1em;}
+.pull-quote{
+  font-family:'Playfair Display',serif;
+  font-size:22px;
+  font-style:italic;
+  line-height:1.4;
+  color:var(--ink);
+  border-left:3px solid var(--accent);
+  padding:1rem 1.25rem;
+  margin:1.5rem 0;
+}
+
+.stats-strip{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--rule);
+  border-bottom:2px solid var(--ink);
+  margin-bottom:2rem;
+}
+.stat-cell{
+  padding:1rem 0.75rem;
+  text-align:center;
+  border-right:1px solid var(--rule);
+}
+.stat-cell:last-child{border-right:none;}
+.stat-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--accent);}
+.stat-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:var(--ink3);margin-top:3px;}
+
+.section-label{
+  font-family:'DM Mono',monospace;font-size:9px;
+  letter-spacing:0.18em;color:var(--ink3);
+  border-top:2px solid var(--ink);
+  padding-top:0.5rem;
+  margin-bottom:0.4rem;
+}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(22px,4vw,32px);
+  font-weight:700;
+  line-height:1.2;
+  margin-bottom:0.25rem;
+}
+
+.activity-chips{display:flex;gap:8px;flex-wrap:wrap;margin:1rem 0 1.5rem;}
+.chip{
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.08em;
+  padding:5px 12px;border-radius:2px;border:1px solid;
+}
+.chip.mc{background:var(--online-bg);border-color:var(--online);color:var(--online);}
+.chip.fill{background:var(--store-bg);border-color:var(--store);color:var(--store);}
+.chip.rw{background:var(--gold-bg);border-color:var(--gold);color:var(--gold);}
+
+.btn-start{
+  display:inline-block;
+  padding:14px 40px;
+  background:var(--ink);color:var(--paper);
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+  letter-spacing:0.06em;
+  border:none;border-radius:2px;cursor:pointer;
+  transition:background 0.2s,transform 0.15s;
+}
+.btn-start:hover{background:var(--accent);transform:translateY(-1px);}
+
+/* ---- HUD ---- */
+.hud{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,248,243,0.96);
+  backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--ink);
+  padding:10px 0;
+  margin:0 -1.25rem 2rem;
+  padding-left:1.25rem;padding-right:1.25rem;
+}
+.hud-inner{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.hud-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.hud-mag{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--ink);}
+.hud-score{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink2);}
+.hud-streak{
+  font-family:'DM Mono',monospace;font-size:11px;
+  padding:3px 10px;border:1px solid var(--rule);border-radius:2px;
+  color:var(--ink3);background:var(--paper2);
+  transition:all 0.3s;
+}
+.hud-streak.hot{border-color:var(--accent);color:var(--accent);background:var(--accent2);}
+.hud-right{display:flex;align-items:center;gap:10px;}
+.hud-lives{display:flex;gap:3px;}
+.hud-life{font-size:13px;transition:all 0.3s;}
+.hud-life.lost{opacity:0.15;filter:grayscale(1);}
+.hud-timer{
+  font-family:'Playfair Display',serif;font-size:22px;font-weight:700;
+  color:var(--ink);min-width:36px;text-align:right;
+  transition:color 0.3s;
+}
+.hud-timer.urgent{color:var(--accent);animation:blink 0.8s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+.prog-line{height:2px;background:var(--paper3);margin-top:8px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--accent);transition:width 0.4s;}
+
+/* ---- QUESTION CARD ---- */
+.q-header{
+  display:flex;align-items:baseline;justify-content:space-between;
+  border-top:2px solid var(--ink);
+  padding-top:0.6rem;
+  margin-bottom:1.5rem;
+}
+.q-issue{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;color:var(--ink3);}
+.q-type-tag{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;
+  padding:3px 10px;border-radius:2px;border:1px solid;
+}
+.q-type-tag.mc{background:var(--online-bg);border-color:var(--online);color:var(--online);}
+.q-type-tag.fill{background:var(--store-bg);border-color:var(--store);color:var(--store);}
+.q-type-tag.rw{background:var(--gold-bg);border-color:var(--gold);color:var(--gold);}
+
+.q-context{
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.06em;
+  color:var(--ink3);margin-bottom:0.75rem;
+  padding-left:0.75rem;border-left:2px solid var(--accent);
+}
+
+.q-stem{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(18px,3.5vw,24px);
+  font-weight:700;
+  line-height:1.4;
+  color:var(--ink);
+  margin-bottom:1.5rem;
+}
+.q-stem .blank{
+  display:inline-block;
+  min-width:120px;height:2px;
+  background:var(--ink);
+  vertical-align:middle;
+  margin:0 4px;
+  position:relative;
+}
+.q-stem .blank::after{
+  content:'______';
+  position:absolute;top:-18px;left:0;
+  color:transparent;
+  border-bottom:2px solid var(--ink);
+  width:100%;
+}
+
+.grammar-note{
+  font-size:13px;color:var(--ink3);
+  border:1px solid var(--rule);
+  background:var(--paper2);
+  border-radius:2px;
+  padding:10px 14px;
+  margin-bottom:1.25rem;
+  font-style:italic;
+}
+
+/* ---- MULTIPLE CHOICE ---- */
+.mc-options{display:grid;gap:8px;margin-bottom:1rem;}
+.mc-opt{
+  display:flex;align-items:center;gap:14px;
+  padding:13px 16px;
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-radius:2px;cursor:pointer;
+  font-size:15px;font-weight:400;
+  color:var(--ink2);
+  transition:all 0.15s;
+  text-align:left;width:100%;
+  font-family:'DM Sans',sans-serif;
+}
+.mc-opt:hover:not(:disabled){background:var(--paper2);border-color:var(--ink3);}
+.mc-opt .opt-letter{
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--paper3);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:var(--ink3);
+  transition:all 0.2s;
+}
+.mc-opt.selected{border-color:var(--ink);background:var(--paper2);}
+.mc-opt.selected .opt-letter{background:var(--ink);color:var(--paper);}
+.mc-opt.correct{border-color:var(--store);background:var(--store-bg);}
+.mc-opt.correct .opt-letter{background:var(--store);color:white;}
+.mc-opt.wrong{border-color:var(--accent);background:var(--accent2);}
+.mc-opt.wrong .opt-letter{background:var(--accent);color:white;}
+.mc-opt:disabled{cursor:default;}
+
+/* ---- FILL IN THE BLANK ---- */
+.fill-wrap{position:relative;margin-bottom:1rem;}
+.fill-input{
+  width:100%;
+  background:var(--paper);
+  border:none;
+  border-bottom:2px solid var(--ink);
+  padding:10px 0;
+  font-family:'Playfair Display',serif;
+  font-size:18px;
+  color:var(--ink);
+  outline:none;
+  transition:border-color 0.2s;
+}
+.fill-input:focus{border-color:var(--accent);}
+.fill-input.correct{border-color:var(--store);color:var(--store);}
+.fill-input.wrong{border-color:var(--accent);color:var(--accent);}
+.fill-input:disabled{background:transparent;}
+
+/* ---- REWRITE ---- */
+.rw-original{
+  font-family:'Playfair Display',serif;
+  font-size:16px;
+  font-style:italic;
+  color:var(--ink2);
+  border-left:3px solid var(--ink3);
+  padding:0.75rem 1rem;
+  margin-bottom:1rem;
+  background:var(--paper2);
+}
+.rw-label{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.1em;color:var(--ink3);margin-bottom:6px;}
+.rw-input{
+  width:100%;
+  background:transparent;
+  border:none;
+  border-bottom:2px solid var(--ink);
+  padding:10px 0;
+  font-family:'DM Sans',sans-serif;
+  font-size:15px;
+  color:var(--ink);
+  outline:none;
+  resize:none;
+  min-height:48px;
+  line-height:1.6;
+  transition:border-color 0.2s;
+}
+.rw-input:focus{border-color:var(--accent);}
+.rw-input.correct{border-color:var(--store);color:var(--store);}
+.rw-input.wrong{border-color:var(--accent);color:var(--accent);}
+.rw-input:disabled{background:transparent;}
+
+/* ---- BUTTONS ---- */
+.btn-row{display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap;}
+.btn{
+  padding:10px 20px;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  letter-spacing:0.04em;
+  border:1px solid var(--rule);background:transparent;color:var(--ink2);
+  border-radius:2px;cursor:pointer;
+  transition:all 0.15s;
+}
+.btn:hover{background:var(--paper2);border-color:var(--ink3);}
+.btn:active{transform:scale(0.98);}
+.btn:disabled{opacity:0.3;cursor:not-allowed;transform:none;}
+.btn-check{background:var(--ink);color:var(--paper);border-color:var(--ink);flex:1;}
+.btn-check:hover{background:var(--accent);border-color:var(--accent);}
+.btn-hint{color:var(--gold);border-color:rgba(184,134,11,0.3);}
+.btn-hint:hover{background:var(--gold-bg);}
+.btn-next{background:var(--ink);color:var(--paper);border-color:var(--ink);width:100%;margin-top:8px;letter-spacing:0.08em;}
+.btn-next:hover{background:var(--accent);border-color:var(--accent);}
+
+/* ---- FEEDBACK ---- */
+.feedback{border-radius:2px;padding:12px 14px;font-size:13px;line-height:1.75;margin-top:1rem;display:none;animation:fadeUp 0.3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
+.feedback.show{display:block;}
+.feedback.correct{background:var(--store-bg);border-left:3px solid var(--store);color:#1a4a2a;}
+.feedback.wrong{background:var(--accent2);border-left:3px solid var(--accent);color:#6b1a15;}
+.feedback.hint{background:var(--gold-bg);border-left:3px solid var(--gold);color:#5a4008;}
+.answer-show{font-family:'DM Mono',monospace;font-size:12px;margin-top:6px;color:var(--store);font-weight:500;}
+
+.struct-box{background:var(--paper2);border:1px solid var(--rule);border-radius:2px;padding:12px 14px;margin-top:10px;display:none;}
+.struct-box.show{display:block;}
+.struct-label{font-size:9px;font-family:'DM Mono',monospace;letter-spacing:0.12em;color:var(--ink3);margin-bottom:8px;}
+.struct-pills{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.pill{font-size:11px;font-family:'DM Mono',monospace;padding:3px 10px;border-radius:2px;border:1px solid;}
+.pill.comp{background:var(--online-bg);border-color:var(--online);color:var(--online);}
+.pill.sup{background:var(--store-bg);border-color:var(--store);color:var(--store);}
+.pill.than{background:var(--paper3);border-color:var(--ink3);color:var(--ink3);}
+.pill.the{background:var(--gold-bg);border-color:var(--gold);color:var(--gold);}
+.pill.arrow{background:transparent;border:none;color:var(--ink3);padding:0 2px;}
+
+/* ---- DOTS ---- */
+.q-dots{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:1.5rem;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--paper3);border:1px solid var(--rule);transition:all 0.3s;}
+.dot.done{background:var(--store);border-color:var(--store);}
+.dot.current{background:var(--ink);border-color:var(--ink);}
+.dot.wrong-done{background:var(--accent);border-color:var(--accent);}
+
+/* ---- XP / COMBO ---- */
+.xp-pop{position:fixed;top:72px;right:16px;z-index:999;background:var(--ink);color:var(--paper);border-radius:2px;padding:6px 14px;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;opacity:0;transform:translateY(-6px);transition:all 0.3s;pointer-events:none;}
+.xp-pop.show{opacity:1;transform:translateY(0);}
+.combo-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:56px;font-style:italic;color:var(--accent);pointer-events:none;z-index:500;opacity:0;}
+.combo-flash.show{animation:comboAnim 0.9s ease forwards;}
+@keyframes comboAnim{0%{opacity:0;transform:translate(-50%,-50%) scale(0.4);}40%{opacity:1;transform:translate(-50%,-50%) scale(1.15);}70%{opacity:1;transform:translate(-50%,-50%) scale(1);}100%{opacity:0;transform:translate(-50%,-62%);}}
+
+/* ---- BADGE OVERLAY ---- */
+.badge-overlay{position:fixed;inset:0;z-index:200;background:rgba(15,15,15,0.82);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.badge-overlay.show{opacity:1;pointer-events:all;}
+.badge-box{background:var(--paper);border:2px solid var(--ink);border-radius:2px;padding:2.5rem 2rem;text-align:center;max-width:300px;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes popIn{from{transform:scale(0.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+.badge-box-icon{font-size:52px;margin-bottom:1rem;}
+.badge-box-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.16em;color:var(--ink3);margin-bottom:6px;}
+.badge-box-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.badge-box-desc{font-size:13px;color:var(--ink3);margin-bottom:1.5rem;line-height:1.6;}
+.btn-dismiss{background:var(--ink);color:var(--paper);border:none;border-radius:2px;padding:10px 28px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:13px;letter-spacing:0.06em;cursor:pointer;}
+.btn-dismiss:hover{background:var(--accent);}
+
+/* ---- RESULTS ---- */
+.results-masthead{border-bottom:3px solid var(--ink);text-align:center;padding:2.5rem 0 1.5rem;margin-bottom:0;}
+.results-kicker{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.18em;color:var(--ink3);margin-bottom:0.5rem;}
+.results-headline{font-family:'Playfair Display',serif;font-size:clamp(28px,6vw,52px);font-weight:900;line-height:1.1;color:var(--ink);}
+.results-headline span{color:var(--accent);}
+.results-deck{font-size:14px;color:var(--ink2);margin-top:0.75rem;line-height:1.7;}
+
+.results-columns{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--rule);margin-bottom:1.5rem;}
+.results-col{padding:1.5rem;}
+.results-col:first-child{border-right:1px solid var(--rule);}
+.results-col-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.14em;color:var(--ink3);margin-bottom:0.5rem;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--rule);margin:1.5rem 0;}
+.stat-block{padding:1.25rem 1rem;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);text-align:center;}
+.stat-block:nth-child(2n){border-right:none;}
+.stat-block:nth-last-child(-n+2){border-bottom:none;}
+.stat-block-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--accent);}
+.stat-block-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:var(--ink3);margin-top:4px;}
+
+.badges-section{margin:1.5rem 0;}
+.badges-section-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.16em;color:var(--ink3);border-top:1px solid var(--rule);padding-top:0.75rem;margin-bottom:0.75rem;}
+.badges-grid{display:flex;gap:8px;flex-wrap:wrap;}
+.badge-chip{display:flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid var(--rule);border-radius:2px;font-size:12px;color:var(--ink3);transition:all 0.3s;}
+.badge-chip.unlocked{border-color:var(--ink);color:var(--ink);background:var(--paper2);}
+.badge-chip.locked{opacity:0.25;filter:grayscale(1);}
+.badge-chip-icon{font-size:16px;}
+
+.grammar-ref{border:1px solid var(--rule);border-radius:2px;padding:1.25rem;margin:1.5rem 0;background:var(--paper2);}
+.grammar-ref-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.16em;color:var(--ink3);margin-bottom:1rem;}
+.ref-row{display:flex;align-items:baseline;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule2);font-size:13px;flex-wrap:wrap;}
+.ref-row:last-child{border-bottom:none;}
+.ref-term{color:var(--ink);font-weight:500;min-width:180px;}
+.ref-rule{font-family:'DM Mono',monospace;color:var(--ink3);font-size:12px;}
+
+.btn-play-again{display:block;width:100%;padding:14px;background:var(--ink);color:var(--paper);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.08em;border:none;border-radius:2px;cursor:pointer;margin-top:1rem;transition:all 0.15s;}
+.btn-play-again:hover{background:var(--accent);}
+
+/* ---- RESPONSIVE ---- */
+@media(max-width:540px){
+  .intro-spread{grid-template-columns:1fr;}
+  .intro-col:first-child{border-right:none;border-bottom:1px solid var(--rule);}
+  .stats-strip{grid-template-columns:repeat(2,1fr);}
+  .stat-cell:nth-child(2){border-right:none;}
+  .results-columns{grid-template-columns:1fr;}
+  .results-col:first-child{border-right:none;border-bottom:1px solid var(--rule);}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap" style="padding-bottom:0;">
+    <div class="issue-line">GRAMMAR EDITION &nbsp;·&nbsp; B1 INTERMEDIATE &nbsp;·&nbsp; COMPARATIVES & SUPERLATIVES</div>
+    <div class="mag-title">THE SHOPPING <span>REPORT</span></div>
+    <div class="mag-kicker">ONLINE VS IN-STORE — A LANGUAGE INVESTIGATION</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ===== INTRO ===== -->
+<div id="screen-intro" class="screen active">
+
+  <div class="intro-spread">
+    <div class="intro-col">
+      <div class="intro-body">
+        <span class="drop-cap">S</span>
+        <p>hopping has never been more complex — or more linguistically rich. Whether you prefer the efficiency of online stores or the tactile pleasure of physical retail, one thing is clear: comparing them requires precise grammar.</p>
+        <p>In this quiz, you will practise <strong>comparatives</strong> and <strong>superlatives</strong> through real-world sentences about shopping habits. Three types of challenge await.</p>
+      </div>
+      <div class="pull-quote">"Online shopping is <em>faster</em>, but is it the <em>best</em> experience?"</div>
+    </div>
+    <div class="intro-col">
+      <div class="activity-chips">
+        <span class="chip mc">◉ MULTIPLE CHOICE</span>
+        <span class="chip fill">◎ FILL IN THE BLANK</span>
+        <span class="chip rw">✎ REWRITE</span>
+      </div>
+      <div class="section-label">WHAT YOU WILL PRACTISE</div>
+      <div class="section-title">Comparatives &amp; Superlatives</div>
+      <div class="intro-body" style="margin-top:1rem;">
+        <p>You will use adjectives like <em>cheap, convenient, reliable, fast, good</em> and <em>bad</em> to build grammatically correct comparisons between shopping methods.</p>
+        <p>Earn XP, keep your streak alive and unlock badges. Use the hint button wisely — it costs you nothing, but the best detectives don't need it.</p>
+      </div>
+      <button class="btn-start" onclick="startGame()" style="margin-top:1.5rem;">Begin the Report →</button>
+    </div>
+  </div>
+
+  <div class="stats-strip">
+    <div class="stat-cell"><div class="stat-num">12</div><div class="stat-lbl">QUESTIONS</div></div>
+    <div class="stat-cell"><div class="stat-num">3</div><div class="stat-lbl">LIVES</div></div>
+    <div class="stat-cell"><div class="stat-num">6</div><div class="stat-lbl">BADGES</div></div>
+    <div class="stat-cell"><div class="stat-num">30″</div><div class="stat-lbl">PER QUESTION</div></div>
+  </div>
+
+</div>
+
+<!-- ===== GAME ===== -->
+<div id="screen-game" class="screen">
+
+  <div class="hud" id="hud">
+    <div class="hud-inner">
+      <div class="hud-left">
+        <span class="hud-mag">THE SHOPPING REPORT</span>
+        <span class="hud-score" id="hud-score">0 XP</span>
+        <span class="hud-streak" id="hud-streak">STREAK ×0</span>
+      </div>
+      <div class="hud-right">
+        <div class="hud-lives" id="hud-lives"></div>
+        <div class="hud-timer" id="hud-timer">30</div>
+      </div>
+    </div>
+    <div class="prog-line"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="q-dots" id="q-dots"></div>
+
+  <div id="q-area"></div>
+
+</div>
+
+<!-- ===== RESULTS ===== -->
+<div id="screen-results" class="screen">
+
+  <div class="results-masthead">
+    <div class="results-kicker">FINAL EDITION &nbsp;·&nbsp; YOUR RESULTS</div>
+    <div class="results-headline" id="r-headline">Case <span>Closed</span></div>
+    <div class="results-deck" id="r-deck"></div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-block"><div class="stat-block-num" id="r-xp">0</div><div class="stat-block-lbl">TOTAL XP</div></div>
+    <div class="stat-block"><div class="stat-block-num" id="r-correct">0/12</div><div class="stat-block-lbl">CORRECT</div></div>
+    <div class="stat-block"><div class="stat-block-num" id="r-streak">0</div><div class="stat-block-lbl">BEST STREAK</div></div>
+    <div class="stat-block"><div class="stat-block-num" id="r-time">0s</div><div class="stat-block-lbl">AVG SPEED</div></div>
+  </div>
+
+  <div class="badges-section">
+    <div class="badges-section-title">BADGES EARNED THIS EDITION</div>
+    <div class="badges-grid" id="r-badges"></div>
+  </div>
+
+  <div class="grammar-ref">
+    <div class="grammar-ref-title">GRAMMAR REFERENCE — COMPARATIVES & SUPERLATIVES</div>
+    <div class="ref-row"><span class="ref-term">Short adj. comparative</span><span class="ref-rule">adj + -er + than &nbsp;→&nbsp; cheaper than</span></div>
+    <div class="ref-row"><span class="ref-term">Long adj. comparative</span><span class="ref-rule">more + adj + than &nbsp;→&nbsp; more convenient than</span></div>
+    <div class="ref-row"><span class="ref-term">Short adj. superlative</span><span class="ref-rule">the + adj + -est &nbsp;→&nbsp; the cheapest</span></div>
+    <div class="ref-row"><span class="ref-term">Long adj. superlative</span><span class="ref-rule">the most + adj &nbsp;→&nbsp; the most convenient</span></div>
+    <div class="ref-row"><span class="ref-term">Irregular: good</span><span class="ref-rule">better than &nbsp;/&nbsp; the best</span></div>
+    <div class="ref-row"><span class="ref-term">Irregular: bad</span><span class="ref-rule">worse than &nbsp;/&nbsp; the worst</span></div>
+    <div class="ref-row"><span class="ref-term">Irregular: far</span><span class="ref-rule">farther/further than &nbsp;/&nbsp; the farthest</span></div>
+    <div class="ref-row"><span class="ref-term">Equality</span><span class="ref-rule">as + adj + as &nbsp;→&nbsp; as fast as</span></div>
+  </div>
+
+  <button class="btn-play-again" onclick="restartGame()">↺ Read Another Edition</button>
+
+</div>
+
+</div><!-- /wrap -->
+
+<!-- Overlays -->
+<div class="xp-pop" id="xp-pop">+80 XP</div>
+<div class="combo-flash" id="combo-flash">Hot streak!</div>
+<div class="badge-overlay" id="badge-overlay">
+  <div class="badge-box">
+    <div class="badge-box-icon" id="bu-icon"></div>
+    <div class="badge-box-label">BADGE UNLOCKED</div>
+    <div class="badge-box-name" id="bu-name"></div>
+    <div class="badge-box-desc" id="bu-desc"></div>
+    <button class="btn-dismiss" onclick="dismissBadge()">Continue →</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const QS = [
+  // ---- MULTIPLE CHOICE ----
+  {
+    type:'mc', tag:'MULTIPLE CHOICE', tagClass:'mc',
+    context:'Topic: Price comparison',
+    stem:'Which sentence is grammatically correct?',
+    note:'Think about the rule for short adjectives (1 syllable): adj + -er + than.',
+    options:['Online shopping is more cheap than going to a store.','Online shopping is cheaper than going to a store.','Online shopping is cheapest than going to a store.','Online shopping is the cheapest than going to a store.'],
+    correct:1,
+    explain:'Short adjectives (1 syllable) form comparatives with <em>-er + than</em>. "Cheap" → "cheaper than". "More cheap" is incorrect.',
+    structure:[{t:'comp',l:'cheaper'},{t:'arrow',l:'→'},{t:'than',l:'than'}],
+    baseXP:75
+  },
+  {
+    type:'fill', tag:'FILL IN THE BLANK', tagClass:'fill',
+    context:'Topic: Convenience',
+    stem:'Shopping online is ________ than driving to the shops. You never have to leave home.',
+    note:'Use the comparative form of "convenient" (3 syllables → use "more").',
+    answers:['more convenient'],
+    explain:'"Convenient" has 3 syllables, so we use <em>more + adjective</em> to form the comparative: <em>more convenient than</em>.',
+    structure:[{t:'comp',l:'more convenient'},{t:'arrow',l:'→'},{t:'than',l:'than + noun'}],
+    baseXP:80
+  },
+  {
+    type:'rw', tag:'REWRITE', tagClass:'rw',
+    context:'Topic: Speed of delivery',
+    stem:'Rewrite using the comparative form.',
+    original:'Next-day delivery is fast. Collecting in store is fast too. (But next-day delivery is faster.)',
+    note:'Use: next-day delivery / fast / collecting in store',
+    answers:['next-day delivery is faster than collecting in store','next-day delivery is faster than collecting in-store'],
+    explain:'"Fast" is a 1-syllable adjective → <em>faster than</em>. The subject (next-day delivery) remains the focus.',
+    structure:[{t:'comp',l:'faster'},{t:'arrow',l:'→'},{t:'than',l:'than + gerund'}],
+    baseXP:90
+  },
+  {
+    type:'mc', tag:'MULTIPLE CHOICE', tagClass:'mc',
+    context:'Topic: Product quality & superlatives',
+    stem:'Amazon is ________ online marketplace in the world by number of products.',
+    note:'We need a superlative here — "the ___" before the adjective.',
+    options:['the most large','the larger','the largest','most largest'],
+    correct:2,
+    explain:'"Large" is a 1-syllable adjective. Superlative = <em>the + adj + -est</em> → <em>the largest</em>. Never use "most" with short adjectives.',
+    structure:[{t:'sup',l:'the largest'},{t:'arrow',l:'→'},{t:'the',l:'the + adj + -est'}],
+    baseXP:75
+  },
+  {
+    type:'fill', tag:'FILL IN THE BLANK', tagClass:'fill',
+    context:'Topic: Customer experience',
+    stem:'Many shoppers say that physical stores offer ________ customer experience than online shops.',
+    note:'Use the comparative of "personal" (3 syllables).',
+    answers:['a more personal','the more personal','more personal'],
+    explain:'"Personal" is a 3-syllable adjective → comparative = <em>more personal than</em>. You can optionally include the article "a".',
+    structure:[{t:'comp',l:'more personal'},{t:'arrow',l:'→'},{t:'than',l:'than + noun'}],
+    baseXP:85
+  },
+  {
+    type:'rw', tag:'REWRITE', tagClass:'rw',
+    context:'Topic: Returns policy',
+    stem:'Rewrite using the superlative.',
+    original:'Returning items in store is easy. It is easier than by post. In fact, it is the easiest method of all.',
+    note:'Complete this sentence: "Returning items in store is ________ way to get a refund."',
+    answers:['returning items in store is the easiest way to get a refund','the easiest way to get a refund is returning items in store'],
+    explain:'"Easy" → superlative: <em>the easiest</em>. Note the spelling: y → iest. Superlatives need "the" before them.',
+    structure:[{t:'sup',l:'the easiest'},{t:'arrow',l:'→'},{t:'the',l:'y → iest'}],
+    baseXP:95
+  },
+  {
+    type:'mc', tag:'MULTIPLE CHOICE', tagClass:'mc',
+    context:'Topic: Irregular adjectives',
+    stem:'The variety of products online is ________ than in any single physical store.',
+    note:'Think about the irregular comparative of "good".',
+    options:['gooder','more good','better','more better'],
+    correct:2,
+    explain:'"Good" is irregular. Comparative = <em>better (than)</em>. Never say "more good" or "gooder" — these do not exist in English.',
+    structure:[{t:'comp',l:'better'},{t:'arrow',l:'→'},{t:'than',l:'irregular'}],
+    baseXP:75
+  },
+  {
+    type:'fill', tag:'FILL IN THE BLANK', tagClass:'fill',
+    context:'Topic: Wait times',
+    stem:'Waiting in a checkout queue is ________ waiting for a delivery at home.',
+    note:'Use the structure "as + adjective + as" to express equality — but here the speaker thinks queuing is actually worse! Use: bad → worse.',
+    answers:['worse than'],
+    explain:'"Bad" is irregular → comparative: <em>worse than</em>. Use this when something is of lower quality or less desirable.',
+    structure:[{t:'comp',l:'worse than'},{t:'arrow',l:'→'},{t:'than',l:'bad → worse'}],
+    baseXP:85
+  },
+  {
+    type:'rw', tag:'REWRITE', tagClass:'rw',
+    context:'Topic: Price — equality structure',
+    stem:'Rewrite using "as...as".',
+    original:'High-street prices are similar to online prices for electronics.',
+    note:'High-street prices / expensive / online prices',
+    answers:['high-street prices are as expensive as online prices','high-street prices are as expensive as online ones'],
+    explain:'"As + adjective + as" expresses equality. It means the two things are the same in that quality.',
+    structure:[{t:'comp',l:'as expensive as'},{t:'arrow',l:'→'},{t:'than',l:'equality'}],
+    baseXP:95
+  },
+  {
+    type:'mc', tag:'MULTIPLE CHOICE', tagClass:'mc',
+    context:'Topic: Shopping habits survey',
+    stem:'Which option correctly completes this sentence? "Black Friday is ________ shopping day of the year."',
+    note:'"Day" is countable and singular — we need a superlative with "the".',
+    options:['the most busy','the busiest','busiest','more busiest'],
+    correct:1,
+    explain:'"Busy" → superlative: <em>the busiest</em>. Note the spelling: y → iest. Always use "the" with superlatives.',
+    structure:[{t:'sup',l:'the busiest'},{t:'arrow',l:'→'},{t:'the',l:'y → iest'}],
+    baseXP:80
+  },
+  {
+    type:'fill', tag:'FILL IN THE BLANK', tagClass:'fill',
+    context:'Topic: Sustainability',
+    stem:'Buying second-hand in charity shops is ________ option for the environment.',
+    note:'Use the superlative of "sustainable" (4 syllables). Don\'t forget "the"!',
+    answers:['the most sustainable'],
+    explain:'"Sustainable" is a long adjective (4 syllables) → superlative = <em>the most sustainable</em>.',
+    structure:[{t:'sup',l:'the most sustainable'},{t:'arrow',l:'→'},{t:'the',l:'the most + adj'}],
+    baseXP:90
+  },
+  {
+    type:'rw', tag:'REWRITE', tagClass:'rw',
+    context:'Topic: Overall experience — mixed review',
+    stem:'Rewrite using the correct comparative or superlative.',
+    original:'Physical shopping is social. Online shopping is not very social. (Physical shopping is more social)',
+    note:'Make a full comparative sentence: physical shopping / social / online shopping',
+    answers:['physical shopping is more social than online shopping','physical shopping is more social than shopping online'],
+    explain:'"Social" is a 2-syllable adjective ending in a vowel sound → use <em>more social than</em>. As a rule: adjectives of 2+ syllables use "more".',
+    structure:[{t:'comp',l:'more social'},{t:'arrow',l:'→'},{t:'than',l:'than + noun'}],
+    baseXP:95
+  }
+];
+
+const BADGES = [
+  {id:'first',    icon:'📰', name:'First Edition',   desc:'Answer your first question correctly.'},
+  {id:'streak3',  icon:'🔥', name:'Hot Streak',       desc:'Get 3 correct answers in a row.'},
+  {id:'speed',    icon:'⚡', name:'Speed Reader',     desc:'Answer a question in under 8 seconds.'},
+  {id:'nohints',  icon:'🧠', name:'No Crib Sheet',    desc:'Finish without using any hints.'},
+  {id:'half',     icon:'🗞️', name:'Half-time Report', desc:'Complete the first 6 questions.'},
+  {id:'master',   icon:'🏆', name:'Editor in Chief',  desc:'Complete all 12 questions with no mistakes.'}
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let S = {};
+function initState(){
+  S={qi:0,xp:0,lives:3,streak:0,bestStreak:0,correct:0,
+    timerInterval:null,timeLeft:30,fastAnswer:false,
+    noHints:true,totalTime:0,qAnswered:0,
+    mistakes:0,unlockedBadges:[],badgeQueue:[],
+    selectedMC:null};
+}
+
+// ============================================================
+// SCREENS
+// ============================================================
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function startGame(){initState();renderDots();renderLives();showScreen('screen-game');loadQ();}
+
+// ============================================================
+// DOTS / LIVES
+// ============================================================
+function renderDots(){
+  document.getElementById('q-dots').innerHTML=
+    QS.map((_,i)=>`<div class="dot" id="dot-${i}"></div>`).join('');
+}
+function updateDot(i,t){const el=document.getElementById('dot-'+i);if(el)el.className='dot '+t;}
+function renderLives(){
+  document.getElementById('hud-lives').innerHTML=
+    [0,1,2].map(i=>`<div class="hud-life ${i>=S.lives?'lost':''}" id="hl-${i}">♥</div>`).join('');
+}
+
+// ============================================================
+// LOAD QUESTION
+// ============================================================
+function loadQ(){
+  if(S.qi>=QS.length){endGame();return;}
+  const q=QS[S.qi];
+  S.selectedMC=null;
+  const pct=Math.round((S.qi/QS.length)*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  updateDot(S.qi,'current');
+
+  let html=`
+    <div class="q-header">
+      <span class="q-issue">Q${S.qi+1} / ${QS.length}</span>
+      <span class="q-type-tag ${q.tagClass}">${q.tag}</span>
+    </div>
+    <div class="q-dots-spacer"></div>
+    <div class="q-context">${q.context}</div>
+    <div class="q-stem">${q.stem}</div>
+  `;
+  if(q.note) html+=`<div class="grammar-note">💡 Grammar tip: ${q.note}</div>`;
+
+  if(q.type==='mc'){
+    html+=`<div class="mc-options" id="mc-opts">`;
+    q.options.forEach((o,i)=>{
+      const letters=['A','B','C','D'];
+      html+=`<button class="mc-opt" id="mc-${i}" onclick="selectMC(${i})">
+        <span class="opt-letter">${letters[i]}</span>
+        <span>${o}</span>
+      </button>`;
+    });
+    html+=`</div>`;
+  } else if(q.type==='fill'){
+    html+=`<div class="fill-wrap">
+      <input class="fill-input" id="fill-inp" type="text" placeholder="type here..." autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>`;
+  } else if(q.type==='rw'){
+    html+=`<div class="rw-original">${q.original}</div>
+      <div class="rw-label">▸ YOUR REWRITE:</div>
+      <textarea class="rw-input" id="rw-inp" rows="2" placeholder="Write your sentence here..." spellcheck="false"></textarea>`;
+  }
+
+  html+=`
+    <div class="feedback" id="fb-hint"></div>
+    <div class="feedback" id="fb-main"></div>
+    <div class="struct-box" id="struct-box">
+      <div class="struct-label">GRAMMAR STRUCTURE</div>
+      <div class="struct-pills" id="struct-pills"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-check" id="btn-check" onclick="checkAnswer()">Check</button>
+      <button class="btn btn-hint" id="btn-hint" onclick="showHint()">Hint 💡</button>
+    </div>
+    <button class="btn btn-next" id="btn-next" onclick="nextQ()" style="display:none">Next Question →</button>
+  `;
+
+  document.getElementById('q-area').innerHTML=html;
+  startTimer();
+  if(q.type==='fill') document.getElementById('fill-inp').focus();
+  else if(q.type==='rw') document.getElementById('rw-inp').focus();
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+function startTimer(){
+  clearInterval(S.timerInterval);
+  S.timeLeft=30;updateTimerDisplay();
+  S.timerInterval=setInterval(()=>{
+    S.timeLeft--;updateTimerDisplay();
+    if(S.timeLeft<=0){clearInterval(S.timerInterval);timeUp();}
+  },1000);
+}
+function updateTimerDisplay(){
+  const el=document.getElementById('hud-timer');
+  el.textContent=S.timeLeft;
+  el.className='hud-timer'+(S.timeLeft<=8?' urgent':'');
+}
+function timeUp(){
+  const q=QS[S.qi];
+  doWrong();
+  document.getElementById('fb-main').className='feedback wrong show';
+  document.getElementById('fb-main').innerHTML='⏰ Time\'s up! '+q.explain+'<div class="answer-show">→ '+q.answers[0]+'</div>';
+  lockInputs();
+  document.getElementById('btn-next').style.display='block';
+  showStruct(q);
+  updateDot(S.qi,'wrong-done');
+}
+
+// ============================================================
+// SELECT MC
+// ============================================================
+function selectMC(i){
+  if(document.getElementById('btn-check').disabled) return;
+  S.selectedMC=i;
+  document.querySelectorAll('.mc-opt').forEach((el,idx)=>{
+    el.className='mc-opt'+(idx===i?' selected':'');
+  });
+}
+
+// ============================================================
+// CHECK
+// ============================================================
+function norm(s){return s.trim().toLowerCase().replace(/[.!?,'"]+$/,'').replace(/\s+/g,' ');}
+
+function checkAnswer(){
+  clearInterval(S.timerInterval);
+  const q=QS[S.qi];
+  const timeTaken=30-S.timeLeft;
+  S.totalTime+=timeTaken;S.qAnswered++;
+
+  let ok=false;
+  if(q.type==='mc'){
+    if(S.selectedMC===null){startTimer();return;}
+    ok=(S.selectedMC===q.correct);
+  } else if(q.type==='fill'){
+    const v=document.getElementById('fill-inp').value;
+    if(!v.trim()){document.getElementById('fill-inp').focus();startTimer();return;}
+    ok=q.answers.some(a=>norm(a)===norm(v));
+  } else if(q.type==='rw'){
+    const v=document.getElementById('rw-inp').value;
+    if(!v.trim()){document.getElementById('rw-inp').focus();startTimer();return;}
+    ok=q.answers.some(a=>norm(a)===norm(v));
+  }
+
+  lockInputs();
+  document.getElementById('btn-next').style.display='block';
+
+  if(ok){
+    S.correct++;S.streak++;
+    if(S.streak>S.bestStreak)S.bestStreak=S.streak;
+    if(timeTaken<8)S.fastAnswer=true;
+    let earned=q.baseXP;
+    if(timeTaken<8)earned+=40;
+    else if(timeTaken<15)earned+=15;
+    if(S.streak>=2)earned+=20*(S.streak-1);
+    S.xp+=earned;
+    updateHUD();showXPPop('+'+earned+' XP');
+    if(S.streak>=3)showCombo();
+    if(q.type==='mc'){
+      document.querySelectorAll('.mc-opt').forEach((el,i)=>{
+        el.disabled=true;
+        if(i===q.correct)el.className='mc-opt correct';
+        else if(i===S.selectedMC)el.className='mc-opt wrong';
+        else el.className='mc-opt';
+      });
+    } else if(q.type==='fill'){
+      document.getElementById('fill-inp').className='fill-input correct';
+    } else {
+      document.getElementById('rw-inp').className='rw-input correct';
+    }
+    document.getElementById('fb-main').className='feedback correct show';
+    document.getElementById('fb-main').innerHTML='✓ Correct! '+q.explain;
+    updateDot(S.qi,'done');
+    showStruct(q);
+    checkBadges();
+  } else {
+    doWrong();
+    if(q.type==='mc'){
+      document.querySelectorAll('.mc-opt').forEach((el,i)=>{
+        el.disabled=true;
+        if(i===q.correct)el.className='mc-opt correct';
+        else if(i===S.selectedMC)el.className='mc-opt wrong';
+        else el.className='mc-opt';
+      });
+    } else if(q.type==='fill'){
+      document.getElementById('fill-inp').className='fill-input wrong';
+    } else {
+      document.getElementById('rw-inp').className='rw-input wrong';
+    }
+    document.getElementById('fb-main').className='feedback wrong show';
+    document.getElementById('fb-main').innerHTML='✗ Not quite. '+q.explain+'<div class="answer-show">→ '+q.answers[0]+'</div>';
+    updateDot(S.qi,'wrong-done');
+    showStruct(q);
+  }
+}
+
+function doWrong(){S.streak=0;S.mistakes++;S.lives--;renderLives();updateHUD();}
+function lockInputs(){
+  document.getElementById('btn-check').disabled=true;
+  document.getElementById('btn-hint').disabled=true;
+  const fi=document.getElementById('fill-inp');if(fi)fi.disabled=true;
+  const ri=document.getElementById('rw-inp');if(ri)ri.disabled=true;
+}
+
+function showHint(){
+  S.noHints=false;
+  const fb=document.getElementById('fb-hint');
+  fb.className='feedback hint show';
+  fb.textContent='💡 Hint: '+QS[S.qi].note;
+  document.getElementById('btn-hint').disabled=true;
+}
+
+function showStruct(q){
+  document.getElementById('struct-box').className='struct-box show';
+  document.getElementById('struct-pills').innerHTML=q.structure.map(p=>`<span class="pill ${p.t}">${p.l}</span>`).join('');
+}
+
+function nextQ(){
+  if(S.lives<=0){endGame();return;}
+  S.qi++;
+  if(S.qi>=QS.length){endGame();return;}
+  loadQ();
+}
+
+// ============================================================
+// HUD
+// ============================================================
+function updateHUD(){
+  document.getElementById('hud-score').textContent=S.xp+' XP';
+  const el=document.getElementById('hud-streak');
+  el.textContent='STREAK ×'+S.streak;
+  el.className='hud-streak'+(S.streak>=3?' hot':'');
+}
+
+// ============================================================
+// POPUPS
+// ============================================================
+function showXPPop(msg){
+  const el=document.getElementById('xp-pop');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),1600);
+}
+function showCombo(){
+  const el=document.getElementById('combo-flash');
+  el.className='combo-flash';void el.offsetWidth;
+  el.className='combo-flash show';
+}
+
+// ============================================================
+// BADGES
+// ============================================================
+function checkBadges(){
+  if(S.correct===1)awardBadge('first');
+  if(S.bestStreak>=3)awardBadge('streak3');
+  if(S.fastAnswer)awardBadge('speed');
+  if(S.qi===5)awardBadge('half');
+  if(S.qi===QS.length-1&&S.mistakes===0&&S.noHints)awardBadge('nohints');
+  if(S.qi===QS.length-1&&S.mistakes===0)awardBadge('master');
+}
+function awardBadge(id){
+  if(S.unlockedBadges.includes(id))return;
+  const b=BADGES.find(x=>x.id===id);if(!b)return;
+  S.unlockedBadges.push(id);S.badgeQueue.push(b);
+  if(S.badgeQueue.length===1)showNextBadge();
+}
+function showNextBadge(){
+  if(!S.badgeQueue.length)return;
+  clearInterval(S.timerInterval);
+  const b=S.badgeQueue[0];
+  document.getElementById('bu-icon').textContent=b.icon;
+  document.getElementById('bu-name').textContent=b.name;
+  document.getElementById('bu-desc').textContent=b.desc;
+  document.getElementById('badge-overlay').classList.add('show');
+}
+function dismissBadge(){
+  S.badgeQueue.shift();
+  document.getElementById('badge-overlay').classList.remove('show');
+  if(S.badgeQueue.length)showNextBadge();
+}
+
+// ============================================================
+// END GAME
+// ============================================================
+function endGame(){
+  clearInterval(S.timerInterval);
+  if(S.noHints&&S.mistakes===0)awardBadge('nohints');
+  if(S.mistakes===0)awardBadge('master');
+  const pct=Math.round((S.correct/QS.length)*100);
+  const avg=S.qAnswered>0?Math.round(S.totalTime/S.qAnswered):0;
+  let hl,deck;
+  if(pct===100){hl='<span>Flawless</span> Edition';deck='A perfect score. Your command of comparatives and superlatives is impeccable.';}
+  else if(pct>=83){hl='Front Page <span>Material</span>';deck='Excellent work. You have a strong grasp of the structures. Review any mistakes below.';}
+  else if(pct>=66){hl='Good <span>Copy</span>';deck='A solid performance. Some structures need more practice — check the grammar reference.';}
+  else if(pct>=50){hl='Back Page <span>News</span>';deck='You\'re on the right track. Focus on when to use "more" vs "-er" and superlative rules.';}
+  else{hl='In <span>Draft</span>';deck='Don\'t give up — the grammar reference below covers everything you need. Try again!';}
+  document.getElementById('r-headline').innerHTML=hl;
+  document.getElementById('r-deck').textContent=deck;
+  document.getElementById('r-xp').textContent=S.xp;
+  document.getElementById('r-correct').textContent=S.correct+'/'+QS.length;
+  document.getElementById('r-streak').textContent=S.bestStreak;
+  document.getElementById('r-time').textContent=avg+'s';
+  document.getElementById('r-badges').innerHTML=BADGES.map(b=>`
+    <div class="badge-chip ${S.unlockedBadges.includes(b.id)?'unlocked':'locked'}">
+      <span class="badge-chip-icon">${b.icon}</span>
+      <span>${b.name}</span>
+    </div>`).join('');
+  document.getElementById('prog-fill').style.width='100%';
+  showScreen('screen-results');
+}
+function restartGame(){showScreen('screen-intro');}
+
+// ============================================================
+// KEYBOARD
+// ============================================================
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter'||e.shiftKey)return;
+  const overlay=document.getElementById('badge-overlay');
+  if(overlay.classList.contains('show')){e.preventDefault();dismissBadge();return;}
+  const next=document.getElementById('btn-next');
+  if(next&&next.style.display==='block'){e.preventDefault();nextQ();return;}
+  const check=document.getElementById('btn-check');
+  if(check&&!check.disabled){
+    const q=QS[S.qi];
+    if(q&&q.type!=='rw'){e.preventDefault();checkAnswer();}
+  }
+});
+</script>
+</body>
+</html>
