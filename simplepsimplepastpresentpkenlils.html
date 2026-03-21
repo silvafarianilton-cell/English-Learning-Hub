@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Writing Blog — English Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --cream: #FAF7F2;
+  --warm: #F2EDE4;
+  --ink: #1C1917;
+  --ink-light: #44403C;
+  --ink-muted: #78716C;
+  --teal: #0D9488;
+  --teal-light: #CCFBF1;
+  --teal-mid: #5EEAD4;
+  --amber: #D97706;
+  --amber-light: #FEF3C7;
+  --rose: #E11D48;
+  --rose-light: #FFE4E6;
+  --violet: #7C3AED;
+  --violet-light: #EDE9FE;
+  --border: rgba(28,25,23,0.1);
+  --shadow: 0 4px 24px rgba(28,25,23,0.08);
+  --shadow-lg: 0 12px 48px rgba(28,25,23,0.14);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--ink);
+  color: white;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  letter-spacing: -0.3px;
+}
+.logo span { color: var(--teal-mid); }
+
+.header-right { display: flex; align-items: center; gap: 1rem; }
+
+/* ── XP BAR ── */
+.xp-area { display: flex; align-items: center; gap: 10px; }
+.level-badge {
+  background: var(--teal);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: .04em;
+}
+.xp-track {
+  width: 120px; height: 6px;
+  background: rgba(255,255,255,.15);
+  border-radius: 10px; overflow: hidden;
+}
+.xp-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--teal-mid), var(--teal));
+  border-radius: 10px;
+  transition: width .6s cubic-bezier(.34,1.56,.64,1);
+}
+.xp-label { font-size: 11px; color: rgba(255,255,255,.6); white-space: nowrap; }
+
+/* ── STREAK ── */
+.streak-pill {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+}
+.flame { font-size: 15px; }
+
+/* ── LAYOUT ── */
+#layout { display: flex; height: calc(100vh - 60px); }
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: 240px; min-width: 240px;
+  background: white;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 1.25rem 0;
+}
+.sidebar-section-label {
+  font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-muted); padding: 0 1.1rem .6rem; font-weight: 600;
+}
+.topic-btn {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; border: none; background: none; cursor: pointer;
+  padding: .6rem 1.1rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13.5px; color: var(--ink-light); text-align: left;
+  position: relative; transition: all .15s;
+}
+.topic-btn:hover { background: var(--warm); color: var(--ink); }
+.topic-btn.active {
+  background: var(--teal-light);
+  color: var(--teal);
+  font-weight: 600;
+}
+.topic-btn.active::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--teal); border-radius: 0 3px 3px 0;
+}
+.topic-btn.done .check-icon {
+  margin-left: auto;
+  color: var(--teal);
+  font-size: 13px;
+}
+.topic-icon { font-size: 16px; width: 22px; text-align: center; }
+
+/* ── MAIN ── */
+#main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+/* ── TOPIC HEADER ── */
+#topic-header {
+  padding: 2rem 2.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: white;
+}
+.topic-eyebrow {
+  font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--teal); font-weight: 600; margin-bottom: .4rem;
+}
+#topic-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 700; color: var(--ink);
+  line-height: 1.2;
+}
+#topic-sub { font-size: 13px; color: var(--ink-muted); margin-top: 4px; }
+
+/* ── CONTENT ── */
+#content { flex: 1; padding: 2rem 2.5rem; max-width: 860px; }
+
+/* ── TENSE TAGS ── */
+.tense-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+.tense-tag {
+  font-size: 11.5px; padding: 4px 12px; border-radius: 20px;
+  font-weight: 600; letter-spacing: .02em;
+}
+.tense-tag.present { background: var(--teal-light); color: var(--teal); }
+.tense-tag.past    { background: var(--amber-light); color: var(--amber); }
+.tense-tag.perfect { background: var(--violet-light); color: var(--violet); }
+
+/* ── EXAMPLE BOX ── */
+.example-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+}
+.example-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: .65rem 1.2rem;
+  background: var(--ink);
+  color: white;
+  font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+}
+.example-dot { width: 8px; height: 8px; border-radius: 50%; }
+.example-body {
+  padding: 1.25rem 1.4rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 15px; line-height: 1.9;
+  color: var(--ink-light);
+  font-style: italic;
+}
+.example-body b { font-style: normal; }
+.present-verb { color: var(--teal); font-weight: 700; }
+.past-verb    { color: var(--amber); font-weight: 700; }
+.perfect-verb { color: var(--violet); font-weight: 700; }
+
+/* ── LEGEND ── */
+.legend {
+  display: flex; gap: 16px; margin-bottom: 1.5rem; flex-wrap: wrap;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--ink-muted); font-weight: 500;
+}
+.legend-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+
+/* ── WRITING AREA ── */
+.write-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.write-header {
+  padding: .8rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.write-title {
+  font-size: 13px; font-weight: 600; color: var(--ink);
+}
+.hint-badge {
+  font-size: 11px; color: var(--ink-muted);
+  background: var(--warm); border-radius: 8px; padding: 3px 10px;
+}
+.prompt-strip {
+  padding: .7rem 1.2rem;
+  background: var(--warm);
+  font-size: 13px; color: var(--ink-light); line-height: 1.6;
+  border-bottom: 1px solid var(--border);
+}
+textarea#blog-entry {
+  width: 100%; border: none; outline: none;
+  padding: 1.1rem 1.2rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 15.5px; line-height: 1.9;
+  color: var(--ink);
+  background: white;
+  resize: vertical; min-height: 200px;
+}
+textarea#blog-entry::placeholder {
+  font-style: italic;
+  color: var(--ink-muted);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13.5px;
+}
+.write-footer {
+  padding: .85rem 1.2rem;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+  background: var(--cream);
+}
+
+/* ── BUTTONS ── */
+.btn-submit {
+  background: var(--teal);
+  color: white;
+  border: none; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13.5px; font-weight: 600;
+  padding: 9px 22px; border-radius: 10px;
+  display: flex; align-items: center; gap: 7px;
+  transition: all .15s; letter-spacing: .01em;
+}
+.btn-submit:hover { background: #0B7A70; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13,148,136,.3); }
+.btn-submit:active { transform: translateY(0); }
+
+.btn-clear {
+  background: none; border: 1px solid var(--border);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px; color: var(--ink-muted); cursor: pointer;
+  padding: 9px 16px; border-radius: 10px; transition: all .15s;
+}
+.btn-clear:hover { background: var(--warm); color: var(--ink); }
+
+.word-counter {
+  margin-left: auto;
+  font-size: 12px; color: var(--ink-muted); font-weight: 500;
+}
+.word-counter span { color: var(--teal); font-weight: 700; }
+
+/* ── STATS ROW ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.stat-card {
+  background: white; border-radius: 12px;
+  border: 1px solid var(--border); padding: .9rem 1rem;
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 700; color: var(--ink);
+  line-height: 1;
+}
+.stat-label { font-size: 11px; color: var(--ink-muted); margin-top: 3px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
+
+/* ── BADGE SHOWCASE ── */
+.badges-section { margin-bottom: 2rem; }
+.badges-title {
+  font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-muted); font-weight: 600; margin-bottom: .75rem;
+}
+.badges-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.badge-item {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; padding: .6rem .9rem;
+  background: white; border-radius: 12px;
+  border: 1px solid var(--border); min-width: 80px;
+  transition: all .2s; cursor: default;
+}
+.badge-item.locked { opacity: .35; filter: grayscale(1); }
+.badge-item:not(.locked):hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.badge-emoji { font-size: 22px; }
+.badge-name { font-size: 10px; font-weight: 600; color: var(--ink-muted); text-align: center; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--ink); color: white;
+  padding: .9rem 1.4rem; border-radius: 12px;
+  font-size: 14px; font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(120%); opacity: 0;
+  transition: all .35s cubic-bezier(.34,1.56,.64,1);
+  z-index: 999; display: flex; align-items: center; gap: 10px;
+  max-width: 320px;
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+#toast .toast-icon { font-size: 20px; }
+
+/* ── CONFETTI ── */
+.confetti-piece {
+  position: fixed; top: -10px;
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  animation: fall linear forwards;
+  z-index: 998; pointer-events: none;
+}
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeInUp .35s ease both; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 680px) {
+  #sidebar { display: none; }
+  #content { padding: 1.25rem; }
+  #topic-header { padding: 1.25rem; }
+  .stats-row { grid-template-columns: repeat(3,1fr); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">My Writing <span>Blog</span></div>
+  <div class="header-right">
+    <div class="streak-pill">
+      <span class="flame">🔥</span>
+      <span id="streak-count">0</span> day streak
+    </div>
+    <div class="xp-area">
+      <div class="level-badge" id="level-badge">Lv 1</div>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill"></div></div>
+      <div class="xp-label" id="xp-label">0 / 100 XP</div>
+    </div>
+  </div>
+</header>
+
+<div id="layout">
+  <nav id="sidebar"><p class="sidebar-section-label">Topics</p><div id="topic-list"></div></nav>
+  <main id="main">
+    <div id="topic-header">
+      <div class="topic-eyebrow">English Practice</div>
+      <div id="topic-title"></div>
+      <div id="topic-sub"></div>
+    </div>
+    <div id="content"></div>
+  </main>
+</div>
+
+<div id="toast"><span class="toast-icon" id="toast-icon">🎉</span><span id="toast-msg"></span></div>
+
+<script>
+/* ────────── DATA ────────── */
+const topics = [
+  {
+    id:"travel", icon:"✈️", name:"My travel experiences",
+    sub:"Places visited, trips planned, adventures ahead",
+    chips:[
+      {label:"Simple present", cls:"present", ex:"travel / don't travel"},
+      {label:"Simple past",    cls:"past",    ex:"went / didn't go"},
+      {label:"Present perfect",cls:"perfect", ex:"have been / haven't been"}
+    ],
+    prompt:"Talk about where you usually go, a recent trip, and places you have or haven't visited yet.",
+    example:`I <b class="present-verb">don't travel</b> a lot, but I <b class="present-verb">love</b> it when I do. I <b class="perfect-verb">have been</b> to many places in Europe — Barcelona, Rome, Paris, and Belgium. I <b class="perfect-verb">haven't been</b> to other continents yet, but it's on my bucket list. I'd like to tell you about my last trip to Italy. I <b class="past-verb">went</b> to Rome last summer and I <b class="past-verb">did</b> so many things. I <b class="past-verb">ate</b> pizza at the square, <b class="past-verb">drank</b> some Aperols, and <b class="past-verb">took</b> many pictures. It <b class="past-verb">was</b> one of the best trips of my life.`
+  },
+  {
+    id:"career", icon:"💼", name:"My career",
+    sub:"Jobs, goals, skills and professional life",
+    chips:[
+      {label:"Simple present", cls:"present", ex:"work / don't work"},
+      {label:"Simple past",    cls:"past",    ex:"studied / didn't study"},
+      {label:"Present perfect",cls:"perfect", ex:"have worked / haven't decided"}
+    ],
+    prompt:"Describe your job or studies now, how you got here, and what you have or haven't achieved yet.",
+    example:`I <b class="present-verb">work</b> as a graphic designer at a small agency. I <b class="present-verb">don't earn</b> a huge salary, but I <b class="present-verb">love</b> what I do. My journey <b class="past-verb">wasn't</b> easy, though. I <b class="past-verb">studied</b> architecture at first — I <b class="past-verb">didn't enjoy</b> it at all, so I <b class="past-verb">changed</b> careers. Since then, I <b class="perfect-verb">have learned</b> so much. I <b class="perfect-verb">have worked</b> with clients from five different countries, and I <b class="perfect-verb">have designed</b> over 200 projects. I <b class="perfect-verb">haven't started</b> my own studio yet, but that's my dream for the future.`
+  },
+  {
+    id:"movies", icon:"🎬", name:"Movies and series",
+    sub:"Favourites, reviews and recommendations",
+    chips:[
+      {label:"Simple present", cls:"present", ex:"watch / don't like"},
+      {label:"Simple past",    cls:"past",    ex:"watched / didn't expect"},
+      {label:"Present perfect",cls:"perfect", ex:"have seen / haven't watched"}
+    ],
+    prompt:"Talk about what you enjoy watching, a recent film, and series you have or haven't seen.",
+    example:`I <b class="present-verb">watch</b> a lot of series — probably too many. I <b class="present-verb">don't like</b> horror films at all; they <b class="present-verb">make</b> me anxious. Last week, I <b class="past-verb">watched</b> a documentary about climate change. I <b class="past-verb">didn't expect</b> it to be so emotional, but I actually <b class="past-verb">cried</b>. Recently I <b class="perfect-verb">have become</b> obsessed with Nordic crime series. I <b class="perfect-verb">have seen</b> all of The Bridge. I <b class="perfect-verb">haven't watched</b> the last season of Succession yet — please don't spoil it!`
+  },
+  {
+    id:"hobbies", icon:"🎨", name:"Hobbies and free time",
+    sub:"What you love doing outside of work or school",
+    chips:[
+      {label:"Simple present", cls:"present", ex:"play / don't practise"},
+      {label:"Simple past",    cls:"past",    ex:"used to / gave up"},
+      {label:"Present perfect",cls:"perfect", ex:"have tried / haven't found"}
+    ],
+    prompt:"Describe your current hobbies, one you had in the past, and activities you have or haven't tried.",
+    example:`In my free time, I <b class="present-verb">paint</b> watercolours and I <b class="present-verb">read</b> a lot. I <b class="present-verb">don't play</b> any sports — I <b class="present-verb">know</b>, I probably should. When I was a teenager, I <b class="past-verb">played</b> the guitar every day. I <b class="past-verb">didn't practise</b> enough, so I eventually <b class="past-verb">gave</b> it up. Lately, I <b class="perfect-verb">have joined</b> a pottery class and I absolutely love it. I <b class="perfect-verb">haven't run</b> a marathon yet, but who knows — maybe one day!`
+  },
+  {
+    id:"food", icon:"🍽️", name:"Food and cooking",
+    sub:"Favourite dishes, restaurants and kitchen adventures",
+    chips:[
+      {label:"Simple present", cls:"present", ex:"cook / don't eat"},
+      {label:"Simple past",    cls:"past",    ex:"made / didn't follow"},
+      {label:"Present perfect",cls:"perfect", ex:"have tried / haven't cooked"}
+    ],
+    prompt:"Talk about your eating habits, a meal you cooked or ate recently, and foods you have or haven't tried.",
+    example:`I <b class="present-verb">cook</b> at home almost every day. I <b class="present-verb">don't eat</b> red meat, so I always <b class="present-verb">look</b> for vegetarian options. Last Sunday, I <b class="past-verb">made</b> homemade pasta for the first time. I <b class="past-verb">didn't follow</b> the recipe exactly — I <b class="past-verb">added</b> too much garlic — but it <b class="past-verb">tasted</b> amazing. Over the years, I <b class="perfect-verb">have tried</b> food from many different cultures. I <b class="perfect-verb">have eaten</b> sushi, tagine, and even crickets once! I <b class="perfect-verb">haven't cooked</b> Japanese food at home yet, but I'm ready to try.`
+  },
+  {
+    id:"family", icon:"👥", name:"Friends and family",
+    sub:"The people who matter most in your life",
+    chips:[
+      {label:"Simple present", cls:"present", ex:"live / don't see"},
+      {label:"Simple past",    cls:"past",    ex:"visited / didn't want"},
+      {label:"Present perfect",cls:"perfect", ex:"have known / haven't argued"}
+    ],
+    prompt:"Describe your family or friends now, a recent moment together, and what your relationship has been like.",
+    example:`My family <b class="present-verb">lives</b> in another city, so I <b class="present-verb">don't see</b> them every week. We <b class="present-verb">call</b> each other on Sunday evenings — it's our little tradition. Last month, I <b class="past-verb">visited</b> my parents for a long weekend. We <b class="past-verb">cooked</b> together, <b class="past-verb">walked</b> around the neighbourhood, and <b class="past-verb">talked</b> for hours. I <b class="past-verb">didn't want</b> to leave. My best friend and I <b class="perfect-verb">have known</b> each other since we were eight years old. We <b class="perfect-verb">haven't argued</b> seriously even once. I'm very lucky.`
+  },
+  {
+    id:"health", icon:"🏃", name:"Health and lifestyle",
+    sub:"Exercise, habits, wellbeing and routines",
+    chips:[
+      {label:"Simple present", cls:"present", ex:"exercise / don't sleep"},
+      {label:"Simple past",    cls:"past",    ex:"started / didn't stick to"},
+      {label:"Present perfect",cls:"perfect", ex:"have improved / haven't quit"}
+    ],
+    prompt:"Talk about your current habits, a past attempt to be healthier, and changes you have or haven't made.",
+    example:`I <b class="present-verb">exercise</b> three times a week and I <b class="present-verb">try</b> to eat well. I <b class="present-verb">don't sleep</b> enough — that's my biggest problem. A few years ago, I <b class="past-verb">started</b> running. I <b class="past-verb">didn't stick</b> to it for long because my knees <b class="past-verb">hurt</b>, so I <b class="past-verb">switched</b> to swimming. Since then, my health <b class="perfect-verb">has improved</b> a lot. I <b class="perfect-verb">have felt</b> much more energetic. I <b class="perfect-verb">haven't quit</b> coffee yet — and honestly, I <b class="present-verb">don't plan</b> to. Some habits are just non-negotiable.`
+  },
+  {
+    id:"school", icon:"📚", name:"My school life",
+    sub:"Classes, teachers, subjects and student memories",
+    chips:[
+      {label:"Simple present", cls:"present", ex:"study / don't enjoy"},
+      {label:"Simple past",    cls:"past",    ex:"passed / failed"},
+      {label:"Present perfect",cls:"perfect", ex:"have learned / haven't finished"}
+    ],
+    prompt:"Describe your current studies, a school memory, and things you have or haven't learned yet.",
+    example:`I <b class="present-verb">study</b> English and I really <b class="present-verb">enjoy</b> it. I <b class="present-verb">don't find</b> grammar easy, but I <b class="present-verb">keep</b> trying. Last year, I <b class="past-verb">took</b> an exam and I <b class="past-verb">didn't pass</b> it the first time. I <b class="past-verb">felt</b> terrible, but I <b class="past-verb">studied</b> harder and I <b class="past-verb">passed</b> on the second attempt. Since I started this course, I <b class="perfect-verb">have learned</b> so much. I <b class="perfect-verb">have improved</b> my vocabulary and I <b class="perfect-verb">have started</b> watching series in English without subtitles. I <b class="perfect-verb">haven't finished</b> my B2 level yet, but I <b class="perfect-verb">have made</b> real progress.`
+  },
+  {
+    id:"tech", icon:"💻", name:"Technology and social media",
+    sub:"Apps, gadgets, digital habits and screen time",
+    chips:[
+      {label:"Simple present", cls:"present", ex:"use / don't post"},
+      {label:"Simple past",    cls:"past",    ex:"deleted / didn't miss"},
+      {label:"Present perfect",cls:"perfect", ex:"have tried / haven't gone back"}
+    ],
+    prompt:"Talk about how you use technology now, a past digital habit, and apps you have or haven't tried.",
+    example:`I <b class="present-verb">use</b> my phone constantly — probably too much. I <b class="present-verb">don't post</b> on social media very often, but I <b class="present-verb">scroll</b> for hours. Last year, I <b class="past-verb">deleted</b> TikTok from my phone. I <b class="past-verb">didn't miss</b> it as much as I <b class="past-verb">expected</b>. I also <b class="past-verb">tried</b> a digital detox for a whole week — it <b class="past-verb">was</b> hard at first, but then it felt wonderful. Since then, I <b class="perfect-verb">have become</b> more mindful about screen time. I <b class="perfect-verb">haven't gone</b> back to TikTok yet — and honestly, I <b class="present-verb">don't plan</b> to.`
+  },
+  {
+    id:"dreams", icon:"🌙", name:"Dreams and future plans",
+    sub:"Goals, wishes and things you'd love to do someday",
+    chips:[
+      {label:"Simple present", cls:"present", ex:"want / don't know"},
+      {label:"Simple past",    cls:"past",    ex:"dreamed / didn't happen"},
+      {label:"Present perfect",cls:"perfect", ex:"have always wanted / haven't done"}
+    ],
+    prompt:"Describe your current dreams, a past plan that didn't work out, and things you have always wanted to do.",
+    example:`I <b class="present-verb">want</b> to move abroad someday. I <b class="present-verb">don't know</b> exactly where yet, but Japan is at the top of my list. When I was younger, I <b class="past-verb">dreamed</b> of becoming a professional musician. It <b class="past-verb">didn't happen</b>, but I <b class="present-verb">don't regret</b> it. I <b class="perfect-verb">have always wanted</b> to write a book. I <b class="perfect-verb">have had</b> the idea in my head for years, but I <b class="perfect-verb">haven't started</b> writing yet. I <b class="perfect-verb">have also thought</b> about going back to university. Life <b class="present-verb">is</b> full of possibilities!`
+  }
+];
+
+/* ────────── BADGES ────────── */
+const ALL_BADGES = [
+  { id:"first",   emoji:"✍️",  name:"First Entry",   desc:"Write your first entry",           xp:0   },
+  { id:"w50",     emoji:"📝",  name:"50 Words",       desc:"Write 50+ words in one entry",     xp:50  },
+  { id:"w100",    emoji:"📖",  name:"100 Words",      desc:"Write 100+ words in one entry",    xp:100 },
+  { id:"topics3", emoji:"🗺️", name:"Explorer",       desc:"Try 3 different topics",           xp:0   },
+  { id:"topics5", emoji:"🌍",  name:"World Traveller",desc:"Try 5 different topics",           xp:0   },
+  { id:"topics10",emoji:"🏆",  name:"Blog Master",    desc:"Complete all 10 topics",           xp:0   },
+  { id:"streak3", emoji:"🔥",  name:"On Fire",        desc:"3-day writing streak",             xp:0   },
+  { id:"xp200",   emoji:"⭐",  name:"Rising Star",    desc:"Reach 200 XP",                     xp:200 },
+  { id:"xp500",   emoji:"💎",  name:"Diamond Writer", desc:"Reach 500 XP",                     xp:500 }
+];
+
+/* ────────── STATE ────────── */
+let state = JSON.parse(localStorage.getItem("wblog") || "null") || {
+  xp: 0, level: 1, streak: 0, lastDate: null,
+  done: [], badges: [], topicsVisited: []
+};
+let current = topics[0];
+
+/* ────────── SAVE/LOAD ────────── */
+function save() { localStorage.setItem("wblog", JSON.stringify(state)); }
+
+/* ────────── STREAK ────────── */
+function updateStreak() {
+  const today = new Date().toDateString();
+  if (state.lastDate === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  state.streak = state.lastDate === yesterday ? state.streak + 1 : 1;
+  state.lastDate = today;
+  save();
+}
+
+/* ────────── XP & LEVEL ────────── */
+function addXP(amount) {
+  state.xp += amount;
+  const threshold = state.level * 100;
+  if (state.xp >= threshold) {
+    state.xp -= threshold;
+    state.level++;
+    showToast("🎊", `Level up! You're now Level ${state.level}`);
+  }
+  save();
+  renderHUD();
+}
+
+function renderHUD() {
+  document.getElementById("streak-count").textContent = state.streak;
+  document.getElementById("level-badge").textContent = "Lv " + state.level;
+  const threshold = state.level * 100;
+  const pct = Math.min(100, Math.round(state.xp / threshold * 100));
+  document.getElementById("xp-fill").style.width = pct + "%";
+  document.getElementById("xp-label").textContent = state.xp + " / " + threshold + " XP";
+}
+
+/* ────────── BADGES ────────── */
+function checkBadges(wordCount) {
+  const earned = [];
+  function maybe(id, cond) {
+    if (cond && !state.badges.includes(id)) { state.badges.push(id); earned.push(id); }
+  }
+  maybe("first",    state.done.length >= 1);
+  maybe("w50",      wordCount >= 50);
+  maybe("w100",     wordCount >= 100);
+  maybe("topics3",  state.topicsVisited.length >= 3);
+  maybe("topics5",  state.topicsVisited.length >= 5);
+  maybe("topics10", state.topicsVisited.length >= 10);
+  maybe("streak3",  state.streak >= 3);
+  maybe("xp200",    state.xp >= 200);
+  maybe("xp500",    state.xp >= 500);
+  if (earned.length) {
+    const b = ALL_BADGES.find(x => x.id === earned[0]);
+    if (b) { showToast(b.emoji, "Badge unlocked: " + b.name); confetti(); }
+    save();
+    renderBadges();
+  }
+}
+
+function renderBadges() {
+  const el = document.getElementById("badges-grid");
+  if (!el) return;
+  el.innerHTML = ALL_BADGES.map(b => `
+    <div class="badge-item ${state.badges.includes(b.id)?'':'locked'}" title="${b.desc}">
+      <span class="badge-emoji">${b.emoji}</span>
+      <span class="badge-name">${b.name}</span>
+    </div>`).join('');
+}
+
+/* ────────── TOAST ────────── */
+let toastTimer;
+function showToast(icon, msg) {
+  document.getElementById("toast-icon").textContent = icon;
+  document.getElementById("toast-msg").textContent = msg;
+  const t = document.getElementById("toast");
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
+}
+
+/* ────────── CONFETTI ────────── */
+function confetti() {
+  const colors = ["#0D9488","#D97706","#7C3AED","#E11D48","#059669","#DB2777"];
+  for (let i = 0; i < 48; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti-piece";
+    el.style.cssText = `left:${Math.random()*100}vw;background:${colors[i%colors.length]};
+      width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;
+      animation-duration:${1.2+Math.random()*1.5}s;
+      animation-delay:${Math.random()*.4}s;
+      border-radius:${Math.random()>0.5?'50%':'2px'}`;
+    document.body.appendChild(el);
+    el.addEventListener("animationend", () => el.remove());
+  }
+}
+
+/* ────────── RENDER SIDEBAR ────────── */
+function renderSidebar() {
+  document.getElementById("topic-list").innerHTML = topics.map(t => `
+    <button class="topic-btn ${t.id===current.id?'active':''} ${state.done.includes(t.id)?'done':''}"
+      onclick="selectTopic('${t.id}')">
+      <span class="topic-icon">${t.icon}</span>
+      <span>${t.name}</span>
+      ${state.done.includes(t.id)?'<span class="check-icon">✓</span>':''}
+    </button>`).join('');
+}
+
+/* ────────── RENDER MAIN ────────── */
+function renderMain() {
+  document.getElementById("topic-title").textContent = current.name;
+  document.getElementById("topic-sub").textContent = current.sub;
+
+  const totalEntries = state.done.length;
+  const totalWords   = parseInt(localStorage.getItem("wblog_totalwords") || "0");
+
+  document.getElementById("content").innerHTML = `
+    <div class="animate-in">
+      <div class="stats-row" style="margin-top:.25rem;">
+        <div class="stat-card"><div class="stat-num">${totalEntries}</div><div class="stat-label">Entries written</div></div>
+        <div class="stat-card"><div class="stat-num">${totalWords}</div><div class="stat-label">Total words</div></div>
+        <div class="stat-card"><div class="stat-num">${state.badges.length}</div><div class="stat-label">Badges earned</div></div>
+      </div>
+
+      <div class="tense-row">
+        ${current.chips.map(c=>`<span class="tense-tag ${c.cls}">${c.label} — ${c.ex}</span>`).join('')}
+      </div>
+
+      <div class="example-card">
+        <div class="example-header">
+          <div class="example-dot" style="background:#0D9488"></div>
+          <div class="example-dot" style="background:#D97706"></div>
+          <div class="example-dot" style="background:#7C3AED"></div>
+          &nbsp; Example entry — read before you write
+        </div>
+        <div class="example-body">${current.example}</div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#0D9488"></div> Simple present</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#D97706"></div> Simple past</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#7C3AED"></div> Present perfect</div>
+      </div>
+
+      <div class="write-card">
+        <div class="write-header">
+          <div class="write-title">Your entry</div>
+          <div class="hint-badge">+20 XP for submitting</div>
+        </div>
+        <div class="prompt-strip">${current.prompt} Try to use all three tenses — affirmative and negative.</div>
+        <textarea id="blog-entry" placeholder="Start writing here... mix the three tenses like the example above." oninput="onType()"></textarea>
+        <div class="write-footer">
+          <button class="btn-submit" onclick="submit()">Submit entry ✦</button>
+          <button class="btn-clear" onclick="clearEntry()">Clear</button>
+          <div class="word-counter">Words: <span id="wc">0</span></div>
+        </div>
+      </div>
+
+      <div class="badges-section">
+        <div class="badges-title">Badges</div>
+        <div class="badges-grid" id="badges-grid"></div>
+      </div>
+    </div>`;
+
+  renderBadges();
+}
+
+/* ────────── INTERACTIONS ────────── */
+function selectTopic(id) {
+  current = topics.find(t => t.id === id);
+  if (!state.topicsVisited.includes(id)) { state.topicsVisited.push(id); save(); }
+  renderSidebar();
+  renderMain();
+}
+
+function onType() {
+  const w = wordCount();
+  document.getElementById("wc").textContent = w;
+}
+
+function wordCount() {
+  const txt = (document.getElementById("blog-entry")||{}).value || "";
+  return txt.trim() ? txt.trim().split(/\s+/).length : 0;
+}
+
+function clearEntry() {
+  const ta = document.getElementById("blog-entry");
+  if (ta) { ta.value = ""; document.getElementById("wc").textContent = "0"; }
+}
+
+function submit() {
+  const txt = (document.getElementById("blog-entry")||{}).value||"";
+  if (!txt.trim()) { document.getElementById("blog-entry").focus(); return; }
+  const wc = wordCount();
+
+  // Mark done
+  if (!state.done.includes(current.id)) state.done.push(current.id);
+  const prev = parseInt(localStorage.getItem("wblog_totalwords") || "0");
+  localStorage.setItem("wblog_totalwords", prev + wc);
+
+  updateStreak();
+  addXP(20 + Math.floor(wc / 10));
+  checkBadges(wc);
+  save();
+  renderSidebar();
+  renderHUD();
+
+  showToast("✨", `+${20 + Math.floor(wc/10)} XP earned! Great writing!`);
+}
+
+/* ────────── INIT ────────── */
+updateStreak();
+renderHUD();
+renderSidebar();
+renderMain();
+</script>
+</body>
+</html>
