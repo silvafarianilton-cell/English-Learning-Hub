@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speak Up — Phrasal Verb Conversation Cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --card: #fffdf8;
+    --ink: #1a1612;
+    --ink2: #4a4540;
+    --ink3: #9a9490;
+    --accent: #c0392b;
+    --accent-soft: #f9ebe9;
+    --gold: #b8860b;
+    --gold-soft: #fdf6e3;
+    --green: #2e7d5e;
+    --green-soft: #e8f5f0;
+    --blue: #1a5276;
+    --blue-soft: #eaf2f8;
+    --border: rgba(26,22,18,0.1);
+    --shadow: 0 2px 20px rgba(26,22,18,0.08);
+    --shadow-lg: 0 8px 40px rgba(26,22,18,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2rem;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+  }
+
+  .logo em {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .level-chip {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: var(--gold-soft);
+    color: var(--gold);
+    border: 1px solid rgba(184,134,11,0.25);
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+  }
+
+  .card-counter {
+    font-size: 0.8rem;
+    color: var(--ink3);
+    font-weight: 500;
+  }
+
+  /* ===== MAIN ===== */
+  main {
+    position: relative;
+    z-index: 5;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1.5rem 3rem;
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* ===== CATEGORY PILLS ===== */
+  .cat-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 2rem;
+    width: 100%;
+  }
+
+  .cat-pill {
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.5rem 1.1rem;
+    border-radius: 30px;
+    background: var(--card);
+    color: var(--ink2);
+    border: 1.5px solid var(--border);
+    transition: all 0.2s;
+    letter-spacing: 0.2px;
+  }
+
+  .cat-pill:hover { border-color: var(--ink2); color: var(--ink); }
+
+  .cat-pill.active-money   { background: var(--gold-soft);  color: var(--gold);  border-color: rgba(184,134,11,0.4); }
+  .cat-pill.active-hobbies { background: var(--green-soft); color: var(--green); border-color: rgba(46,125,94,0.4); }
+  .cat-pill.active-health  { background: var(--accent-soft);color: var(--accent);border-color: rgba(192,57,43,0.4); }
+  .cat-pill.active-chores  { background: var(--blue-soft);  color: var(--blue);  border-color: rgba(26,82,118,0.4); }
+  .cat-pill.active-all     { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  /* ===== CARD STACK ===== */
+  .stack-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 580px;
+    margin-bottom: 2rem;
+  }
+
+  /* shadow cards behind */
+  .stack-wrap::before,
+  .stack-wrap::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .stack-wrap::before {
+    width: calc(100% - 32px);
+    height: 100%;
+    top: 10px;
+    transform: translateX(-50%) rotate(2deg);
+    z-index: 1;
+    opacity: 0.7;
+  }
+
+  .stack-wrap::after {
+    width: calc(100% - 56px);
+    height: 100%;
+    top: 18px;
+    transform: translateX(-50%) rotate(-1.5deg);
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* ===== THE CARD ===== */
+  .convo-card {
+    position: relative;
+    z-index: 10;
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    padding: 2.5rem 2.5rem 2rem;
+    width: 100%;
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s;
+  }
+
+  .convo-card.exit-left {
+    animation: slideLeft 0.35s ease forwards;
+  }
+
+  .convo-card.exit-right {
+    animation: slideRight 0.35s ease forwards;
+  }
+
+  .convo-card.enter {
+    animation: enterCard 0.4s cubic-bezier(0.34,1.4,0.64,1) forwards;
+  }
+
+  @keyframes slideLeft {
+    to { transform: translateX(-60px) rotate(-4deg); opacity: 0; }
+  }
+  @keyframes slideRight {
+    to { transform: translateX(60px) rotate(4deg); opacity: 0; }
+  }
+  @keyframes enterCard {
+    from { transform: translateY(20px) scale(0.97); opacity: 0; }
+    to   { transform: translateY(0) scale(1); opacity: 1; }
+  }
+
+  /* card top row */
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.75rem;
+  }
+
+  .category-tag {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+  }
+
+  .tag-money   { background: var(--gold-soft);  color: var(--gold); }
+  .tag-hobbies { background: var(--green-soft); color: var(--green); }
+  .tag-health  { background: var(--accent-soft);color: var(--accent); }
+  .tag-chores  { background: var(--blue-soft);  color: var(--blue); }
+
+  .q-type-tag {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink3);
+  }
+
+  /* question */
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 3.5vw, 1.7rem);
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 2rem;
+    font-weight: 700;
+  }
+
+  /* reveal area */
+  .reveal-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .reveal-label {
+    font-size: 0.72rem;
+    color: var(--ink3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+    flex: 0 0 auto;
+  }
+
+  .verb-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--ink3);
+    background: transparent;
+    border: 1.5px dashed var(--border);
+    padding: 0.35rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    filter: blur(5px);
+  }
+
+  .verb-chip.revealed {
+    filter: blur(0);
+    color: var(--ink);
+    border-style: solid;
+    border-color: rgba(26,22,18,0.2);
+    background: rgba(26,22,18,0.04);
+    cursor: default;
+  }
+
+  .reveal-hint {
+    font-size: 0.72rem;
+    color: var(--ink3);
+    margin-left: auto;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .reveal-hint:hover { color: var(--ink2); }
+
+  /* follow-up strip */
+  .followup-strip {
+    margin-top: 1.2rem;
+    padding: 0.85rem 1rem;
+    background: rgba(26,22,18,0.03);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    display: none;
+  }
+
+  .followup-strip.show { display: block; }
+
+  .followup-label {
+    font-size: 0.62rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink3);
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+
+  .followup-text {
+    font-size: 0.88rem;
+    color: var(--ink2);
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  /* ===== CONTROLS ===== */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 580px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .btn-next {
+    background: var(--ink);
+    color: #fff;
+    padding: 0.75rem 2rem;
+    box-shadow: 0 4px 14px rgba(26,22,18,0.2);
+  }
+
+  .btn-next:hover { background: #2d2924; box-shadow: 0 6px 20px rgba(26,22,18,0.28); transform: translateY(-1px); }
+  .btn-next:active { transform: translateY(0); }
+
+  .btn-prev {
+    background: transparent;
+    color: var(--ink3);
+    border: 1.5px solid var(--border);
+  }
+
+  .btn-prev:hover { color: var(--ink2); border-color: rgba(26,22,18,0.25); }
+
+  .btn-shuffle {
+    background: transparent;
+    color: var(--ink3);
+    border: 1.5px solid var(--border);
+    padding: 0.75rem 1rem;
+  }
+
+  .btn-shuffle:hover { color: var(--ink2); border-color: rgba(26,22,18,0.25); }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-wrap {
+    width: 100%;
+    max-width: 580px;
+    margin-bottom: 1.5rem;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(0.34,1.2,0.64,1);
+  }
+
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.72rem;
+    color: var(--ink3);
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    display: none;
+  }
+
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .empty-sub { color: var(--ink3); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  /* ===== DONE CARD ===== */
+  .done-card {
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    padding: 3rem 2.5rem;
+    width: 100%;
+    max-width: 580px;
+    text-align: center;
+    display: none;
+    position: relative;
+    z-index: 10;
+  }
+
+  .done-card .done-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .done-card .done-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 0.5rem; }
+  .done-card .done-sub { color: var(--ink3); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6; }
+
+  .done-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .dstat { text-align: center; }
+  .dstat-num { display: block; font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--ink); }
+  .dstat-label { font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink3); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 540px) {
+    header { padding: 1rem; }
+    .convo-card { padding: 1.75rem 1.5rem 1.5rem; }
+    .question-text { font-size: 1.2rem; }
+    main { padding: 1.5rem 1rem 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Speak <em>Up</em></div>
+  <div class="header-right">
+    <span class="level-chip">B1–B2</span>
+    <span class="card-counter" id="headerCounter">—</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- CATEGORY FILTER -->
+  <div class="cat-row">
+    <button class="cat-pill active-all" data-cat="all"     onclick="filterCat('all')">All topics</button>
+    <button class="cat-pill" data-cat="money"   onclick="filterCat('money')">💰 Money</button>
+    <button class="cat-pill" data-cat="hobbies" onclick="filterCat('hobbies')">🎯 Hobbies</button>
+    <button class="cat-pill" data-cat="health"  onclick="filterCat('health')">💪 Health</button>
+    <button class="cat-pill" data-cat="chores"  onclick="filterCat('chores')">🏠 Chores</button>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="progress-labels">
+      <span id="progressLabel">Card 1</span>
+      <span id="progressTotal"></span>
+    </div>
+  </div>
+
+  <!-- CARD STACK -->
+  <div class="stack-wrap" id="stackWrap">
+    <div class="convo-card" id="convoCard">
+      <div class="card-top">
+        <span class="category-tag" id="cardCatTag"></span>
+        <span class="q-type-tag" id="cardQType"></span>
+      </div>
+      <div class="question-text" id="questionText"></div>
+
+      <div class="reveal-row">
+        <span class="reveal-label">Target verb</span>
+        <span class="verb-chip" id="verbChip" onclick="revealVerb()"></span>
+        <span class="reveal-hint" id="revealHint" onclick="revealVerb()">tap to reveal</span>
+      </div>
+
+      <div class="followup-strip" id="followupStrip">
+        <div class="followup-label">💬 Follow-up</div>
+        <div class="followup-text" id="followupText"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DONE CARD -->
+  <div class="done-card" id="doneCard">
+    <div class="done-icon">✦</div>
+    <div class="done-title">All cards done.</div>
+    <div class="done-sub">You've been through every question in this set.<br>Shuffle for another round, or pick a different topic.</div>
+    <div class="done-stats">
+      <div class="dstat">
+        <span class="dstat-num" id="doneTotal">—</span>
+        <span class="dstat-label">Cards</span>
+      </div>
+      <div class="dstat">
+        <span class="dstat-num" id="doneRevealed">—</span>
+        <span class="dstat-label">Revealed</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-next" onclick="shuffleAndRestart()">↺ &nbsp; Shuffle & restart</button>
+      <button class="btn btn-prev" onclick="filterCat(currentCat)">Reset same topic</button>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls" id="controls">
+    <button class="btn btn-prev" onclick="prevCard()">← Back</button>
+    <button class="btn btn-next" onclick="nextCard()">Next question &nbsp;→</button>
+    <button class="btn btn-shuffle" title="Shuffle" onclick="shuffleAndRestart()">⇄</button>
+  </div>
+
+</main>
+
+<script>
+// ============================================================
+// DATA — one phrasal verb per card, 3 questions each
+// ============================================================
+const ALL_CARDS = [
+
+  // ── MONEY ──────────────────────────────────────────────────
+  {cat:'money', verb:'pay off', qtype:'Personal',
+   q:"Have you ever worked really hard at something for a long time — a course, a project, a skill — and felt it finally paid off? What happened?",
+   followup:"Ask them: what exactly did they do, and how long did it take?"},
+  {cat:'money', verb:'pay off', qtype:'Opinion',
+   q:"Do you think studying a language always pays off in the end, even if it takes years? Why or why not?",
+   followup:"Push them: can they think of a case where the effort didn't pay off?"},
+
+  {cat:'money', verb:'stock up on', qtype:'Personal',
+   q:"Is there anything you always stock up on when you go to the supermarket? Why that particular thing?",
+   followup:"Ask: do they ever regret buying too much of something?"},
+  {cat:'money', verb:'stock up on', qtype:'Hypothetical',
+   q:"If you found out the shops were going to be closed for two weeks, what would you stock up on first?",
+   followup:"Ask: would they panic-buy, or stay calm and shop sensibly?"},
+
+  {cat:'money', verb:'cut back on', qtype:'Personal',
+   q:"Have you ever had to cut back on something you really enjoyed — going out, travelling, buying clothes — because of money? How did it feel?",
+   followup:"Ask: did cutting back become a habit, or did they go back to their old ways?"},
+  {cat:'money', verb:'cut back on', qtype:'Opinion',
+   q:"Some people say you should cut back on small daily expenses — like coffee — to save money. Do you think that actually makes a difference?",
+   followup:"Do they have any strategies for spending less day-to-day?"},
+
+  {cat:'money', verb:'pay back', qtype:'Hypothetical',
+   q:"Imagine a close friend lent you a large amount of money in an emergency and told you to pay them back whenever you can. How long would feel too long to wait?",
+   followup:"Ask: would it feel awkward to have that conversation?"},
+  {cat:'money', verb:'pay back', qtype:'Opinion',
+   q:"Do you think it changes a friendship if you have to pay someone back? Why might some people never bring it up?",
+   followup:"Has this ever happened to them personally?"},
+
+  {cat:'money', verb:'save up', qtype:'Personal',
+   q:"What's the biggest thing you've ever saved up for? How long did it take, and was it worth it?",
+   followup:"Ask: were they tempted to spend the money on something else along the way?"},
+  {cat:'money', verb:'save up', qtype:'Hypothetical',
+   q:"If you decided to save up for something really ambitious — say, a year travelling — what would you have to change about your life right now?",
+   followup:"Do they think they're good at saving money in general?"},
+
+  {cat:'money', verb:'get by', qtype:'Personal',
+   q:"Have you ever been through a period where money was very tight — where you had just enough to get by? What was that like?",
+   followup:"Ask: what did they learn about themselves from that experience?"},
+  {cat:'money', verb:'get by', qtype:'Opinion',
+   q:"Do you think it's possible to get by happily on a very small income in today's world? What would have to change?",
+   followup:"What's the minimum they personally need to feel comfortable?"},
+
+  {cat:'money', verb:'run out of', qtype:'Hypothetical',
+   q:"What would you do if you ran out of money completely — not just a little short, but nothing — with a week until payday?",
+   followup:"Have they ever been in a situation like this, even briefly?"},
+  {cat:'money', verb:'run out of', qtype:'Personal',
+   q:"Tell me about a time you ran out of something at a really inconvenient moment. What was it?",
+   followup:"Ask: could it have been avoided? Do they plan better now?"},
+
+  {cat:'money', verb:'splash out on', qtype:'Personal',
+   q:"When was the last time you splashed out on something — something you didn't really need but really wanted? Do you regret it?",
+   followup:"Ask: how does it feel to spend a lot of money on yourself?"},
+  {cat:'money', verb:'splash out on', qtype:'Opinion',
+   q:"Some people say you should splash out on experiences, not things. Do you agree? What's worth spending big money on?",
+   followup:"What would they never splash out on, no matter how much money they had?"},
+
+  // ── HOBBIES ────────────────────────────────────────────────
+  {cat:'hobbies', verb:'try out', qtype:'Personal',
+   q:"What's the last new activity or hobby you tried out? What made you want to give it a go?",
+   followup:"Ask: would they try it again, or was once enough?"},
+  {cat:'hobbies', verb:'try out', qtype:'Hypothetical',
+   q:"If you had a completely free weekend with no obligations, what's one thing you've always wanted to try out but haven't got around to yet?",
+   followup:"What's stopped them from trying it so far?"},
+
+  {cat:'hobbies', verb:'give up', qtype:'Personal',
+   q:"Have you ever given up on a hobby or activity that you really wanted to be good at? Why did you stop?",
+   followup:"Do they ever think about going back to it?"},
+  {cat:'hobbies', verb:'give up', qtype:'Opinion',
+   q:"At what point is it reasonable to give up on learning something difficult — like a language or an instrument? Is giving up always a bad thing?",
+   followup:"Ask them to defend their view — when is quitting actually the right choice?"},
+
+  {cat:'hobbies', verb:'join in', qtype:'Personal',
+   q:"Are you the kind of person who joins in easily when people are playing a game or doing an activity? Or do you prefer to watch first?",
+   followup:"Has there been a moment where they were glad they joined in, even though they were nervous?"},
+  {cat:'hobbies', verb:'join in', qtype:'Hypothetical',
+   q:"Imagine you're at a party and everyone starts playing a game you've never heard of. Would you join in straight away, or would you wait and see?",
+   followup:"How does it feel to join in when you don't know the rules?"},
+
+  {cat:'hobbies', verb:'wind down', qtype:'Personal',
+   q:"What do you usually do to wind down at the end of a stressful day? Does it actually work?",
+   followup:"Ask: has their way of winding down changed over the years?"},
+  {cat:'hobbies', verb:'wind down', qtype:'Opinion',
+   q:"Do you think people today are worse at winding down than in the past — because of screens and constant notifications? What's your experience?",
+   followup:"What advice would they give someone who finds it impossible to relax?"},
+
+  {cat:'hobbies', verb:'hang out', qtype:'Personal',
+   q:"Who do you most enjoy hanging out with — and what do you normally do together?",
+   followup:"Ask: does it matter what they do, or is it just about the person?"},
+  {cat:'hobbies', verb:'hang out', qtype:'Opinion',
+   q:"Do you think it's important to regularly hang out with friends just doing nothing in particular — no plans, no purpose? Why?",
+   followup:"How often do they actually do that?"},
+
+  {cat:'hobbies', verb:'pick up', qtype:'Personal',
+   q:"Is there a skill you picked up without ever formally studying it — just by doing it, watching others, or being around it? How did it happen?",
+   followup:"Ask: do they think informal learning is as valuable as formal learning?"},
+  {cat:'hobbies', verb:'pick up', qtype:'Hypothetical',
+   q:"If you could instantly pick up any skill or hobby — no practice, it just comes naturally — what would you choose? Why that one?",
+   followup:"Would it change their life, or just be fun?"},
+
+  {cat:'hobbies', verb:'take up', qtype:'Personal',
+   q:"Have you taken up any new hobbies in the last few years? What made you decide to start?",
+   followup:"Ask: do they think they'll keep doing it, or does enthusiasm usually fade?"},
+  {cat:'hobbies', verb:'take up', qtype:'Hypothetical',
+   q:"If your doctor told you to take up a physical hobby — any one you like — what would you choose and why?",
+   followup:"Is there anything they'd never want to take up, no matter what?"},
+
+  {cat:'hobbies', verb:'get into', qtype:'Personal',
+   q:"Is there something you got into quite recently that surprised you — something you never expected to enjoy? How did it start?",
+   followup:"Ask: what is it about that thing that hooked them?"},
+  {cat:'hobbies', verb:'get into', qtype:'Opinion',
+   q:"Do you think social media makes it easier or harder to get into new hobbies? Does it inspire people, or just make them compare themselves to experts?",
+   followup:"Has an app or video ever got them into something new?"},
+
+  // ── HEALTH ─────────────────────────────────────────────────
+  {cat:'health', verb:'get fit', qtype:'Personal',
+   q:"Have you ever made a serious decision to get fit? What motivated you, and how did it go?",
+   followup:"Ask: was motivation easy to keep, or did it fade quickly?"},
+  {cat:'health', verb:'get fit', qtype:'Opinion',
+   q:"Some people say January is the worst time to try to get fit because the motivation doesn't last. Do you agree? When do you think is actually the best time?",
+   followup:"What's the most sustainable way they've found to stay active?"},
+
+  {cat:'health', verb:'warm up', qtype:'Opinion',
+   q:"Be honest — do you always warm up before exercising, or do you skip it? Why do so many people ignore it even though they know it's important?",
+   followup:"Have they ever got injured from not warming up?"},
+  {cat:'health', verb:'warm up', qtype:'Hypothetical',
+   q:"If you were designing a PE class for adults who hate exercise, how would you warm them up in a way that didn't feel like exercise?",
+   followup:"What kinds of movement do they actually enjoy?"},
+
+  {cat:'health', verb:'cool down', qtype:'Personal',
+   q:"After a really intense day — mentally or physically — how do you cool down? What helps you slow back to normal?",
+   followup:"Ask: do they find it hard to switch off, or does it come naturally?"},
+  {cat:'health', verb:'cool down', qtype:'Opinion',
+   q:"Do you think most people cool down properly after exercise, or do they just stop suddenly and walk away? Why does it matter?",
+   followup:"What happens to the body if you don't cool down?"},
+
+  {cat:'health', verb:'pass out', qtype:'Personal',
+   q:"Have you ever passed out, nearly passed out, or seen someone pass out? What happened?",
+   followup:"Ask: how did they or the other person feel afterwards?"},
+  {cat:'health', verb:'pass out', qtype:'Hypothetical',
+   q:"Imagine you're giving a presentation to a big group and you feel like you're about to pass out. What would you do?",
+   followup:"Ask: do they get nervous in public? Have they ever frozen or felt faint in a stressful moment?"},
+
+  {cat:'health', verb:'come down with', qtype:'Personal',
+   q:"What do you do when you feel like you're coming down with something — the first signs of a cold or flu? Do you push through, rest, or something else?",
+   followup:"Ask: are they the type to ignore it, or do they take it seriously?"},
+  {cat:'health', verb:'come down with', qtype:'Opinion',
+   q:"Do you think people should go to work when they're coming down with a cold, or stay home? Where's the line?",
+   followup:"Has this ever caused tension at their workplace?"},
+
+  {cat:'health', verb:'burn off', qtype:'Personal',
+   q:"Do you ever exercise specifically to burn off stress — not to get fit, just to get rid of that energy? Does it help?",
+   followup:"Ask: what's the most effective thing they've found for burning off stress?"},
+  {cat:'health', verb:'burn off', qtype:'Opinion',
+   q:"Some people eat whatever they want and say they'll burn it off later. Do you think that's a healthy attitude, or is it a bit of an excuse?",
+   followup:"What's their relationship with eating and exercise?"},
+
+  {cat:'health', verb:'cut down on', qtype:'Personal',
+   q:"Is there anything you've successfully cut down on — food, drink, screen time, anything? How did you manage to do it?",
+   followup:"Was it willpower, a strategy, or something that happened to make them change?"},
+  {cat:'health', verb:'cut down on', qtype:'Opinion',
+   q:"Doctors often tell people to cut down on things — sugar, caffeine, alcohol. Do you think advice like that actually changes people's behaviour? Why or why not?",
+   followup:"Do they respond better to negative advice ('cut down on') or positive ('eat more vegetables')?"},
+
+  {cat:'health', verb:'work out', qtype:'Personal',
+   q:"Do you currently work out regularly? What does your routine look like — or why haven't you found one that sticks?",
+   followup:"Ask: gym, home, outdoors — what works best for them and why?"},
+  {cat:'health', verb:'work out', qtype:'Hypothetical',
+   q:"If you had to work out every day for 30 days as a challenge — no excuses — what would you do, and do you think you'd make it?",
+   followup:"What would make them give up or push through?"},
+
+  // ── CHORES ─────────────────────────────────────────────────
+  {cat:'chores', verb:'sweep up', qtype:'Personal',
+   q:"Are you the kind of person who sweeps up mess immediately, or does it have to get to a certain level before you do something about it?",
+   followup:"Ask: do they have a threshold — a point where they can't ignore it any longer?"},
+  {cat:'chores', verb:'sweep up', qtype:'Opinion',
+   q:"Do you think living in a clean, tidy space actually affects your mood and focus? Or is the 'tidy house, tidy mind' idea a bit overrated?",
+   followup:"Have they ever noticed a real difference in how they felt after cleaning?"},
+
+  {cat:'chores', verb:'put away', qtype:'Personal',
+   q:"Is there anything in your home that never quite gets put away — it just lives on a chair, or a corner, or a specific spot? What is it?",
+   followup:"Ask: have they tried to fix this? Why does it keep happening?"},
+  {cat:'chores', verb:'put away', qtype:'Opinion',
+   q:"Some people say children should be taught to put things away from a very young age. Do you agree? At what age is it reasonable to expect that?",
+   followup:"Were they taught to tidy up as a child? Did it stick?"},
+
+  {cat:'chores', verb:'sort out', qtype:'Personal',
+   q:"Is there an area of your home — a drawer, a wardrobe, a cupboard — that you really need to sort out but keep putting off? What's stopping you?",
+   followup:"Ask: what would make them finally do it?"},
+  {cat:'chores', verb:'sort out', qtype:'Hypothetical',
+   q:"If someone gave you a full day at home with nothing to do but sort out any space you wanted — no distractions — what would you tackle first?",
+   followup:"Would it feel satisfying or exhausting?"},
+
+  {cat:'chores', verb:'hang out', qtype:'Personal',
+   q:"Do you hang out the washing yourself, or does it go in the dryer? What's your opinion on the great washing line debate?",
+   followup:"Ask: do they have strong feelings about how laundry should be done?"},
+  {cat:'chores', verb:'hang out', qtype:'Hypothetical',
+   q:"Imagine you hang out all your washing, go out for the day, and come back to find it's rained. What do you do — and how do you feel?",
+   followup:"Are they a calm person when small things go wrong, or does it wind them up?"},
+
+  {cat:'chores', verb:'pick up', qtype:'Personal',
+   q:"Are you the person who picks up after others in your home, or are you the one who needs reminding? Be honest.",
+   followup:"Ask: has this ever caused conflict in the house?"},
+  {cat:'chores', verb:'pick up', qtype:'Opinion',
+   q:"Do you think it's unfair to expect one person in a household to pick up after everyone else? How should chores be divided?",
+   followup:"What's the fairest system they've seen or tried?"},
+
+  {cat:'chores', verb:'take out', qtype:'Personal',
+   q:"In your house, who takes out the rubbish — is there an unspoken rule, or does it always end in a silent negotiation?",
+   followup:"Ask: what chore do they most hate? What would they happily pay someone else to do?"},
+  {cat:'chores', verb:'take out', qtype:'Hypothetical',
+   q:"If you had to choose one chore to take out of your life completely — someone else does it forever — what would it be?",
+   followup:"And which chore would they happily keep? Is there one they actually enjoy?"},
+
+  {cat:'chores', verb:'wipe down', qtype:'Personal',
+   q:"How often do you wipe down surfaces in your kitchen — after every meal, once a day, once a week? Are you a clean-as-you-go person?",
+   followup:"Ask: does a messy kitchen stress them out, or can they ignore it?"},
+  {cat:'chores', verb:'wipe down', qtype:'Opinion',
+   q:"Some people say a kitchen should be wiped down and clean before you go to bed. Others leave it for the morning. Which camp are you in, and why?",
+   followup:"Does it depend on how tired they are, or is it a firm habit?"},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let deck = [];
+let currentCat = 'all';
+let idx = 0;
+let revealedCount = 0;
+let verbRevealed = false;
+let history = [];
+
+// ============================================================
+// INIT
+// ============================================================
+function filterCat(cat) {
+  currentCat = cat;
+
+  // pill highlight
+  document.querySelectorAll('.cat-pill').forEach(p => {
+    p.className = 'cat-pill';
+    if (p.dataset.cat === cat) p.classList.add('active-' + cat);
+  });
+
+  deck = cat === 'all'
+    ? [...ALL_CARDS]
+    : ALL_CARDS.filter(c => c.cat === cat);
+
+  shuffle(deck);
+  idx = 0;
+  history = [];
+  revealedCount = 0;
+
+  document.getElementById('doneCard').style.display = 'none';
+  document.getElementById('stackWrap').style.display = '';
+  document.getElementById('controls').style.display = '';
+
+  renderCard(true);
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderCard(instant) {
+  if (idx >= deck.length) { showDone(); return; }
+
+  const card = deck[idx];
+  verbRevealed = false;
+
+  // category tag
+  const tag = document.getElementById('cardCatTag');
+  tag.textContent = {money:'💰 Money', hobbies:'🎯 Hobbies', health:'💪 Health', chores:'🏠 Chores'}[card.cat];
+  tag.className = 'category-tag tag-' + card.cat;
+
+  // question type
+  document.getElementById('cardQType').textContent = card.qtype;
+
+  // question
+  document.getElementById('questionText').textContent = card.q;
+
+  // verb chip — blurred
+  const chip = document.getElementById('verbChip');
+  chip.textContent = card.verb;
+  chip.className = 'verb-chip';
+
+  // reveal hint
+  document.getElementById('revealHint').style.display = '';
+
+  // follow-up — hidden until verb revealed
+  document.getElementById('followupStrip').className = 'followup-strip';
+  document.getElementById('followupText').textContent = card.followup;
+
+  // progress
+  const pct = deck.length > 1 ? (idx / (deck.length - 1)) * 100 : 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = 'Card ' + (idx + 1);
+  document.getElementById('progressTotal').textContent = deck.length + ' cards';
+  document.getElementById('headerCounter').textContent = (idx + 1) + ' / ' + deck.length;
+
+  // animate
+  if (!instant) {
+    const el = document.getElementById('convoCard');
+    el.classList.remove('enter');
+    void el.offsetWidth;
+    el.classList.add('enter');
+  }
+}
+
+// ============================================================
+// REVEAL
+// ============================================================
+function revealVerb() {
+  if (verbRevealed) return;
+  verbRevealed = true;
+  revealedCount++;
+
+  const chip = document.getElementById('verbChip');
+  chip.classList.add('revealed');
+  document.getElementById('revealHint').style.display = 'none';
+
+  // show follow-up
+  document.getElementById('followupStrip').classList.add('show');
+}
+
+// ============================================================
+// NAV
+// ============================================================
+function nextCard() {
+  history.push(idx);
+  idx++;
+  renderCard(false);
+}
+
+function prevCard() {
+  if (history.length === 0) return;
+  idx = history.pop();
+  renderCard(false);
+}
+
+function shuffleAndRestart() {
+  filterCat(currentCat);
+}
+
+// ============================================================
+// DONE
+// ============================================================
+function showDone() {
+  document.getElementById('stackWrap').style.display = 'none';
+  document.getElementById('controls').style.display = 'none';
+  document.getElementById('doneCard').style.display = 'block';
+  document.getElementById('doneTotal').textContent = deck.length;
+  document.getElementById('doneRevealed').textContent = revealedCount;
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('headerCounter').textContent = 'Done';
+}
+
+// ============================================================
+// KEYBOARD
+// ============================================================
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextCard(); }
+  if (e.key === 'ArrowLeft') prevCard();
+  if (e.key === 'r' || e.key === 'R') revealVerb();
+});
+
+// ============================================================
+// START
+// ============================================================
+filterCat('all');
+</script>
+</body>
+</html>
