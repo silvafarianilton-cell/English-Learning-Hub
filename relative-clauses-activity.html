@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relative Clauses — Interactive Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --card: #FFFFFF;
+    --text: #1A1A18;
+    --muted: #6B6B65;
+    --border: #E2DDD4;
+    --accent: #2D5A8E;
+    --accent-light: #EBF2FA;
+    --success: #2D7A4F;
+    --success-light: #EAF5EE;
+    --error: #B84040;
+    --error-light: #FAEBEB;
+    --warning: #8C5E00;
+    --warning-light: #FDF4E0;
+    --pill-who: #E8F0FB;
+    --pill-who-text: #1A4A8C;
+    --pill-which: #F0EBF8;
+    --pill-which-text: #5C2D91;
+    --pill-whose: #FDEEE0;
+    --pill-whose-text: #8C3B00;
+    --pill-where: #E8F5EE;
+    --pill-where-text: #1A6B3C;
+    --pill-when: #FDF4E0;
+    --pill-when-text: #7A5000;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page-header {
+    max-width: 720px;
+    margin: 0 auto 2.5rem;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+
+  .page-header p {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tab-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .activity-panel { display: none; max-width: 720px; margin: 0 auto; }
+  .activity-panel.active { display: block; }
+
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  /* ACTIVITY 1 — Sentence Expansion */
+  .expansion-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .base-sentence {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .expansion-input {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border 0.15s;
+  }
+
+  .expansion-input:focus { border-color: var(--accent); }
+  .expansion-input.correct { border-color: var(--success); background: var(--success-light); }
+  .expansion-input.wrong { border-color: var(--error); background: var(--error-light); }
+
+  .hint-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .connector-pill {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 100px;
+    cursor: default;
+  }
+
+  .pill-who   { background: var(--pill-who);   color: var(--pill-who-text); }
+  .pill-which { background: var(--pill-which); color: var(--pill-which-text); }
+  .pill-whose { background: var(--pill-whose); color: var(--pill-whose-text); }
+  .pill-where { background: var(--pill-where); color: var(--pill-where-text); }
+  .pill-when  { background: var(--pill-when);  color: var(--pill-when-text); }
+
+  .check-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: 1.5px solid var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 10px;
+  }
+
+  .check-btn:hover { background: var(--accent); color: #fff; }
+
+  .feedback-text {
+    font-size: 0.875rem;
+    margin-top: 8px;
+    min-height: 1.2em;
+    line-height: 1.5;
+  }
+
+  .feedback-text.ok   { color: var(--success); }
+  .feedback-text.err  { color: var(--error); }
+  .feedback-text.hint { color: var(--warning); }
+
+  /* ACTIVITY 2 — Reformulation drill */
+  .reformulation-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .two-sentences {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+  }
+
+  .sentence-line {
+    font-size: 1rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    border-left: 3px solid var(--border);
+  }
+
+  .arrow-label {
+    font-size: 1.5rem;
+    color: var(--muted);
+    text-align: center;
+    margin: 6px 0;
+  }
+
+  /* ACTIVITY 3 — Describe & Guess */
+  .guess-game {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .mystery-word {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    letter-spacing: 0.02em;
+  }
+
+  .clue-badge {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+  }
+
+  .describe-textarea {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    resize: none;
+    min-height: 90px;
+    outline: none;
+    transition: border 0.15s;
+    text-align: left;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .describe-textarea:focus { border-color: var(--accent); }
+
+  .live-analysis {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    min-height: 44px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .found-connector {
+    display: inline-block;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin: 0 2px;
+  }
+
+  .next-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .next-btn:hover { opacity: 0.88; }
+  .next-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .word-counter {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    text-align: right;
+  }
+
+  /* Scoreboard */
+  .score-bar {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .score-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 20px;
+    text-align: center;
+    min-width: 90px;
+  }
+
+  .score-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--accent);
+    display: block;
+  }
+
+  .score-lbl {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    background: var(--border);
+    border-radius: 100px;
+    height: 4px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 100px;
+    transition: width 0.3s ease;
+  }
+
+  /* Reference card */
+  .reference-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+
+  .ref-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+  }
+
+  .ref-card h4 {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+
+  .ref-card .ref-use {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .ref-card .ref-example {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    font-style: italic;
+    color: var(--text);
+  }
+
+  .ref-card .ref-example span {
+    font-style: normal;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Relative Clauses</h1>
+  <p>Three activities to move from knowing the rule to using it naturally in speech.</p>
+</div>
+
+<!-- Score bar -->
+<div class="score-bar">
+  <div class="score-card">
+    <span class="score-num" id="total-score">0</span>
+    <span class="score-lbl">points</span>
+  </div>
+  <div class="score-card">
+    <span class="score-num" id="streak-count">0</span>
+    <span class="score-lbl">streak</span>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('expand')">① Expand</button>
+  <button class="tab-btn" onclick="switchTab('reform')">② Reformulate</button>
+  <button class="tab-btn" onclick="switchTab('describe')">③ Describe & Guess</button>
+  <button class="tab-btn" onclick="switchTab('ref')">📋 Reference</button>
+</div>
+
+<!-- PANEL 1: Sentence Expansion -->
+<div class="activity-panel active" id="panel-expand">
+  <p class="section-label">Activity 1 — Build longer sentences</p>
+  <p style="color:var(--muted); font-size:0.9rem; margin-bottom:1.5rem;">Start with the base sentence. Add a relative clause using the suggested connector. There may be more than one good answer.</p>
+
+  <div id="expand-items"></div>
+</div>
+
+<!-- PANEL 2: Reformulation -->
+<div class="activity-panel" id="panel-reform">
+  <p class="section-label">Activity 2 — Join two sentences into one</p>
+  <p style="color:var(--muted); font-size:0.9rem; margin-bottom:1.5rem;">Read the two sentences. Write one new sentence using the right relative pronoun.</p>
+
+  <div id="reform-items"></div>
+</div>
+
+<!-- PANEL 3: Describe & Guess -->
+<div class="activity-panel" id="panel-describe">
+  <p class="section-label">Activity 3 — Describe without saying the word</p>
+  <p style="color:var(--muted); font-size:0.9rem; margin-bottom:1.5rem;">Describe the word using relative clauses. The app detects which connectors you use. Try to use at least one!</p>
+
+  <div class="guess-game">
+    <div class="mystery-word" id="mystery-word">umbrella</div>
+    <div class="clue-badge" id="clue-badge">object</div>
+    <p style="font-size:0.875rem; color:var(--muted); margin-bottom:1.25rem;">Describe it using <em>who, which, whose, where,</em> or <em>when</em> — without saying the word itself.</p>
+    <div class="word-counter"><span id="char-count">0</span> characters</div>
+    <textarea class="describe-textarea" id="describe-input" placeholder="It's a thing which you use when..." oninput="analyzeDescription()"></textarea>
+    <div class="live-analysis" id="live-analysis">Start typing to see which connectors you use...</div>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <button class="next-btn" onclick="nextWord()">Next word →</button>
+      <button class="next-btn" style="background:var(--success);" onclick="scoreDescription()">✓ I used a relative clause</button>
+    </div>
+    <div class="feedback-text" id="describe-feedback" style="margin-top:1rem; text-align:center;"></div>
+  </div>
+</div>
+
+<!-- PANEL: Reference -->
+<div class="activity-panel" id="panel-ref">
+  <p class="section-label">Quick Reference</p>
+  <div class="reference-grid">
+    <div class="ref-card">
+      <h4 class="connector-pill pill-who" style="display:inline-block; margin-bottom:8px;">who</h4>
+      <div class="ref-use">for people</div>
+      <div class="ref-example">The man <span>who</span> lives next door is a doctor.</div>
+    </div>
+    <div class="ref-card">
+      <h4 class="connector-pill pill-which" style="display:inline-block; margin-bottom:8px;">which</h4>
+      <div class="ref-use">for things / animals</div>
+      <div class="ref-example">The book <span>which</span> I bought is fascinating.</div>
+    </div>
+    <div class="ref-card">
+      <h4 class="connector-pill pill-whose" style="display:inline-block; margin-bottom:8px;">whose</h4>
+      <div class="ref-use">possession (people & things)</div>
+      <div class="ref-example">The student <span>whose</span> essay I read was brilliant.</div>
+    </div>
+    <div class="ref-card">
+      <h4 class="connector-pill pill-where" style="display:inline-block; margin-bottom:8px;">where</h4>
+      <div class="ref-use">for places</div>
+      <div class="ref-example">The café <span>where</span> we met closed down.</div>
+    </div>
+    <div class="ref-card">
+      <h4 class="connector-pill pill-when" style="display:inline-block; margin-bottom:8px;">when</h4>
+      <div class="ref-use">for times</div>
+      <div class="ref-example">I remember the day <span>when</span> we first met.</div>
+    </div>
+    <div class="ref-card">
+      <h4 style="margin-bottom:8px;">that</h4>
+      <div class="ref-use">informal — replaces who/which in defining clauses</div>
+      <div class="ref-example">The film <span>that</span> won the Oscar was incredible.</div>
+    </div>
+  </div>
+
+  <div style="background:var(--warning-light); border-radius:14px; padding:1.25rem 1.5rem; border-left:3px solid #C0840A;">
+    <p style="font-weight:600; margin-bottom:6px; color:var(--warning);">Defining vs. Non-defining</p>
+    <p style="font-size:0.9rem; color:var(--text); line-height:1.6;"><strong>Defining:</strong> essential info — no commas.<br>
+    <em>The woman <strong>who</strong> called you is waiting.</em><br><br>
+    <strong>Non-defining:</strong> extra info — use commas.<br>
+    <em>My sister, <strong>who</strong> lives in Berlin, is visiting next week.</em></p>
+  </div>
+</div>
+
+<script>
+let totalScore = 0;
+let streak = 0;
+
+function addScore(pts) {
+  totalScore += pts;
+  streak++;
+  document.getElementById('total-score').textContent = totalScore;
+  document.getElementById('streak-count').textContent = streak;
+}
+
+function breakStreak() {
+  streak = 0;
+  document.getElementById('streak-count').textContent = streak;
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.activity-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ─── ACTIVITY 1 DATA ───────────────────────────────────────────────
+const expandData = [
+  {
+    base: "I have a friend.",
+    hint: "who",
+    pillClass: "pill-who",
+    keywords: ["who"],
+    example: "I have a friend who lives in Madrid.",
+    tip: "Use <em>who</em> + a verb or subject + verb after the noun <em>friend</em>."
+  },
+  {
+    base: "She showed me a photo.",
+    hint: "which",
+    pillClass: "pill-which",
+    keywords: ["which", "that"],
+    example: "She showed me a photo which was taken in the 1980s.",
+    tip: "Use <em>which</em> (or <em>that</em>) after <em>photo</em> — a thing."
+  },
+  {
+    base: "I visited a city.",
+    hint: "where",
+    pillClass: "pill-where",
+    keywords: ["where"],
+    example: "I visited a city where everything is very expensive.",
+    tip: "Use <em>where</em> after a place noun like <em>city</em>."
+  },
+  {
+    base: "He remembers the summer.",
+    hint: "when",
+    pillClass: "pill-when",
+    keywords: ["when"],
+    example: "He remembers the summer when they first met.",
+    tip: "Use <em>when</em> after a time expression like <em>summer, day, moment</em>."
+  },
+  {
+    base: "I know a woman.",
+    hint: "whose",
+    pillClass: "pill-whose",
+    keywords: ["whose"],
+    example: "I know a woman whose daughter is a famous chef.",
+    tip: "Use <em>whose</em> to show possession — replace <em>her / his / its</em>."
+  },
+  {
+    base: "We went to a restaurant.",
+    hint: "where",
+    pillClass: "pill-where",
+    keywords: ["where"],
+    example: "We went to a restaurant where you cook your own food.",
+    tip: "Use <em>where</em> after the place noun <em>restaurant</em>."
+  },
+  {
+    base: "She's reading a book.",
+    hint: "which / that",
+    pillClass: "pill-which",
+    keywords: ["which", "that"],
+    example: "She's reading a book which won three international awards.",
+    tip: "Both <em>which</em> and <em>that</em> work here for a thing."
+  },
+];
+
+function buildExpandItems() {
+  const container = document.getElementById('expand-items');
+  expandData.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'expansion-item';
+    div.innerHTML = `
+      <div class="base-sentence">${item.base}</div>
+      <div class="hint-row">
+        <span style="font-size:0.8rem; color:var(--muted);">Suggested connector:</span>
+        <span class="connector-pill ${item.pillClass}">${item.hint}</span>
+      </div>
+      <input type="text" class="expansion-input" id="exp-input-${i}"
+        placeholder="Rewrite and expand the sentence..."
+        onkeydown="if(event.key==='Enter') checkExpand(${i})">
+      <br>
+      <button class="check-btn" onclick="checkExpand(${i})">Check ✓</button>
+      <div class="feedback-text" id="exp-fb-${i}"></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function checkExpand(i) {
+  const input = document.getElementById(`exp-input-${i}`);
+  const fb = document.getElementById(`exp-fb-${i}`);
+  const val = input.value.trim().toLowerCase();
+  const item = expandData[i];
+
+  if (val.length < 10) {
+    fb.className = 'feedback-text hint';
+    fb.textContent = 'Write a full sentence to check it.';
+    return;
+  }
+
+  const hasConnector = item.keywords.some(k => val.includes(k));
+  const hasBase = val.includes(item.base.replace('.','').toLowerCase());
+
+  if (hasConnector && val.length > 20) {
+    input.className = 'expansion-input correct';
+    fb.className = 'feedback-text ok';
+    fb.textContent = '✓ Great! You used the connector. Say it out loud now.';
+    addScore(10);
+  } else if (!hasConnector) {
+    input.className = 'expansion-input wrong';
+    fb.className = 'feedback-text err';
+    fb.innerHTML = `Try using <strong>${item.hint}</strong>. ${item.tip}`;
+    breakStreak();
+  } else {
+    fb.className = 'feedback-text hint';
+    fb.innerHTML = `Getting there! Example: <em>${item.example}</em>`;
+  }
+}
+
+// ─── ACTIVITY 2 DATA ───────────────────────────────────────────────
+const reformData = [
+  {
+    s1: "That's my neighbour.",
+    s2: "His dog is enormous.",
+    connector: "whose",
+    pillClass: "pill-whose",
+    keywords: ["whose"],
+    answer: "That's my neighbour whose dog is enormous.",
+  },
+  {
+    s1: "The café closed last year.",
+    s2: "We used to meet there.",
+    connector: "where",
+    pillClass: "pill-where",
+    keywords: ["where"],
+    answer: "The café where we used to meet closed last year.",
+  },
+  {
+    s1: "I met a teacher.",
+    s2: "She changed my life.",
+    connector: "who",
+    pillClass: "pill-who",
+    keywords: ["who"],
+    answer: "I met a teacher who changed my life.",
+  },
+  {
+    s1: "He bought a car.",
+    s2: "It broke down on the first day.",
+    connector: "which / that",
+    pillClass: "pill-which",
+    keywords: ["which", "that"],
+    answer: "He bought a car which broke down on the first day.",
+  },
+  {
+    s1: "I remember the day.",
+    s2: "My daughter was born then.",
+    connector: "when",
+    pillClass: "pill-when",
+    keywords: ["when"],
+    answer: "I remember the day when my daughter was born.",
+  },
+  {
+    s1: "She works at a hospital.",
+    s2: "It was built in the 1960s.",
+    connector: "which / that",
+    pillClass: "pill-which",
+    keywords: ["which", "that"],
+    answer: "She works at a hospital which was built in the 1960s.",
+  },
+  {
+    s1: "I have a colleague.",
+    s2: "Her presentation won an award.",
+    connector: "whose",
+    pillClass: "pill-whose",
+    keywords: ["whose"],
+    answer: "I have a colleague whose presentation won an award.",
+  },
+];
+
+function buildReformItems() {
+  const container = document.getElementById('reform-items');
+  reformData.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'reformulation-card';
+    div.innerHTML = `
+      <div class="two-sentences">
+        <div class="sentence-line">${item.s1}</div>
+        <div class="sentence-line">${item.s2}</div>
+      </div>
+      <div class="hint-row" style="margin-bottom:10px;">
+        <span style="font-size:0.8rem; color:var(--muted);">Connector:</span>
+        <span class="connector-pill ${item.pillClass}">${item.connector}</span>
+      </div>
+      <input type="text" class="expansion-input" id="ref-input-${i}"
+        placeholder="Write one combined sentence..."
+        onkeydown="if(event.key==='Enter') checkReform(${i})">
+      <br>
+      <button class="check-btn" onclick="checkReform(${i})">Check ✓</button>
+      <div class="feedback-text" id="ref-fb-${i}"></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function checkReform(i) {
+  const input = document.getElementById(`ref-input-${i}`);
+  const fb = document.getElementById(`ref-fb-${i}`);
+  const val = input.value.trim().toLowerCase();
+  const item = reformData[i];
+
+  if (val.length < 8) {
+    fb.className = 'feedback-text hint';
+    fb.textContent = 'Write a complete sentence.';
+    return;
+  }
+
+  const hasConnector = item.keywords.some(k => val.includes(k));
+
+  if (hasConnector && val.length > 20) {
+    input.className = 'expansion-input correct';
+    fb.className = 'feedback-text ok';
+    fb.innerHTML = `✓ Excellent! Model answer: <em>${item.answer}</em>`;
+    addScore(10);
+  } else {
+    input.className = 'expansion-input wrong';
+    fb.className = 'feedback-text err';
+    fb.innerHTML = `Use <strong>${item.connector}</strong> to connect the two ideas. Model: <em>${item.answer}</em>`;
+    breakStreak();
+  }
+}
+
+// ─── ACTIVITY 3 DATA ───────────────────────────────────────────────
+const describeWords = [
+  { word: "umbrella", clue: "object" },
+  { word: "library", clue: "place" },
+  { word: "dentist", clue: "person" },
+  { word: "passport", clue: "document" },
+  { word: "kitchen", clue: "room" },
+  { word: "referee", clue: "person" },
+  { word: "midnight", clue: "time" },
+  { word: "dictionary", clue: "object" },
+  { word: "airport", clue: "place" },
+  { word: "architect", clue: "person" },
+  { word: "alarm clock", clue: "object" },
+  { word: "birthday", clue: "occasion" },
+];
+
+let currentWordIndex = 0;
+
+function loadWord(i) {
+  const w = describeWords[i % describeWords.length];
+  document.getElementById('mystery-word').textContent = w.word;
+  document.getElementById('clue-badge').textContent = w.clue;
+  document.getElementById('describe-input').value = '';
+  document.getElementById('live-analysis').innerHTML = 'Start typing to see which connectors you use...';
+  document.getElementById('describe-feedback').textContent = '';
+  document.getElementById('char-count').textContent = '0';
+}
+
+function analyzeDescription() {
+  const text = document.getElementById('describe-input').value.toLowerCase();
+  document.getElementById('char-count').textContent = document.getElementById('describe-input').value.length;
+
+  const connectors = [
+    { word: 'who',   cls: 'pill-who' },
+    { word: 'which', cls: 'pill-which' },
+    { word: 'whose', cls: 'pill-whose' },
+    { word: 'where', cls: 'pill-where' },
+    { word: 'when',  cls: 'pill-when' },
+    { word: 'that',  cls: 'pill-which' },
+  ];
+
+  const found = connectors.filter(c => {
+    const re = new RegExp('\\b' + c.word + '\\b');
+    return re.test(text);
+  });
+
+  const analysis = document.getElementById('live-analysis');
+
+  if (found.length === 0) {
+    analysis.innerHTML = text.length < 5 ? 'Start typing...' : 'No relative clause detected yet — keep going!';
+    analysis.style.color = 'var(--muted)';
+  } else {
+    analysis.innerHTML = 'Connectors used: ' + found.map(c =>
+      `<span class="found-connector connector-pill ${c.cls}">${c.word}</span>`
+    ).join(' ');
+  }
+}
+
+function nextWord() {
+  currentWordIndex++;
+  loadWord(currentWordIndex);
+}
+
+function scoreDescription() {
+  const text = document.getElementById('describe-input').value.toLowerCase();
+  const connectors = ['who','which','whose','where','when','that'];
+  const fb = document.getElementById('describe-feedback');
+  const hasAny = connectors.some(c => {
+    const re = new RegExp('\\b' + c + '\\b');
+    return re.test(text);
+  });
+
+  if (text.length < 15) {
+    fb.className = 'feedback-text hint';
+    fb.textContent = 'Write a few more words first!';
+    return;
+  }
+
+  if (hasAny) {
+    fb.className = 'feedback-text ok';
+    fb.textContent = '✓ Well done! +10 points. Now say your description out loud before moving on.';
+    addScore(10);
+    setTimeout(nextWord, 1800);
+  } else {
+    fb.className = 'feedback-text err';
+    fb.textContent = 'Try adding a relative clause. Use: which, who, whose, where, or when.';
+    breakStreak();
+  }
+}
+
+// ─── INIT ───────────────────────────────────────────────────────────
+buildExpandItems();
+buildReformItems();
+loadWord(0);
+</script>
+</body>
+</html>
