@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Future Tenses – B1 English Practice</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0e0f14;
+      --surface: #16181f;
+      --surface2: #1e2029;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.15);
+      --text: #f0f0f3;
+      --muted: #7a7d8c;
+      --will: #5c8fff;
+      --will-bg: rgba(92,143,255,0.12);
+      --will-border: rgba(92,143,255,0.35);
+      --going: #3ecf8e;
+      --going-bg: rgba(62,207,142,0.12);
+      --going-border: rgba(62,207,142,0.35);
+      --pres: #c87eff;
+      --pres-bg: rgba(200,126,255,0.12);
+      --pres-border: rgba(200,126,255,0.35);
+      --correct: #3ecf8e;
+      --wrong: #ff5e5e;
+      --correct-bg: rgba(62,207,142,0.1);
+      --wrong-bg: rgba(255,94,94,0.1);
+      --font: 'Sora', sans-serif;
+      --mono: 'DM Mono', monospace;
+      --radius: 12px;
+      --radius-lg: 18px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* background grid texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    /* Header */
+    .header {
+      margin-bottom: 2rem;
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .site-title {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+    .level-pill {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border-hover);
+      border-radius: 999px;
+      padding: 3px 12px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    .main-title {
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .main-title span.accent { color: var(--will); }
+
+    /* HUD */
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+    .hud-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .hud-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: var(--mono);
+      margin-bottom: 5px;
+    }
+    .hud-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    /* Progress bar */
+    .progress-track {
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 99px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--will), var(--pres));
+      transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Question card */
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1rem;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .cat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      border-radius: 999px;
+      padding: 4px 12px;
+      margin-bottom: 1rem;
+      border: 1px solid;
+    }
+    .cat-badge.will  { background: var(--will-bg); color: var(--will); border-color: var(--will-border); }
+    .cat-badge.going { background: var(--going-bg); color: var(--going); border-color: var(--going-border); }
+    .cat-badge.pres  { background: var(--pres-bg); color: var(--pres); border-color: var(--pres-border); }
+
+    .q-text {
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+    .blank {
+      display: inline-block;
+      border-bottom: 2px dashed rgba(255,255,255,0.25);
+      min-width: 100px;
+      color: var(--muted);
+      font-style: italic;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    /* Options */
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .opt {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      font-size: 14px;
+      font-family: var(--font);
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      line-height: 1.4;
+    }
+    .opt:hover:not(:disabled) {
+      background: rgba(255,255,255,0.06);
+      border-color: var(--border-hover);
+      transform: translateY(-1px);
+    }
+    .opt:active:not(:disabled) { transform: translateY(0); }
+    .opt:disabled { cursor: default; }
+    .opt.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct);
+      color: var(--correct);
+      font-weight: 600;
+    }
+    .opt.wrong {
+      background: var(--wrong-bg);
+      border-color: var(--wrong);
+      color: var(--wrong);
+    }
+
+    /* Feedback */
+    .feedback {
+      margin-top: 1.25rem;
+      font-size: 14px;
+      line-height: 1.65;
+      padding: 0.9rem 1.1rem;
+      border-radius: var(--radius);
+      border: 1px solid;
+      animation: fadeIn 0.25s ease;
+    }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .feedback.ok  { background: var(--correct-bg); border-color: rgba(62,207,142,0.3); color: #a8f0d0; }
+    .feedback.bad { background: var(--wrong-bg);   border-color: rgba(255,94,94,0.3);  color: #ffb0b0; }
+    .feedback strong { color: inherit; font-weight: 600; }
+
+    .btn-next {
+      display: inline-block;
+      margin-top: 1rem;
+      background: transparent;
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius);
+      padding: 0.65rem 1.5rem;
+      font-size: 14px;
+      font-family: var(--font);
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-next:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.25); }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+    .legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+    .d-will  { background: var(--will); }
+    .d-going { background: var(--going); }
+    .d-pres  { background: var(--pres); }
+
+    /* Summary */
+    .summary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      animation: slideUp 0.4s ease;
+    }
+    .stars { font-size: 2.5rem; margin-bottom: 1rem; line-height: 1; }
+    .summary-score {
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+    .summary-label {
+      font-size: 13px;
+      color: var(--muted);
+      font-family: var(--mono);
+      letter-spacing: 0.08em;
+      margin-bottom: 1.25rem;
+    }
+    .summary-msg {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--muted);
+      max-width: 400px;
+      margin: 0 auto 1.75rem;
+    }
+    .summary-tags {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.75rem;
+    }
+    .replay-btn {
+      background: var(--will);
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.75rem 2rem;
+      font-size: 15px;
+      font-family: var(--font);
+      font-weight: 600;
+      color: #000;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .replay-btn:hover { opacity: 0.88; }
+    .replay-btn:active { transform: scale(0.98); }
+
+    .streak-flash {
+      animation: pop 0.35s ease;
+    }
+    @keyframes pop {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.35); }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 480px) {
+      .options { grid-template-columns: 1fr; }
+      .hud { grid-template-columns: repeat(2, 1fr); }
+      .q-card { padding: 1.25rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="header">
+    <div class="header-top">
+      <span class="site-title">Grammar Quest</span>
+      <span class="level-pill">B1 · English</span>
+    </div>
+    <h1 class="main-title">Future <span class="accent">Tenses</span> Challenge</h1>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot d-will"></div>Will — predictions</div>
+    <div class="legend-item"><div class="legend-dot d-going"></div>Going to — plans</div>
+    <div class="legend-item"><div class="legend-dot d-pres"></div>Present continuous — arrangements</div>
+  </div>
+
+  <div class="hud">
+    <div class="hud-card"><div class="hud-label">Score</div><div class="hud-val" id="score">0</div></div>
+    <div class="hud-card"><div class="hud-label">Streak</div><div class="hud-val" id="streak">—</div></div>
+    <div class="hud-card"><div class="hud-label">Question</div><div class="hud-val" id="qnum">1/12</div></div>
+    <div class="hud-card"><div class="hud-label">Lives</div><div class="hud-val" id="lives">♥♥♥</div></div>
+  </div>
+
+  <div class="progress-track">
+    <div class="progress-fill" id="progress" style="width:8%"></div>
+  </div>
+
+  <div id="game-area"></div>
+
+</div>
+
+<script>
+const questions = [
+  {cat:"will", label:"Will · prediction",
+   q:"Look at those clouds! I think it ___ later.",
+   opts:["will rain","is going to rain","is raining","rains"],ans:0,
+   exp:"<strong>Will</strong> is used for spontaneous predictions based on personal opinion or feeling. Words like <em>I think</em> signal this."},
+  {cat:"will", label:"Will · prediction",
+   q:"I'm sure she ___ a great doctor one day.",
+   opts:["will be","is going to be","is being","be"],ans:0,
+   exp:"<strong>Will</strong> expresses predictions based on belief or certainty. <em>I'm sure</em> is a strong clue."},
+  {cat:"will", label:"Will · prediction",
+   q:"Probably, robots ___ most factory jobs in the future.",
+   opts:["will replace","are replacing","are going to replace","replace"],ans:0,
+   exp:"General future predictions — especially with <em>probably</em> — use <strong>will</strong>."},
+  {cat:"will", label:"Will · prediction",
+   q:"Don't worry. I'm sure everything ___ fine in the end.",
+   opts:["will be","is going to be","is","is being"],ans:0,
+   exp:"Reassurance about the future based on personal belief → <strong>will</strong>."},
+  {cat:"going", label:"Going to · plan",
+   q:"She has already bought the tickets. She ___ to Paris next summer.",
+   opts:["is going to travel","will travel","travels","is travelling"],ans:0,
+   exp:"<strong>Going to</strong> signals a pre-made plan or decision. Buying tickets is clear evidence of that decision."},
+  {cat:"going", label:"Going to · plan",
+   q:"Watch out! That ladder ___ fall!",
+   opts:["is going to","will","is","does"],ans:0,
+   exp:"<strong>Going to</strong> is used for predictions based on present visual evidence. You can see the danger right now."},
+  {cat:"going", label:"Going to · plan",
+   q:"We ___ renovate the kitchen. We've already called the contractor.",
+   opts:["are going to","will","are","do"],ans:0,
+   exp:"The decision was made before speaking → <strong>going to</strong>. Calling the contractor confirms the plan."},
+  {cat:"going", label:"Going to · plan",
+   q:"He looks really pale. I think he ___ faint.",
+   opts:["is going to","will","is","has"],ans:0,
+   exp:"Physical evidence (pale face) signals an imminent prediction → <strong>going to</strong>."},
+  {cat:"pres", label:"Present continuous · arrangement",
+   q:"I can't meet you at 7. I ___ dinner with my boss tonight at that restaurant.",
+   opts:["am having","will have","am going to have","have"],ans:0,
+   exp:"<strong>Present continuous</strong> is used for confirmed arrangements: there is a specific time and place already fixed."},
+  {cat:"pres", label:"Present continuous · arrangement",
+   q:"They ___ married on June 15th. The venue is already booked.",
+   opts:["are getting","will get","are going to get","get"],ans:0,
+   exp:"A booked venue means a fully arranged, fixed future event → <strong>present continuous</strong>."},
+  {cat:"pres", label:"Present continuous · arrangement",
+   q:"___ you ___ anything on Saturday afternoon?",
+   opts:["Are / doing","Will / do","Do / do","Going / to do"],ans:0,
+   exp:"Asking about someone's arranged plans → <strong>present continuous</strong> in question form."},
+  {cat:"pres", label:"Present continuous · arrangement",
+   q:"The conference ___ at 9 AM sharp. All speakers have confirmed.",
+   opts:["is starting","will start","starts","is going to start"],ans:0,
+   exp:"A timetabled event with confirmed participants → <strong>present continuous</strong> is natural here."}
+];
+
+let shuffled=[], idx=0, score=0, streak=0, lives=3, answered=false;
+
+function shuffle(a){ return a.slice().sort(()=>Math.random()-.5); }
+function catClass(c){ return c==="will"?"will":c==="going"?"going":"pres"; }
+
+function updateHUD(){
+  document.getElementById("score").textContent = score;
+  document.getElementById("streak").textContent = streak >= 1 ? streak + (streak>=3?" 🔥":"") : "—";
+  document.getElementById("lives").textContent = "♥".repeat(lives) + "♡".repeat(3-lives);
+}
+
+function renderQ(){
+  const ga = document.getElementById("game-area");
+  if(idx >= shuffled.length){ renderSummary(); return; }
+  const q = shuffled[idx];
+  const pct = Math.round(((idx+1)/shuffled.length)*100);
+  document.getElementById("progress").style.width = pct+"%";
+  document.getElementById("qnum").textContent = (idx+1)+"/"+shuffled.length;
+  answered = false;
+  const cls = catClass(q.cat);
+  const qhtml = q.q.replace("___","<span class='blank'>___</span>");
+  ga.innerHTML = `
+    <div class="q-card">
+      <span class="cat-badge ${cls}">${q.label}</span>
+      <div class="q-text">${qhtml}</div>
+      <div class="options" id="opts">
+        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="pick(${i})">${o}</button>`).join("")}
+      </div>
+      <div id="fb" style="display:none"></div>
+      <div id="nxt"></div>
+    </div>`;
+}
+
+function pick(chosen){
+  if(answered) return;
+  answered = true;
+  const q = shuffled[idx];
+  document.querySelectorAll(".opt").forEach(b=>b.disabled=true);
+  document.querySelectorAll(".opt")[q.ans].classList.add("correct");
+  const fb = document.getElementById("fb");
+  fb.style.display = "block";
+  if(chosen === q.ans){
+    const bonus = streak>=2 ? 20 : 10;
+    score += bonus;
+    streak++;
+    fb.className = "feedback ok";
+    fb.innerHTML = (streak>=3?"🔥 ":"✓ ") + q.exp + (bonus===20?" <strong>(+20 streak bonus!)</strong>":"");
+  } else {
+    document.querySelectorAll(".opt")[chosen].classList.add("wrong");
+    lives = Math.max(0, lives-1);
+    streak = 0;
+    fb.className = "feedback bad";
+    fb.innerHTML = "✗ " + q.exp;
+  }
+  updateHUD();
+  const streakEl = document.getElementById("streak");
+  if(streak>=3){ streakEl.classList.remove("streak-flash"); void streakEl.offsetWidth; streakEl.classList.add("streak-flash"); }
+  document.getElementById("nxt").innerHTML =
+    `<button class="btn-next" onclick="nextQ()">${idx+1<shuffled.length?"Next question →":"See my results →"}</button>`;
+}
+
+function nextQ(){ idx++; renderQ(); }
+
+function renderSummary(){
+  const total = questions.length * 10;
+  const pct = Math.round((score/total)*100);
+  const stars = score>=110?"⭐⭐⭐":score>=70?"⭐⭐":"⭐";
+  const msg = score>=110
+    ? "Outstanding! You've clearly mastered the three future forms. Keep up the great work."
+    : score>=70
+    ? "Good job! You're on the right track. Review the grammar notes for the questions you missed."
+    : "Keep practicing! Read the explanation carefully after each question — it really helps.";
+  document.getElementById("progress").style.width="100%";
+  document.getElementById("game-area").innerHTML = `
+    <div class="summary">
+      <div class="stars">${stars}</div>
+      <div class="summary-score">${score} pts</div>
+      <div class="summary-label">${pct}% accuracy · ${questions.length} questions</div>
+      <p class="summary-msg">${msg}</p>
+      <div class="summary-tags">
+        <span class="cat-badge will">Will · predictions</span>
+        <span class="cat-badge going">Going to · plans</span>
+        <span class="cat-badge pres">Present continuous · arrangements</span>
+      </div>
+      <button class="replay-btn" onclick="startGame()">Play again</button>
+    </div>`;
+}
+
+function startGame(){
+  shuffled = shuffle(questions);
+  idx=0; score=0; streak=0; lives=3;
+  updateHUD();
+  renderQ();
+}
+
+startGame();
+</script>
+</body>
+</html>
