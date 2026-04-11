@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Past Tenses – B1 English Practice</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0e0f14;
+      --surface: #16181f;
+      --surface2: #1e2029;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.15);
+      --text: #f0f0f3;
+      --muted: #7a7d8c;
+      --simple: #ff9f5e;
+      --simple-bg: rgba(255,159,94,0.12);
+      --simple-border: rgba(255,159,94,0.35);
+      --cont: #5cb8ff;
+      --cont-bg: rgba(92,184,255,0.12);
+      --cont-border: rgba(92,184,255,0.35);
+      --both: #c87eff;
+      --both-bg: rgba(200,126,255,0.12);
+      --both-border: rgba(200,126,255,0.35);
+      --correct: #3ecf8e;
+      --wrong: #ff5e5e;
+      --correct-bg: rgba(62,207,142,0.1);
+      --wrong-bg: rgba(255,94,94,0.1);
+      --font: 'Sora', sans-serif;
+      --mono: 'DM Mono', monospace;
+      --radius: 12px;
+      --radius-lg: 18px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem 4rem;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .wrap { position: relative; z-index: 1; width: 100%; max-width: 700px; }
+
+    /* Header */
+    .header { margin-bottom: 2rem; }
+    .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+    .site-title { font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-family: var(--mono); }
+    .level-pill { font-family: var(--mono); font-size: 11px; font-weight: 500; background: rgba(255,255,255,0.06); border: 1px solid var(--border-hover); border-radius: 999px; padding: 3px 12px; color: var(--muted); letter-spacing: 0.08em; }
+    .main-title { font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+    .main-title .acc-orange { color: var(--simple); }
+    .main-title .acc-blue { color: var(--cont); }
+
+    /* Timeline visual */
+    .timeline-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .tl-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+    .timeline {
+      position: relative;
+      height: 54px;
+      display: flex;
+      align-items: center;
+    }
+    .tl-line {
+      position: absolute;
+      left: 0; right: 0;
+      top: 50%;
+      height: 2px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+    }
+    .tl-cont-bar {
+      position: absolute;
+      left: 5%;
+      width: 52%;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 10px;
+      background: var(--cont-bg);
+      border: 1px solid var(--cont-border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tl-cont-label { font-family: var(--mono); font-size: 10px; color: var(--cont); letter-spacing: 0.06em; white-space: nowrap; }
+    .tl-interrupt {
+      position: absolute;
+      left: 56%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--simple);
+      border: 2px solid var(--bg);
+      z-index: 2;
+    }
+    .tl-interrupt-label {
+      position: absolute;
+      left: 56%;
+      top: calc(50% + 14px);
+      transform: translateX(-50%);
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--simple);
+      white-space: nowrap;
+    }
+    .tl-rule {
+      display: flex;
+      gap: 16px;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .tl-rule-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .rule-pill {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      border-radius: 999px;
+      padding: 2px 9px;
+      border: 1px solid;
+    }
+    .rp-cont  { background: var(--cont-bg); color: var(--cont); border-color: var(--cont-border); }
+    .rp-simple{ background: var(--simple-bg); color: var(--simple); border-color: var(--simple-border); }
+
+    /* Legend */
+    .legend { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); font-family: var(--mono); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .d-simple { background: var(--simple); }
+    .d-cont   { background: var(--cont); }
+    .d-both   { background: var(--both); }
+
+    /* HUD */
+    .hud { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+    .hud-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem .5rem; text-align: center; }
+    .hud-label { font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-family: var(--mono); margin-bottom: 5px; }
+    .hud-val { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1; }
+
+    /* Progress */
+    .progress-track { height: 4px; background: var(--surface2); border-radius: 99px; margin-bottom: 1.5rem; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--simple), var(--cont)); transition: width .5s cubic-bezier(.4,0,.2,1); }
+
+    /* Question card */
+    .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem 1.75rem; margin-bottom: 1rem; animation: slideUp .3s ease; }
+    @keyframes slideUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+    .cat-badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .06em; border-radius: 999px; padding: 4px 12px; margin-bottom: 1rem; border: 1px solid; }
+    .cat-badge.simple { background: var(--simple-bg); color: var(--simple); border-color: var(--simple-border); }
+    .cat-badge.cont   { background: var(--cont-bg);   color: var(--cont);   border-color: var(--cont-border); }
+    .cat-badge.both   { background: var(--both-bg);   color: var(--both);   border-color: var(--both-border); }
+
+    .q-text { font-size: 17px; line-height: 1.65; color: var(--text); margin-bottom: 1.25rem; }
+    .blank { display: inline-block; border-bottom: 2px dashed rgba(255,255,255,0.22); min-width: 130px; color: var(--muted); font-style: italic; font-size: 14px; vertical-align: middle; text-align: center; }
+
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .opt { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem 1rem; font-size: 14px; font-family: var(--font); color: var(--text); cursor: pointer; text-align: left; transition: background .15s, border-color .15s, transform .1s; line-height: 1.4; }
+    .opt:hover:not(:disabled) { background: rgba(255,255,255,0.06); border-color: var(--border-hover); transform: translateY(-1px); }
+    .opt:active:not(:disabled) { transform: translateY(0); }
+    .opt:disabled { cursor: default; }
+    .opt.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 600; }
+    .opt.wrong   { background: var(--wrong-bg);   border-color: var(--wrong);   color: var(--wrong); }
+
+    .feedback { margin-top: 1.25rem; font-size: 14px; line-height: 1.65; padding: .9rem 1.1rem; border-radius: var(--radius); border: 1px solid; animation: fadeIn .25s ease; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .feedback.ok  { background: var(--correct-bg); border-color: rgba(62,207,142,.3); color: #a8f0d0; }
+    .feedback.bad { background: var(--wrong-bg);   border-color: rgba(255,94,94,.3);  color: #ffb0b0; }
+    .feedback strong { color: inherit; font-weight: 600; }
+    .feedback em { font-style: italic; opacity: .85; }
+
+    .btn-next { display: inline-block; margin-top: 1rem; background: transparent; border: 1px solid var(--border-hover); border-radius: var(--radius); padding: .65rem 1.5rem; font-size: 14px; font-family: var(--font); font-weight: 500; color: var(--text); cursor: pointer; transition: background .15s; }
+    .btn-next:hover { background: rgba(255,255,255,.06); }
+
+    /* Summary */
+    .summary { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem 2rem; text-align: center; animation: slideUp .4s ease; }
+    .stars { font-size: 2.5rem; margin-bottom: 1rem; line-height: 1; }
+    .summary-score { font-size: 3rem; font-weight: 700; letter-spacing: -.03em; color: var(--text); margin-bottom: .25rem; }
+    .summary-label { font-size: 13px; color: var(--muted); font-family: var(--mono); letter-spacing: .08em; margin-bottom: 1.25rem; }
+    .summary-msg { font-size: 15px; line-height: 1.65; color: var(--muted); max-width: 420px; margin: 0 auto 1.75rem; }
+    .summary-tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.75rem; }
+    .replay-btn { background: var(--simple); border: none; border-radius: var(--radius); padding: .75rem 2rem; font-size: 15px; font-family: var(--font); font-weight: 600; color: #000; cursor: pointer; transition: opacity .15s, transform .1s; }
+    .replay-btn:hover { opacity: .88; }
+    .replay-btn:active { transform: scale(.98); }
+
+    .streak-flash { animation: pop .35s ease; }
+    @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.35)} 100%{transform:scale(1)} }
+
+    @media (max-width: 480px) {
+      .options { grid-template-columns: 1fr; }
+      .hud { grid-template-columns: repeat(2,1fr); }
+      .q-card { padding: 1.25rem; }
+      .tl-cont-label { font-size: 9px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="header">
+    <div class="header-top">
+      <span class="site-title">Grammar Quest</span>
+      <span class="level-pill">B1 · English</span>
+    </div>
+    <h1 class="main-title">
+      <span class="acc-blue">Past Continuous</span> vs <span class="acc-orange">Simple Past</span>
+    </h1>
+  </header>
+
+  <!-- Timeline visual reference -->
+  <div class="timeline-card">
+    <div class="tl-label">How it works</div>
+    <div class="timeline">
+      <div class="tl-line"></div>
+      <div class="tl-cont-bar"><span class="tl-cont-label">was/were + verb-ing (ongoing)</span></div>
+      <div class="tl-interrupt"></div>
+      <div class="tl-interrupt-label">interruption (simple past)</div>
+    </div>
+    <div class="tl-rule">
+      <div class="tl-rule-item"><span class="rule-pill rp-cont">past continuous</span> action in progress</div>
+      <div class="tl-rule-item"><span class="rule-pill rp-simple">simple past</span> sudden interruption</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot d-cont"></div>Past continuous focus</div>
+    <div class="legend-item"><div class="legend-dot d-simple"></div>Simple past focus</div>
+    <div class="legend-item"><div class="legend-dot d-both"></div>Both tenses</div>
+  </div>
+
+  <div class="hud">
+    <div class="hud-card"><div class="hud-label">Score</div><div class="hud-val" id="score">0</div></div>
+    <div class="hud-card"><div class="hud-label">Streak</div><div class="hud-val" id="streak">—</div></div>
+    <div class="hud-card"><div class="hud-label">Question</div><div class="hud-val" id="qnum">1/12</div></div>
+    <div class="hud-card"><div class="hud-label">Lives</div><div class="hud-val" id="lives">♥♥♥</div></div>
+  </div>
+
+  <div class="progress-track">
+    <div class="progress-fill" id="progress" style="width:8%"></div>
+  </div>
+
+  <div id="game-area"></div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    cat:"cont", label:"Past continuous · ongoing action",
+    q:"I ___ a shower when the doorbell rang.",
+    opts:["was having","had","have had","were having"],
+    ans:0,
+    exp:"<strong>Was having</strong> describes the action already in progress (the shower). <em>Rang</em> is the sudden interruption in simple past."
+  },
+  {
+    cat:"simple", label:"Simple past · interruption",
+    q:"She was reading a book when her phone ___.",
+    opts:["rang","was ringing","rings","had rung"],
+    ans:0,
+    exp:"<strong>Rang</strong> is the sudden interruption. The phone call cut into the ongoing action of reading."
+  },
+  {
+    cat:"both", label:"Both tenses · when",
+    q:"They ___ dinner when the lights ___ out.",
+    opts:["were having / went","had / went","were having / were going","have had / went"],
+    ans:0,
+    exp:"<em>Were having</em> = ongoing background action. <em>Went</em> = the sudden interruption. This is the classic pattern with <strong>when</strong>."
+  },
+  {
+    cat:"cont", label:"Past continuous · ongoing action",
+    q:"He ___ to music when I called him.",
+    opts:["was listening","listened","is listening","were listening"],
+    ans:0,
+    exp:"<strong>Was listening</strong> sets the scene — the ongoing activity. <em>Called</em> is the interruption that happened during it."
+  },
+  {
+    cat:"simple", label:"Simple past · interruption",
+    q:"We were walking in the park when it suddenly ___.",
+    opts:["started raining","was starting raining","starts raining","were starting raining"],
+    ans:0,
+    exp:"<strong>Started raining</strong> is the sudden event that interrupted the walk. Interruptions use simple past."
+  },
+  {
+    cat:"both", label:"Both tenses · while",
+    q:"While she ___ for the bus, she ___ into her old teacher.",
+    opts:["was waiting / ran","waited / was running","was waiting / was running","waited / ran"],
+    ans:0,
+    exp:"<em>Was waiting</em> = the background activity in progress. <em>Ran into</em> = the unexpected event that happened during that time."
+  },
+  {
+    cat:"cont", label:"Past continuous · ongoing action",
+    q:"The children ___ in the garden when the storm arrived.",
+    opts:["were playing","played","play","have been playing"],
+    ans:0,
+    exp:"<strong>Were playing</strong> describes what was happening before the storm. It sets the scene for the interruption."
+  },
+  {
+    cat:"simple", label:"Simple past · interruption",
+    q:"I was cooking dinner when I ___ the smoke alarm.",
+    opts:["heard","was hearing","hear","were hearing"],
+    ans:0,
+    exp:"<strong>Heard</strong> is the sudden perception — the moment that interrupted the cooking. Verbs of perception usually appear in simple past here."
+  },
+  {
+    cat:"both", label:"Both tenses · when",
+    q:"What ___ you ___ when the earthquake ___?",
+    opts:["were / doing / hit","did / do / was hitting","were / doing / was hitting","did / do / hit"],
+    ans:0,
+    exp:"<em>Were you doing</em> asks about the ongoing activity. <em>Hit</em> = the interruption. Both follow the classic <strong>when</strong> pattern."
+  },
+  {
+    cat:"cont", label:"Past continuous · ongoing action",
+    q:"My parents ___ TV when I got home.",
+    opts:["were watching","watched","have watched","watch"],
+    ans:0,
+    exp:"<strong>Were watching</strong> describes what was in progress before I arrived. My arrival (<em>got home</em>) is the interrupting event."
+  },
+  {
+    cat:"simple", label:"Simple past · interruption",
+    q:"He was driving on the highway when a tyre suddenly ___.",
+    opts:["burst","was bursting","bursts","had been bursting"],
+    ans:0,
+    exp:"<strong>Burst</strong> is the sudden, unexpected event that interrupted the drive. Abrupt physical events use simple past."
+  },
+  {
+    cat:"both", label:"Both tenses · while",
+    q:"While I ___ my essay, my laptop ___ and I lost everything.",
+    opts:["was writing / crashed","wrote / was crashing","was writing / was crashing","wrote / crashed"],
+    ans:0,
+    exp:"<em>Was writing</em> = the longer ongoing action. <em>Crashed</em> = the sudden, dramatic interruption. A classic <strong>while</strong> sentence."
+  }
+];
+
+let shuffled=[], idx=0, score=0, streak=0, lives=3, answered=false;
+
+function shuffle(a){ return a.slice().sort(()=>Math.random()-.5); }
+
+function updateHUD(){
+  document.getElementById("score").textContent = score;
+  document.getElementById("streak").textContent = streak>=1 ? streak+(streak>=3?" 🔥":"") : "—";
+  document.getElementById("lives").textContent = "♥".repeat(lives)+"♡".repeat(3-lives);
+}
+
+function renderQ(){
+  const ga = document.getElementById("game-area");
+  if(idx >= shuffled.length){ renderSummary(); return; }
+  const q = shuffled[idx];
+  const pct = Math.round(((idx+1)/shuffled.length)*100);
+  document.getElementById("progress").style.width = pct+"%";
+  document.getElementById("qnum").textContent = (idx+1)+"/"+shuffled.length;
+  answered = false;
+  const qhtml = q.q.replace(/___/g, "<span class='blank'>___</span>");
+  ga.innerHTML = `
+    <div class="q-card">
+      <span class="cat-badge ${q.cat}">${q.label}</span>
+      <div class="q-text">${qhtml}</div>
+      <div class="options" id="opts">
+        ${q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})">${o}</button>`).join("")}
+      </div>
+      <div id="fb" style="display:none"></div>
+      <div id="nxt"></div>
+    </div>`;
+}
+
+function pick(chosen){
+  if(answered) return;
+  answered = true;
+  const q = shuffled[idx];
+  document.querySelectorAll(".opt").forEach(b=>b.disabled=true);
+  document.querySelectorAll(".opt")[q.ans].classList.add("correct");
+  const fb = document.getElementById("fb");
+  fb.style.display = "block";
+  if(chosen === q.ans){
+    const bonus = streak>=2 ? 20 : 10;
+    score += bonus;
+    streak++;
+    fb.className = "feedback ok";
+    fb.innerHTML = (streak>=3?"🔥 ":"✓ ") + q.exp + (bonus===20?" <strong>(+20 streak bonus!)</strong>":"");
+    if(streak>=3){
+      const el = document.getElementById("streak");
+      el.classList.remove("streak-flash");
+      void el.offsetWidth;
+      el.classList.add("streak-flash");
+    }
+  } else {
+    document.querySelectorAll(".opt")[chosen].classList.add("wrong");
+    lives = Math.max(0, lives-1);
+    streak = 0;
+    fb.className = "feedback bad";
+    fb.innerHTML = "✗ " + q.exp;
+  }
+  updateHUD();
+  document.getElementById("nxt").innerHTML =
+    `<button class="btn-next" onclick="nextQ()">${idx+1<shuffled.length?"Next question →":"See my results →"}</button>`;
+}
+
+function nextQ(){ idx++; renderQ(); }
+
+function renderSummary(){
+  document.getElementById("progress").style.width="100%";
+  const pct = Math.round((score/(questions.length*10))*100);
+  const stars = score>=110?"⭐⭐⭐":score>=70?"⭐⭐":"⭐";
+  const msg = score>=110
+    ? "Excellent! You've mastered the past continuous vs simple past contrast. Well done!"
+    : score>=70
+    ? "Good work! Review the timeline diagram and the explanations for the questions you missed."
+    : "Keep going! Focus on the key idea: <em>was/were + -ing</em> for the background action, simple past for the interruption.";
+  document.getElementById("game-area").innerHTML = `
+    <div class="summary">
+      <div class="stars">${stars}</div>
+      <div class="summary-score">${score} pts</div>
+      <div class="summary-label">${pct}% accuracy · ${questions.length} questions</div>
+      <p class="summary-msg">${msg}</p>
+      <div class="summary-tags">
+        <span class="cat-badge cont">Past continuous</span>
+        <span class="cat-badge simple">Simple past</span>
+        <span class="cat-badge both">Both tenses</span>
+      </div>
+      <button class="replay-btn" onclick="startGame()">Play again</button>
+    </div>`;
+}
+
+function startGame(){
+  shuffled = shuffle(questions);
+  idx=0; score=0; streak=0; lives=3;
+  updateHUD();
+  renderQ();
+}
+
+startGame();
+</script>
+</body>
+</html>
