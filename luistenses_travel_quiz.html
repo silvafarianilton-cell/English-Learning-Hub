@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Journey Through Portugal — Grammar Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inconsolata:wght@400;600;700&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1923;
+    --surface: #162130;
+    --card: #1c2d3e;
+    --border: #2a3f54;
+    --gold: #e8b84b;
+    --gold-dim: rgba(232,184,75,0.15);
+    --teal: #4ecdc4;
+    --coral: #ff6b6b;
+    --green: #51cf66;
+    --text: #e8e0d4;
+    --text-dim: #8a9bb0;
+    --sp-color: #4ecdc4;
+    --pp-color: #f9a870;
+    --shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(78,205,196,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(249,168,112,0.06) 0%, transparent 50%);
+    min-height: 100vh;
+    font-family: 'Outfit', sans-serif;
+    color: var(--text);
+    padding: 2rem 1rem 5rem;
+  }
+
+  /* ── HEADER ── */
+  header {
+    max-width: 780px;
+    margin: 0 auto 2.5rem;
+    text-align: center;
+  }
+
+  .location-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: var(--gold-dim);
+    border: 1px solid rgba(232,184,75,0.3);
+    padding: 0.3rem 0.9rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-family: 'Lora', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+  }
+
+  h1 em { color: var(--gold); font-style: italic; }
+
+  .subtitle {
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--text-dim);
+    max-width: 480px;
+    margin: 0 auto 1.8rem;
+    line-height: 1.6;
+  }
+
+  /* tense legend */
+  .legend {
+    display: inline-flex;
+    gap: 1.2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.55rem 1.2rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+  .dot-sp { background: var(--sp-color); }
+  .dot-pp { background: var(--pp-color); }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    max-width: 780px;
+    margin: 0 auto 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sp-color), var(--pp-color));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  /* ── STORY LAYOUT ── */
+  #story-container {
+    max-width: 780px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .chapter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .chapter-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .chapter-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: var(--gold-dim);
+    border: 1px solid rgba(232,184,75,0.25);
+    padding: 0.2rem 0.7rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .chapter-title {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .pov-badge {
+    margin-left: auto;
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .pov-1st { background: rgba(78,205,196,0.15); color: var(--sp-color); border: 1px solid rgba(78,205,196,0.3); }
+  .pov-3rd { background: rgba(249,168,112,0.15); color: var(--pp-color); border: 1px solid rgba(249,168,112,0.3); }
+
+  .chapter-body {
+    padding: 1.5rem 1.8rem;
+  }
+
+  /* ── NARRATIVE TEXT ── */
+  .narrative {
+    font-family: 'Lora', serif;
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--text);
+    margin-bottom: 1.4rem;
+  }
+
+  .narrative i { color: var(--text-dim); font-style: italic; }
+
+  /* ── QUESTION ── */
+  .q-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s;
+  }
+
+  .q-block.answered-correct { border-color: var(--green); }
+  .q-block.answered-wrong   { border-color: var(--coral); }
+
+  .q-sentence {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 0.9rem;
+    color: var(--text);
+  }
+
+  .blank-slot {
+    display: inline-block;
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    min-width: 5rem;
+    border-bottom: 2px solid var(--gold);
+    color: var(--gold);
+    text-align: center;
+    margin: 0 0.15rem;
+    vertical-align: baseline;
+    transition: color 0.3s, border-color 0.3s;
+    padding: 0 0.3rem;
+  }
+
+  .q-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .choice-btn {
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.45rem 1rem;
+    border-radius: 7px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    line-height: 1.3;
+  }
+
+  .choice-btn:hover:not(:disabled) {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: var(--gold-dim);
+    transform: translateY(-1px);
+  }
+
+  .choice-btn.correct  { background: rgba(81,207,102,0.15); border-color: var(--green);  color: var(--green);  }
+  .choice-btn.wrong    { background: rgba(255,107,107,0.15); border-color: var(--coral);  color: var(--coral);  }
+  .choice-btn.reveal   { background: rgba(81,207,102,0.1);  border-color: var(--green);  color: var(--green); opacity: 0.7; }
+  .choice-btn:disabled { cursor: default; transform: none; }
+
+  .q-feedback {
+    display: none;
+    margin-top: 0.75rem;
+    font-size: 0.84rem;
+    line-height: 1.5;
+    padding: 0.6rem 0.9rem;
+    border-radius: 7px;
+  }
+
+  .q-feedback.show { display: block; }
+  .q-feedback.correct { background: rgba(81,207,102,0.08); color: #74d98a; border: 1px solid rgba(81,207,102,0.2); }
+  .q-feedback.wrong   { background: rgba(255,107,107,0.08); color: #ff9090; border: 1px solid rgba(255,107,107,0.2); }
+  .q-feedback .rule   { font-style: italic; color: var(--text-dim); font-size: 0.8rem; margin-top: 0.3rem; display: block; }
+
+  /* ── NAV BUTTONS ── */
+  .chapter-nav {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem 1.8rem 1.5rem;
+    border-top: 1px solid var(--border);
+    margin-top: 0.5rem;
+  }
+
+  .nav-btn {
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    padding: 0.65rem 1.6rem;
+    border-radius: 8px;
+    border: none;
+    background: var(--gold);
+    color: var(--bg);
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    display: none;
+  }
+
+  .nav-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .nav-btn.visible { display: inline-block; }
+
+  /* ── RESULTS ── */
+  #result-screen {
+    display: none;
+    max-width: 680px;
+    margin: 0 auto;
+    animation: fadeUp 0.5s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+
+  .passport-stamp {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    background: var(--gold-dim);
+    position: relative;
+  }
+
+  .stamp-score {
+    font-family: 'Lora', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stamp-total {
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  .result-title {
+    font-family: 'Lora', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .result-sub {
+    font-size: 0.92rem;
+    color: var(--text-dim);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  /* tense breakdown */
+  .tense-breakdown {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .tb-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.4rem;
+    text-align: center;
+    min-width: 130px;
+  }
+
+  .tb-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .tb-score {
+    font-family: 'Lora', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .tb-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.2rem; }
+
+  /* Grammar reference */
+  .gram-ref {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+    text-align: left;
+    margin-bottom: 2rem;
+  }
+
+  .gram-ref h3 {
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+  }
+
+  .gram-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 500px) { .gram-row { grid-template-columns: 1fr; } }
+
+  .gram-col {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+  }
+
+  .gram-col h4 {
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  .gram-col.sp h4 { color: var(--sp-color); }
+  .gram-col.pp h4 { color: var(--pp-color); }
+
+  .gram-col ul {
+    list-style: none;
+    padding: 0;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+
+  .gram-col ul li::before { content: "→ "; color: var(--gold); }
+
+  #restart-btn {
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.88rem;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    padding: 0.85rem 2.5rem;
+    border-radius: 9px;
+    border: none;
+    background: var(--gold);
+    color: var(--bg);
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  #restart-btn:hover { opacity: 0.88; transform: translateY(-2px); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="location-tag">✈ Grammar in Context · Travel Story</div>
+  <h1>A Journey Through <em>Portugal</em></h1>
+  <p class="subtitle">Read the story and choose the correct verb form. Practice Simple Present and Present Perfect in 1st and 3rd person.</p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot dot-sp"></div> Simple Present</div>
+    <div class="legend-item"><div class="legend-dot dot-pp"></div> Present Perfect</div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="progress-label" id="progress-label">0 / 20</span>
+</div>
+
+<div id="story-container"></div>
+<div id="result-screen">
+  <div class="result-card">
+    <div class="passport-stamp">
+      <span class="stamp-score" id="r-score">0</span>
+      <span class="stamp-total" id="r-total">/ 20</span>
+    </div>
+    <div class="result-title" id="r-title"></div>
+    <div class="result-sub"   id="r-sub"></div>
+    <div class="tense-breakdown" id="r-breakdown"></div>
+    <div class="gram-ref">
+      <h3>Grammar Reference</h3>
+      <div class="gram-row">
+        <div class="gram-col sp">
+          <h4>SIMPLE PRESENT</h4>
+          <ul>
+            <li>Habits & routines</li>
+            <li>General truths / facts</li>
+            <li>Feelings & states now</li>
+            <li>Schedules & timetables</li>
+            <li>Markers: always, usually, every day…</li>
+          </ul>
+        </div>
+        <div class="gram-col pp">
+          <h4>PRESENT PERFECT</h4>
+          <ul>
+            <li>Past actions with present relevance</li>
+            <li>Life experiences (ever / never)</li>
+            <li>Recent events (just / already / yet)</li>
+            <li>Unfinished time periods (today, this week)</li>
+            <li>Markers: already, just, yet, ever, never, since, for…</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <button id="restart-btn" onclick="restart()">READ AGAIN ↺</button>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────
+const chapters = [
+  {
+    id: "ch1",
+    num: "Chapter 1",
+    title: "The Departure",
+    pov: "1st",
+    narrative: `It is early morning at the airport. I am nervous and excited at the same time. This is my first solo trip abroad.`,
+    questions: [
+      {
+        id: "q1",
+        before: "I ",
+        after: " to Portugal three times before, but always with my family.",
+        answer: "have been",
+        choices: ["have been", "am", "go", "was"],
+        tense: "pp",
+        feedback: "Correct! We use Present Perfect for past experiences up to now.",
+        rule: "Present Perfect: subject + have/has + past participle. Experience accumulated until now."
+      },
+      {
+        id: "q2",
+        before: "Now I ",
+        after: " alone for the first time, and it feels amazing.",
+        answer: "travel",
+        choices: ["travel", "have travelled", "am travelling", "travelled"],
+        tense: "sp",
+        feedback: "Correct! Simple Present describes the current state / general fact here.",
+        rule: "Simple Present: expresses a general truth or current state when combined with stative meaning."
+      },
+      {
+        id: "q3",
+        before: "My flight ",
+        after: " at 6:45 a.m. every Tuesday — it is a regular route.",
+        answer: "departs",
+        choices: ["departs", "has departed", "departed", "is departing"],
+        tense: "sp",
+        feedback: "Correct! Simple Present is used for scheduled timetables.",
+        rule: "Simple Present: timetables and fixed schedules → 'The train leaves at noon.'"
+      },
+      {
+        id: "q4",
+        before: "I ",
+        after: " already packed my bag the night before, so I feel ready.",
+        answer: "have already packed",
+        choices: ["have already packed", "pack", "already packed", "had packed"],
+        tense: "pp",
+        feedback: "Correct! 'Already' is a key marker for Present Perfect.",
+        rule: "Present Perfect + already: an action completed before now with present relevance."
+      }
+    ]
+  },
+  {
+    id: "ch2",
+    num: "Chapter 2",
+    title: "Arriving in Lisbon",
+    pov: "1st",
+    narrative: `The plane lands smoothly. Lisbon smells like the sea and grilled sardines. I step outside the airport and breathe deeply.`,
+    questions: [
+      {
+        id: "q5",
+        before: "I ",
+        after: " never tried pastel de nata before — it is time!",
+        answer: "have never tried",
+        choices: ["have never tried", "never try", "never tried", "don't try"],
+        tense: "pp",
+        feedback: "Correct! 'Never' + Present Perfect expresses a life experience (or lack of it).",
+        rule: "Present Perfect + never: talking about something you haven't experienced in your life so far."
+      },
+      {
+        id: "q6",
+        before: "The city ",
+        after: " me with its yellow trams and colourful tiles.",
+        answer: "surprises",
+        choices: ["surprises", "has surprised", "surprised", "is surprising"],
+        tense: "sp",
+        feedback: "Correct! Simple Present describes an immediate reaction / general truth.",
+        rule: "Simple Present: stative verbs and immediate reactions are expressed in Simple Present."
+      },
+      {
+        id: "q7",
+        before: "I ",
+        after: " just checked into my hostel. My room is tiny but perfect.",
+        answer: "have just checked",
+        choices: ["have just checked", "just check", "just checked", "check"],
+        tense: "pp",
+        feedback: "Correct! 'Just' signals a very recent action → Present Perfect.",
+        rule: "Present Perfect + just: a very recent action with current relevance."
+      }
+    ]
+  },
+  {
+    id: "ch3",
+    num: "Chapter 3",
+    title: "Meeting Sofia",
+    pov: "3rd",
+    narrative: `At the hostel common room, I meet Sofia, a local guide. She is warm, funny, and full of stories about the city.`,
+    questions: [
+      {
+        id: "q8",
+        before: "Sofia ",
+        after: " as a tour guide for ten years.",
+        answer: "has worked",
+        choices: ["has worked", "works", "worked", "is working"],
+        tense: "pp",
+        feedback: "Correct! 'For ten years' with a present result → Present Perfect.",
+        rule: "Present Perfect + for: an activity that started in the past and continues to the present."
+      },
+      {
+        id: "q9",
+        before: "She ",
+        after: " six languages fluently.",
+        answer: "speaks",
+        choices: ["speaks", "has spoken", "spoke", "is speaking"],
+        tense: "sp",
+        feedback: "Correct! A permanent ability or skill uses Simple Present.",
+        rule: "Simple Present: permanent states, abilities, and facts about a person."
+      },
+      {
+        id: "q10",
+        before: "She ",
+        after: " already shown me the best viewpoint in the city — Miradouro da Graça.",
+        answer: "has already shown",
+        choices: ["has already shown", "already shows", "showed already", "show"],
+        tense: "pp",
+        feedback: "Correct! 'Already' + Present Perfect for a completed action with present result.",
+        rule: "Present Perfect + already: the action is done, and the result matters now."
+      },
+      {
+        id: "q11",
+        before: "Sofia ",
+        after: " tourists every day of the week, but she never seems tired.",
+        answer: "guides",
+        choices: ["guides", "has guided", "is guiding", "guided"],
+        tense: "sp",
+        feedback: "Correct! 'Every day' signals a habitual routine → Simple Present.",
+        rule: "Simple Present + every day / always / usually: habitual actions and routines."
+      }
+    ]
+  },
+  {
+    id: "ch4",
+    num: "Chapter 4",
+    title: "The Food Market",
+    pov: "1st",
+    narrative: `Sofia takes me to Mercado da Ribeira. The place is enormous — dozens of stalls with fresh fish, cheese, and wine.`,
+    questions: [
+      {
+        id: "q12",
+        before: "I ",
+        after: " seafood every day on this trip. It is incredible.",
+        answer: "have eaten",
+        choices: ["have eaten", "eat", "ate", "am eating"],
+        tense: "pp",
+        feedback: "Correct! 'On this trip' is an unfinished time period → Present Perfect.",
+        rule: "Present Perfect: actions within an unfinished time frame (this trip, today, this week)."
+      },
+      {
+        id: "q13",
+        before: "The vendor ",
+        after: " his stall open from 8 a.m. to 8 p.m. every day.",
+        answer: "keeps",
+        choices: ["keeps", "has kept", "kept", "is keeping"],
+        tense: "sp",
+        feedback: "Correct! A regular, repeated schedule uses Simple Present.",
+        rule: "Simple Present: schedules and regular habits → 'He opens the shop at 9.'"
+      },
+      {
+        id: "q14",
+        before: "I ",
+        after: " yet to try ginjinha — Sofia says I must before I leave!",
+        answer: "have yet",
+        choices: ["have yet", "yet have", "am yet", "has yet"],
+        tense: "pp",
+        feedback: "Correct! 'Have yet to' is a Present Perfect structure meaning something hasn't happened yet.",
+        rule: "Present Perfect + yet: something expected but not done yet → 'I haven't tried it yet.'"
+      }
+    ]
+  },
+  {
+    id: "ch5",
+    num: "Chapter 5",
+    title: "A Day Trip to Sintra",
+    pov: "3rd",
+    narrative: `The next morning, Sofia and I take the train to Sintra. The palaces sit on misty green hills like something from a fairy tale.`,
+    questions: [
+      {
+        id: "q15",
+        before: "Sofia ",
+        after: " to Sintra hundreds of times, but she always finds something new.",
+        answer: "has been",
+        choices: ["has been", "goes", "went", "is going"],
+        tense: "pp",
+        feedback: "Correct! 'Hundreds of times' is a life experience → Present Perfect.",
+        rule: "Present Perfect: repeated experiences over a lifetime use has/have + past participle."
+      },
+      {
+        id: "q16",
+        before: "She ",
+        after: " the palace opens at 9:30 a.m. and closes at 6 p.m.",
+        answer: "knows",
+        choices: ["knows", "has known", "knew", "is knowing"],
+        tense: "sp",
+        feedback: "Correct! A general fact / permanent knowledge uses Simple Present.",
+        rule: "Simple Present: stating facts and knowledge that don't change."
+      },
+      {
+        id: "q17",
+        before: "She ",
+        after: " not yet decided which route we should take through the forest.",
+        answer: "has not yet decided",
+        choices: ["has not yet decided", "doesn't decide", "not decided", "didn't decide"],
+        tense: "pp",
+        feedback: "Correct! 'Not yet' + Present Perfect means the decision hasn't been made.",
+        rule: "Present Perfect + not yet: a pending action or decision that hasn't happened."
+      }
+    ]
+  },
+  {
+    id: "ch6",
+    num: "Chapter 6",
+    title: "The Last Evening",
+    pov: "1st",
+    narrative: `Back in Lisbon, we find a small fado restaurant by the river. The music fills the room with something I can only describe as beautiful sadness.`,
+    questions: [
+      {
+        id: "q18",
+        before: "I ",
+        after: " never felt so moved by music in my entire life.",
+        answer: "have never felt",
+        choices: ["have never felt", "never feel", "never felt", "don't feel"],
+        tense: "pp",
+        feedback: "Correct! 'Never' in your life experience → Present Perfect.",
+        rule: "Present Perfect + never: strongest negative life experience, up to the present moment."
+      },
+      {
+        id: "q19",
+        before: "Fado music ",
+        after: " stories of longing and the sea — it is the soul of Portugal.",
+        answer: "tells",
+        choices: ["tells", "has told", "told", "is telling"],
+        tense: "sp",
+        feedback: "Correct! A general truth about what fado music does → Simple Present.",
+        rule: "Simple Present: general truths, definitions, and facts that are always true."
+      },
+      {
+        id: "q20",
+        before: "This trip ",
+        after: " changed the way I see the world. I will never forget Lisbon.",
+        answer: "has changed",
+        choices: ["has changed", "changes", "changed", "is changing"],
+        tense: "pp",
+        feedback: "Correct! A past action with a clear present result → Present Perfect.",
+        rule: "Present Perfect: a past action whose effect or result we still feel now."
+      }
+    ]
+  }
+];
+
+// ─────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────
+const TOTAL = chapters.reduce((s, c) => s + c.questions.length, 0);
+let totalCorrect = 0;
+let answeredCount = 0;
+let byTense = { sp: { total: 0, correct: 0 }, pp: { total: 0, correct: 0 } };
+// track chapter completion
+let chapterAnswered = {}; // chId -> count answered
+let chapterTotal    = {}; // chId -> total questions
+
+// ─────────────────────────────────────────
+//  BUILD UI
+// ─────────────────────────────────────────
+function build() {
+  const container = document.getElementById('story-container');
+  container.innerHTML = '';
+  totalCorrect = 0; answeredCount = 0;
+  byTense = { sp: { total: 0, correct: 0 }, pp: { total: 0, correct: 0 } };
+  chapterAnswered = {}; chapterTotal = {};
+  updateProgress();
+
+  chapters.forEach((ch, ci) => {
+    chapterAnswered[ch.id] = 0;
+    chapterTotal[ch.id] = ch.questions.length;
+    ch.questions.forEach(q => byTense[q.tense].total++);
+
+    const article = document.createElement('div');
+    article.className = 'chapter';
+    article.id = ch.id;
+
+    // header
+    const povClass = ch.pov === '1st' ? 'pov-1st' : 'pov-3rd';
+    const povText  = ch.pov === '1st' ? '1st Person · I' : '3rd Person · She';
+    article.innerHTML = `
+      <div class="chapter-header">
+        <span class="chapter-num">${ch.num}</span>
+        <span class="chapter-title">${ch.title}</span>
+        <span class="pov-badge ${povClass}">${povText}</span>
+      </div>
+      <div class="chapter-body">
+        <p class="narrative">${ch.narrative}</p>
+        <div class="questions" id="qs-${ch.id}"></div>
+      </div>
+      <div class="chapter-nav">
+        <button class="nav-btn" id="nav-${ch.id}" onclick="scrollToNext('${ch.id}', ${ci})">CONTINUE ↓</button>
+      </div>
+    `;
+
+    container.appendChild(article);
+
+    const qContainer = article.querySelector(`#qs-${ch.id}`);
+    ch.questions.forEach(q => {
+      const block = document.createElement('div');
+      block.className = 'q-block';
+      block.id = q.id;
+
+      const shuffledChoices = [...q.choices].sort(() => Math.random() - 0.5);
+      const choicesHTML = shuffledChoices.map(c =>
+        `<button class="choice-btn" data-val="${c}" onclick="checkAnswer('${q.id}','${ch.id}',this)">${c}</button>`
+      ).join('');
+
+      block.innerHTML = `
+        <div class="q-sentence">
+          ${q.before}<span class="blank-slot" id="blank-${q.id}">___?___</span>${q.after}
+        </div>
+        <div class="q-choices">${choicesHTML}</div>
+        <div class="q-feedback" id="fb-${q.id}"></div>
+      `;
+      qContainer.appendChild(block);
+    });
+  });
+}
+
+// ─────────────────────────────────────────
+//  ANSWER LOGIC
+// ─────────────────────────────────────────
+function checkAnswer(qId, chId, btn) {
+  // find question data
+  let qData;
+  for (const ch of chapters) {
+    const found = ch.questions.find(q => q.id === qId);
+    if (found) { qData = found; break; }
+  }
+  if (!qData) return;
+
+  const block   = document.getElementById(qId);
+  const blank   = document.getElementById('blank-' + qId);
+  const fb      = document.getElementById('fb-' + qId);
+  const allBtns = block.querySelectorAll('.choice-btn');
+
+  allBtns.forEach(b => b.disabled = true);
+
+  const chosen  = btn.dataset.val;
+  const correct = qData.answer;
+  const isRight = chosen === correct;
+
+  blank.textContent = correct;
+
+  if (isRight) {
+    btn.classList.add('correct');
+    block.classList.add('answered-correct');
+    blank.style.color = 'var(--green)';
+    blank.style.borderColor = 'var(--green)';
+    fb.className = 'q-feedback correct show';
+    fb.innerHTML = `✓ ${qData.feedback}<span class="rule">${qData.rule}</span>`;
+    totalCorrect++;
+    byTense[qData.tense].correct++;
+  } else {
+    btn.classList.add('wrong');
+    block.classList.add('answered-wrong');
+    allBtns.forEach(b => { if (b.dataset.val === correct) b.classList.add('reveal'); });
+    blank.style.color = 'var(--coral)';
+    blank.style.borderColor = 'var(--coral)';
+    fb.className = 'q-feedback wrong show';
+    fb.innerHTML = `✗ The answer is <strong>${correct}</strong>.<span class="rule">${qData.rule}</span>`;
+  }
+
+  answeredCount++;
+  chapterAnswered[chId]++;
+  updateProgress();
+
+  // show nav button when all questions in chapter are answered
+  if (chapterAnswered[chId] === chapterTotal[chId]) {
+    const navBtn = document.getElementById('nav-' + chId);
+    if (navBtn) navBtn.classList.add('visible');
+    // last chapter → change button
+    const chIndex = chapters.findIndex(c => c.id === chId);
+    if (chIndex === chapters.length - 1) {
+      navBtn.textContent = 'SEE RESULTS →';
+      navBtn.onclick = showResults;
+    }
+  }
+}
+
+function scrollToNext(chId, chIndex) {
+  if (chIndex < chapters.length - 1) {
+    const nextEl = document.getElementById(chapters[chIndex + 1].id);
+    if (nextEl) nextEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// ─────────────────────────────────────────
+//  PROGRESS
+// ─────────────────────────────────────────
+function updateProgress() {
+  const pct = (answeredCount / TOTAL) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${answeredCount} / ${TOTAL}`;
+}
+
+// ─────────────────────────────────────────
+//  RESULTS
+// ─────────────────────────────────────────
+function showResults() {
+  document.getElementById('story-container').style.display = 'none';
+  document.querySelector('.progress-wrap').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'block';
+  rs.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const pct = Math.round((totalCorrect / TOTAL) * 100);
+  document.getElementById('r-score').textContent = totalCorrect;
+  document.getElementById('r-total').textContent = `/ ${TOTAL}`;
+
+  let title, sub;
+  if (pct === 100)    { title = "Passport Stamped! 🎉"; sub = "Flawless grammar. You are ready to travel the world in English!"; }
+  else if (pct >= 80) { title = "Excellent Journey!";  sub = "Strong command of both tenses. Just a few stops to revisit."; }
+  else if (pct >= 60) { title = "Good Progress!";      sub = "You are on the right path. Review the grammar reference and try again."; }
+  else if (pct >= 40) { title = "Keep Travelling!";    sub = "The tenses can be tricky. Check the rules below and give it another go."; }
+  else                { title = "Don't Give Up!";      sub = "Every journey starts with a single step. Study the reference and retry!"; }
+
+  document.getElementById('r-title').textContent = title;
+  document.getElementById('r-sub').textContent   = sub;
+
+  const bd = document.getElementById('r-breakdown');
+  bd.innerHTML = `
+    <div class="tb-item">
+      <div class="tb-label" style="color:var(--sp-color)">Simple Present</div>
+      <div class="tb-score" style="color:var(--sp-color)">${byTense.sp.correct}<span style="font-size:1rem;color:var(--text-dim)">/${byTense.sp.total}</span></div>
+      <div class="tb-sub">1st & 3rd person</div>
+    </div>
+    <div class="tb-item">
+      <div class="tb-label" style="color:var(--pp-color)">Present Perfect</div>
+      <div class="tb-score" style="color:var(--pp-color)">${byTense.pp.correct}<span style="font-size:1rem;color:var(--text-dim)">/${byTense.pp.total}</span></div>
+      <div class="tb-sub">1st & 3rd person</div>
+    </div>
+    <div class="tb-item">
+      <div class="tb-label" style="color:var(--gold)">Overall</div>
+      <div class="tb-score" style="color:var(--gold)">${pct}<span style="font-size:1rem;color:var(--text-dim)">%</span></div>
+      <div class="tb-sub">${totalCorrect} correct answers</div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────
+//  RESTART
+// ─────────────────────────────────────────
+function restart() {
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('story-container').style.display = 'flex';
+  document.querySelector('.progress-wrap').style.display = 'flex';
+  build();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+build();
+</script>
+</body>
+</html>
