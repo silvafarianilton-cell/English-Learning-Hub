@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IN · ON · AT — Prepositions of Time Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --cream: #f5f0e8;
+    --gold: #c9a84c;
+    --red: #c0392b;
+    --green: #27ae60;
+    --in-color: #2c5f8a;
+    --on-color: #7b3fa0;
+    --at-color: #b5451b;
+    --shadow: 0 4px 24px rgba(26,26,46,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--cream);
+    background-image:
+      radial-gradient(ellipse at 10% 20%, rgba(44,95,138,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 90% 80%, rgba(123,63,160,0.07) 0%, transparent 60%);
+    min-height: 100vh;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    padding: 2rem 1rem 4rem;
+  }
+
+  header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 3rem;
+  }
+
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.3rem 1rem;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+  }
+
+  .badge-in  { background: var(--in-color);  color: #fff; }
+  .badge-on  { background: var(--on-color);  color: #fff; }
+  .badge-at  { background: var(--at-color);  color: #fff; }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    margin-top: 0.8rem;
+    font-size: 1rem;
+    font-weight: 300;
+    color: #555;
+    letter-spacing: 0.02em;
+  }
+
+  .progress-wrap {
+    max-width: 640px;
+    margin: 0 auto 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .progress-bar-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(26,26,46,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    color: #888;
+    white-space: nowrap;
+  }
+
+  #quiz-container {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .question-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem 2.2rem;
+    box-shadow: var(--shadow);
+    border-left: 5px solid var(--gold);
+    animation: slideIn 0.35s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: #aaa;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    line-height: 1.55;
+    margin-bottom: 1.6rem;
+    color: var(--ink);
+  }
+
+  .blank {
+    display: inline-block;
+    border-bottom: 2.5px solid var(--gold);
+    min-width: 3rem;
+    margin: 0 0.2rem;
+    text-align: center;
+    color: var(--gold);
+    font-weight: 700;
+    transition: color 0.3s, border-color 0.3s;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .opt-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.15rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 0;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  .opt-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .opt-btn[data-prep="in"]:hover:not(:disabled) { background: var(--in-color); color: #fff; border-color: var(--in-color); }
+  .opt-btn[data-prep="on"]:hover:not(:disabled) { background: var(--on-color); color: #fff; border-color: var(--on-color); }
+  .opt-btn[data-prep="at"]:hover:not(:disabled) { background: var(--at-color); color: #fff; border-color: var(--at-color); }
+
+  .opt-btn.correct { background: var(--green); color: #fff; border-color: var(--green); }
+  .opt-btn.wrong   { background: var(--red);   color: #fff; border-color: var(--red); }
+  .opt-btn.reveal  { background: var(--green); color: #fff; border-color: var(--green); opacity: 0.7; }
+  .opt-btn:disabled { cursor: default; transform: none; }
+
+  .feedback {
+    min-height: 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    display: none;
+  }
+
+  .feedback.show { display: block; }
+  .feedback.correct { background: #eafaf1; color: #1e8449; }
+  .feedback.wrong   { background: #fdf2f2; color: #a93226; }
+
+  .explanation {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.35rem;
+    font-style: italic;
+  }
+
+  #next-btn {
+    display: none;
+    margin: 0 auto;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  #next-btn:hover { background: #2e2e50; transform: translateY(-2px); }
+
+  #result-screen {
+    display: none;
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+    animation: slideIn 0.4s ease;
+  }
+
+  .result-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    box-shadow: var(--shadow);
+  }
+
+  .score-ring {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: conic-gradient(var(--gold) var(--pct), #e8e0d0 0%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+
+  .score-inner {
+    width: 96px;
+    height: 96px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .score-total {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: #aaa;
+  }
+
+  .result-msg {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-sub {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 2rem;
+  }
+
+  .rules-summary {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 1.4rem;
+    text-align: left;
+    margin-bottom: 2rem;
+  }
+
+  .rules-summary h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 1rem;
+  }
+
+  .rule-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .rule-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.2rem 0.7rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  .rule-text { font-size: 0.88rem; color: #444; line-height: 1.5; }
+
+  #restart-btn {
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    padding: 0.85rem 2.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  #restart-btn:hover { background: #2e2e50; transform: translateY(-2px); }
+
+  .breakdown { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .break-item { text-align: center; }
+  .break-badge { display: block; width: 36px; height: 36px; border-radius: 8px; line-height: 36px; font-family: 'DM Mono', monospace; font-size: 0.85rem; font-weight: 500; color: #fff; margin: 0 auto 0.3rem; }
+  .break-count { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: #888; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge-row">
+    <span class="badge badge-in">IN</span>
+    <span class="badge badge-on">ON</span>
+    <span class="badge badge-at">AT</span>
+  </div>
+  <h1>Prepositions of Time</h1>
+  <p class="subtitle">Choose the correct preposition for each sentence · 20 questions</p>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
+  <span class="progress-label" id="progress-label">0 / 20</span>
+</div>
+
+<div id="quiz-container">
+  <div class="question-card" id="question-card">
+    <div class="q-meta" id="q-meta">QUESTION 1 OF 20</div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button id="next-btn" onclick="nextQuestion()">NEXT →</button>
+  </div>
+</div>
+
+<div id="result-screen">
+  <div class="result-card">
+    <div class="score-ring" id="score-ring">
+      <div class="score-inner">
+        <span class="score-num" id="score-num">0</span>
+        <span class="score-total" id="score-total">/ 20</span>
+      </div>
+    </div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="result-sub" id="result-sub"></div>
+    <div class="breakdown" id="breakdown"></div>
+    <div class="rules-summary">
+      <h3>Quick Reference</h3>
+      <div class="rule-row">
+        <span class="rule-badge" style="background:var(--in-color)">IN</span>
+        <span class="rule-text">Longer periods: months, years, seasons, parts of the day (morning, afternoon, evening), decades, centuries.</span>
+      </div>
+      <div class="rule-row">
+        <span class="rule-badge" style="background:var(--on-color)">ON</span>
+        <span class="rule-text">Specific days & dates: weekdays, weekends, holidays (Christmas Day, New Year's Day, Easter), specific dates.</span>
+      </div>
+      <div class="rule-row">
+        <span class="rule-badge" style="background:var(--at-color)">AT</span>
+        <span class="rule-text">Precise times & fixed points: clock times, night, noon, midnight, the moment, the weekend (BrE).</span>
+      </div>
+    </div>
+    <button id="restart-btn" onclick="restart()">TRY AGAIN</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  // IN — parts of the day
+  { sentence: ["I always drink coffee ", " the morning."], answer: "in", explanation: "We use IN for parts of the day: in the morning, in the afternoon, in the evening." },
+  { sentence: ["She likes to go for a walk ", " the evening."], answer: "in", explanation: "We use IN for parts of the day: in the evening." },
+  { sentence: ["They usually have a nap ", " the afternoon."], answer: "in", explanation: "We use IN for parts of the day: in the afternoon." },
+  // IN — months, years, seasons, decades
+  { sentence: ["My birthday is ", " December."], answer: "in", explanation: "We use IN for months of the year." },
+  { sentence: ["She was born ", " 1998."], answer: "in", explanation: "We use IN for years." },
+  { sentence: ["It gets very cold here ", " winter."], answer: "in", explanation: "We use IN for seasons: in winter, in summer, in autumn, in spring." },
+  { sentence: ["Music changed a lot ", " the 1960s."], answer: "in", explanation: "We use IN for decades." },
+  // ON — days and dates
+  { sentence: ["We don't have school ", " weekends."], answer: "on", explanation: "We use ON for weekends (AmE) and days of the week." },
+  { sentence: ["The class is ", " Monday."], answer: "on", explanation: "We use ON for specific days of the week." },
+  { sentence: ["They open presents ", " Christmas Day."], answer: "on", explanation: "We use ON for specific holiday days: Christmas Day, New Year's Day." },
+  { sentence: ["We always have a big lunch ", " Sundays."], answer: "on", explanation: "We use ON for days of the week." },
+  { sentence: ["It happened ", " the 3rd of October."], answer: "on", explanation: "We use ON for specific dates." },
+  { sentence: ["There's a parade ", " New Year's Day."], answer: "on", explanation: "We use ON for named holiday days." },
+  { sentence: ["The exam is ", " Friday morning."], answer: "on", explanation: "We use ON when a day and a part of the day are combined: on Friday morning." },
+  // AT — times and fixed expressions
+  { sentence: ["The class starts ", " 9 o'clock."], answer: "at", explanation: "We use AT for specific clock times." },
+  { sentence: ["The museum closes ", " noon."], answer: "at", explanation: "We use AT for fixed time points: noon, midnight, night." },
+  { sentence: ["The party starts ", " midnight."], answer: "at", explanation: "We use AT for midnight." },
+  { sentence: ["I can't sleep ", " night."], answer: "at", explanation: "AT night is a fixed expression in English." },
+  { sentence: ["Let's meet ", " lunchtime."], answer: "at", explanation: "We use AT for fixed periods like lunchtime, breakfast time." },
+  { sentence: ["Everything happened ", " the same time."], answer: "at", explanation: "AT the same time is a fixed expression." },
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+let counts = { in: 0, on: 0, at: 0 };
+let correctCount = { in: 0, on: 0, at: 0 };
+
+const TOTAL = questions.length;
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+const shuffled = shuffle([...questions]);
+
+function renderQuestion() {
+  answered = false;
+  const q = shuffled[current];
+  document.getElementById('q-meta').textContent = `QUESTION ${current + 1} OF ${TOTAL}`;
+
+  const textEl = document.getElementById('q-text');
+  textEl.innerHTML = '';
+  q.sentence.forEach((part, i) => {
+    textEl.appendChild(document.createTextNode(part));
+    if (i < q.sentence.length - 1) {
+      const blank = document.createElement('span');
+      blank.className = 'blank';
+      blank.id = 'blank';
+      blank.textContent = '___';
+      textEl.appendChild(blank);
+    }
+  });
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  ['in', 'on', 'at'].forEach(prep => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.dataset.prep = prep;
+    btn.textContent = prep.toUpperCase();
+    btn.onclick = () => checkAnswer(prep, btn);
+    opts.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+  document.getElementById('next-btn').style.display = 'none';
+
+  const pct = (current / TOTAL) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${current} / ${TOTAL}`;
+}
+
+function checkAnswer(chosen, btn) {
+  if (answered) return;
+  answered = true;
+  const q = shuffled[current];
+  const ans = q.answer;
+  counts[ans]++;
+
+  const allBtns = document.querySelectorAll('.opt-btn');
+  allBtns.forEach(b => b.disabled = true);
+
+  const blank = document.getElementById('blank');
+  const fb = document.getElementById('feedback');
+
+  if (chosen === ans) {
+    score++;
+    correctCount[ans]++;
+    btn.classList.add('correct');
+    blank.textContent = ans.toUpperCase();
+    blank.style.color = 'var(--green)';
+    blank.style.borderColor = 'var(--green)';
+    fb.className = 'feedback correct show';
+    fb.innerHTML = `✓ Correct! <span class="explanation">${q.explanation}</span>`;
+  } else {
+    btn.classList.add('wrong');
+    allBtns.forEach(b => { if (b.dataset.prep === ans) b.classList.add('reveal'); });
+    blank.textContent = ans.toUpperCase();
+    blank.style.color = 'var(--red)';
+    blank.style.borderColor = 'var(--red)';
+    fb.className = 'feedback wrong show';
+    fb.innerHTML = `✗ Not quite. The answer is <strong>${ans.toUpperCase()}</strong>. <span class="explanation">${q.explanation}</span>`;
+  }
+
+  document.getElementById('next-btn').style.display = 'block';
+  if (current === TOTAL - 1) document.getElementById('next-btn').textContent = 'SEE RESULTS →';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= TOTAL) showResults();
+  else renderQuestion();
+}
+
+function showResults() {
+  document.getElementById('quiz-container').style.display = 'none';
+  document.querySelector('.progress-wrap').style.display = 'none';
+
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'block';
+
+  const pct = Math.round((score / TOTAL) * 100);
+  document.getElementById('score-ring').style.setProperty('--pct', pct + '%');
+  document.getElementById('score-num').textContent = score;
+  document.getElementById('score-total').textContent = `/ ${TOTAL}`;
+
+  let msg, sub;
+  if (pct === 100)    { msg = "Perfect score! 🎉";  sub = "Outstanding command of prepositions of time!"; }
+  else if (pct >= 80) { msg = "Excellent work!";    sub = "You have a strong grasp of IN, ON and AT."; }
+  else if (pct >= 60) { msg = "Good effort!";       sub = "A few more review sessions and you'll master it."; }
+  else if (pct >= 40) { msg = "Keep practising!";   sub = "Check the quick reference below and try again."; }
+  else                { msg = "Don't give up!";     sub = "Review the rules below and give it another go!"; }
+
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-sub').textContent = sub;
+
+  const breakdown = document.getElementById('breakdown');
+  breakdown.innerHTML = '';
+  const colors = { in: 'var(--in-color)', on: 'var(--on-color)', at: 'var(--at-color)' };
+  ['in', 'on', 'at'].forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'break-item';
+    div.innerHTML = `
+      <span class="break-badge" style="background:${colors[p]}">${p.toUpperCase()}</span>
+      <span class="break-count">${correctCount[p]}/${counts[p]}</span>
+    `;
+    breakdown.appendChild(div);
+  });
+}
+
+function restart() {
+  current = 0; score = 0; answered = false;
+  counts = { in: 0, on: 0, at: 0 };
+  correctCount = { in: 0, on: 0, at: 0 };
+  shuffle(shuffled);
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('quiz-container').style.display = 'block';
+  document.querySelector('.progress-wrap').style.display = 'flex';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
