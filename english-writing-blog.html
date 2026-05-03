@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My English Writing Space</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream: #faf7f2;
+      --warm-white: #fff9f4;
+      --ink: #1a1a2e;
+      --muted: #6b6b7a;
+      --sage: #7a9e7e;
+      --sage-light: #d4e6d6;
+      --terracotta: #c0714f;
+      --terracotta-light: #f2ddd4;
+      --gold: #c9a84c;
+      --gold-light: #f5ecd3;
+      --sky: #5b8fa8;
+      --sky-light: #d6eaf2;
+      --lavender: #8b7ab8;
+      --lavender-light: #e2dcf0;
+      --border: #e0d9ce;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--ink);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--cream);
+      letter-spacing: 0.02em;
+    }
+    header h1 span {
+      color: var(--gold);
+      font-style: italic;
+    }
+    header p.tagline {
+      font-size: 0.78rem;
+      color: #aaa;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── GRAMMAR STRIP ── */
+    .grammar-strip {
+      background: var(--warm-white);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .grammar-strip-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+      margin-right: 4px;
+    }
+
+    /* Grammar pill buttons */
+    .grammar-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 13px;
+      border-radius: 20px;
+      border: 1.5px solid transparent;
+      font-size: 0.78rem;
+      font-family: 'Lato', sans-serif;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.18s;
+      background: transparent;
+    }
+    .pill-sage   { border-color: var(--sage);       color: var(--sage); }
+    .pill-terra  { border-color: var(--terracotta); color: var(--terracotta); }
+    .pill-gold   { border-color: var(--gold);       color: var(--gold); }
+    .pill-sky    { border-color: var(--sky);         color: var(--sky); }
+    .pill-lav    { border-color: var(--lavender);   color: var(--lavender); }
+
+    .pill-sage:hover   { background: var(--sage-light); }
+    .pill-terra:hover  { background: var(--terracotta-light); }
+    .pill-gold:hover   { background: var(--gold-light); }
+    .pill-sky:hover    { background: var(--sky-light); }
+    .pill-lav:hover    { background: var(--lavender-light); }
+
+    .pill-arrow { font-size: 0.65rem; transition: transform 0.2s; }
+    .grammar-pill.open .pill-arrow { transform: rotate(90deg); }
+
+    /* Grammar panels */
+    .grammar-panels {
+      display: none;
+      background: var(--warm-white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px 0 32px;
+      overflow: hidden;
+    }
+    .grammar-panels.visible { display: block; }
+    .grammar-panel { display: none; }
+    .grammar-panel.active { display: block; animation: fadeSlide 0.22s ease; }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .grammar-panel-inner {
+      padding: 20px 0 24px;
+      max-width: 860px;
+    }
+    .grammar-panel h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      margin-bottom: 10px;
+    }
+    .grammar-panel .note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+    .formula-box {
+      background: var(--cream);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      border-left: 3px solid;
+      font-size: 0.84rem;
+      line-height: 1.7;
+    }
+    .formula-box strong { font-weight: 700; }
+    .formula-box .example { color: var(--muted); font-style: italic; margin-top: 4px; display: block; }
+    .formula-box.neg { border-style: dashed; opacity: 0.85; }
+    .row-formulas { display: flex; gap: 12px; flex-wrap: wrap; }
+    .row-formulas .formula-box { flex: 1; min-width: 200px; }
+
+    /* ── MAIN LAYOUT ── */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 110px);
+    }
+
+    /* ── SIDEBAR ── */
+    aside {
+      background: var(--ink);
+      color: var(--cream);
+      padding: 28px 18px 40px;
+      min-height: 100%;
+      overflow-y: auto;
+    }
+    aside h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .topic-group { margin-bottom: 24px; }
+    .topic-group-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #888;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .topic-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      color: #ccc;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.83rem;
+      padding: 7px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      line-height: 1.4;
+      margin-bottom: 2px;
+    }
+    .topic-btn:hover, .topic-btn.selected {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      padding-left: 14px;
+    }
+    .topic-btn.selected {
+      color: var(--gold);
+      border-left: 2px solid var(--gold);
+    }
+    .topic-btn .emoji { margin-right: 6px; }
+
+    .sidebar-footer {
+      margin-top: 32px;
+      font-size: 0.72rem;
+      color: #555;
+      line-height: 1.6;
+      font-style: italic;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 16px;
+    }
+
+    /* ── WRITING AREA ── */
+    main {
+      padding: 36px 48px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      background: var(--warm-white);
+    }
+
+    .writing-header {
+      margin-bottom: 28px;
+    }
+    .writing-header .prompt-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .writing-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      color: var(--ink);
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .writing-header p.prompt-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 560px;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .meta-row input {
+      flex: 1;
+      min-width: 160px;
+      padding: 9px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.85rem;
+      background: #fff;
+      color: var(--ink);
+      transition: border-color 0.15s;
+    }
+    .meta-row input:focus { outline: none; border-color: var(--sage); }
+
+    .entry-title-input {
+      width: 100%;
+      padding: 11px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      background: #fff;
+      color: var(--ink);
+      margin-bottom: 14px;
+      transition: border-color 0.15s;
+    }
+    .entry-title-input:focus { outline: none; border-color: var(--sage); }
+
+    .textarea-wrap {
+      position: relative;
+    }
+    textarea.writing-area {
+      width: 100%;
+      min-height: 340px;
+      padding: 20px 22px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.85;
+      background: #fff;
+      color: var(--ink);
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+    textarea.writing-area:focus { outline: none; border-color: var(--sage); box-shadow: 0 0 0 3px var(--sage-light); }
+    textarea.writing-area::placeholder { color: #c0bbb2; }
+
+    .word-count {
+      text-align: right;
+      font-size: 0.73rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .word-count span { font-weight: 700; color: var(--sage); }
+
+    .actions-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 22px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 10px 24px;
+      border-radius: 7px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.18s;
+      letter-spacing: 0.03em;
+    }
+    .btn-primary {
+      background: var(--ink);
+      color: var(--cream);
+    }
+    .btn-primary:hover { background: #2e2e4a; transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--muted); color: var(--ink); }
+    .btn-gold {
+      background: var(--gold);
+      color: #fff;
+    }
+    .btn-gold:hover { background: #b8963f; transform: translateY(-1px); }
+
+    /* ── SAVED POSTS ── */
+    .saved-section {
+      margin-top: 52px;
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+    }
+    .saved-section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .post-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: all 0.18s;
+      position: relative;
+      overflow: hidden;
+    }
+    .post-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .post-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.09); transform: translateY(-2px); }
+    .post-card .card-topic { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 5px; }
+    .post-card .card-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--ink); margin-bottom: 6px; }
+    .post-card .card-preview { font-size: 0.8rem; color: var(--muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .post-card .card-meta { margin-top: 10px; font-size: 0.72rem; color: #bbb; }
+    .card-delete {
+      position: absolute;
+      top: 10px; right: 12px;
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 2px 5px;
+      border-radius: 4px;
+      display: none;
+    }
+    .post-card:hover .card-delete { display: block; }
+    .card-delete:hover { color: var(--terracotta); background: var(--terracotta-light); }
+
+    .empty-posts {
+      font-size: 0.85rem;
+      color: #c0bbb2;
+      font-style: italic;
+      padding: 20px 0;
+    }
+
+    /* toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--ink);
+      color: var(--cream);
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-size: 0.83rem;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.28s;
+      pointer-events: none;
+      z-index: 999;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .main-layout { grid-template-columns: 1fr; }
+      aside { min-height: auto; }
+      main { padding: 24px 18px 40px; }
+      .grammar-strip { padding: 10px 16px; }
+      .grammar-panels { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div>
+    <h1>My <span>Writing</span> Space</h1>
+    <p class="tagline">A place to practise &amp; grow in English</p>
+  </div>
+</header>
+
+<!-- ── GRAMMAR STRIP ── -->
+<div class="grammar-strip">
+  <span class="grammar-strip-label">💡 Grammar help:</span>
+  <button class="grammar-pill pill-sage" onclick="toggleGrammar('present-simple', this)">
+    Present Simple <span class="pill-arrow">›</span>
+  </button>
+  <button class="grammar-pill pill-terra" onclick="toggleGrammar('past-simple', this)">
+    Past Simple <span class="pill-arrow">›</span>
+  </button>
+  <button class="grammar-pill pill-gold" onclick="toggleGrammar('past-continuous', this)">
+    Past Continuous <span class="pill-arrow">›</span>
+  </button>
+  <button class="grammar-pill pill-sky" onclick="toggleGrammar('present-perfect', this)">
+    Present Perfect <span class="pill-arrow">›</span>
+  </button>
+  <button class="grammar-pill pill-lav" onclick="toggleGrammar('conditionals', this)">
+    Conditionals 0 &amp; 1 <span class="pill-arrow">›</span>
+  </button>
+  <button class="grammar-pill pill-sage" onclick="toggleGrammar('futures', this)">
+    Futures <span class="pill-arrow">›</span>
+  </button>
+</div>
+
+<!-- ── GRAMMAR PANELS ── -->
+<div class="grammar-panels" id="grammarPanels">
+
+  <!-- PRESENT SIMPLE -->
+  <div class="grammar-panel" id="panel-present-simple">
+    <div class="grammar-panel-inner">
+      <h3 style="color:var(--sage)">Present Simple</h3>
+      <p class="note">Great for habits, routines, facts, and preferences.</p>
+      <div class="row-formulas">
+        <div class="formula-box" style="border-color:var(--sage)">
+          <strong>Affirmative:</strong> Subject + verb (+ s/es he/she/it)<br>
+          <span class="example">I <em>live</em> in the city. / She <em>loves</em> cooking.</span>
+        </div>
+        <div class="formula-box neg" style="border-color:var(--sage)">
+          <strong>Negative:</strong> Subject + don't / doesn't + verb<br>
+          <span class="example">They <em>don't work</em> on Sundays. / He <em>doesn't eat</em> meat.</span>
+        </div>
+        <div class="formula-box" style="border-color:var(--sage)">
+          <strong>Question:</strong> Do / Does + subject + verb?<br>
+          <span class="example"><em>Do</em> you like music? / <em>Does</em> she travel a lot?</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAST SIMPLE -->
+  <div class="grammar-panel" id="panel-past-simple">
+    <div class="grammar-panel-inner">
+      <h3 style="color:var(--terracotta)">Past Simple</h3>
+      <p class="note">Use it to talk about completed actions or experiences in the past.</p>
+      <div class="row-formulas">
+        <div class="formula-box" style="border-color:var(--terracotta)">
+          <strong>Affirmative:</strong> Subject + verb-ed / irregular form<br>
+          <span class="example">I <em>visited</em> Paris last summer. / We <em>went</em> to the beach.</span>
+        </div>
+        <div class="formula-box neg" style="border-color:var(--terracotta)">
+          <strong>Negative:</strong> Subject + didn't + verb (base)<br>
+          <span class="example">She <em>didn't call</em> me yesterday. / I <em>didn't sleep</em> well.</span>
+        </div>
+        <div class="formula-box" style="border-color:var(--terracotta)">
+          <strong>Question:</strong> Did + subject + verb (base)?<br>
+          <span class="example"><em>Did</em> you enjoy the trip? / <em>Did</em> they arrive on time?</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAST CONTINUOUS -->
+  <div class="grammar-panel" id="panel-past-continuous">
+    <div class="grammar-panel-inner">
+      <h3 style="color:var(--gold)">Past Continuous</h3>
+      <p class="note">Use it for actions in progress at a specific past moment, or as a background to another past event.</p>
+      <div class="row-formulas">
+        <div class="formula-box" style="border-color:var(--gold)">
+          <strong>Affirmative:</strong> Subject + was/were + verb-ing<br>
+          <span class="example">I <em>was reading</em> when you called. / They <em>were cooking</em> dinner.</span>
+        </div>
+        <div class="formula-box neg" style="border-color:var(--gold)">
+          <strong>Negative:</strong> Subject + wasn't / weren't + verb-ing<br>
+          <span class="example">He <em>wasn't listening</em> to the teacher.</span>
+        </div>
+        <div class="formula-box" style="border-color:var(--gold)">
+          <strong>Question:</strong> Was/Were + subject + verb-ing?<br>
+          <span class="example"><em>Were</em> you sleeping at 8 pm?</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRESENT PERFECT -->
+  <div class="grammar-panel" id="panel-present-perfect">
+    <div class="grammar-panel-inner">
+      <h3 style="color:var(--sky)">Present Perfect</h3>
+      <p class="note">For experiences, changes, or actions that connect the past with now. Common with: <em>already, yet, ever, never, just, for, since</em>.</p>
+      <div class="row-formulas">
+        <div class="formula-box" style="border-color:var(--sky)">
+          <strong>Affirmative:</strong> Subject + have / has + past participle<br>
+          <span class="example">I <em>have visited</em> Japan. / She <em>has just finished</em> the book.</span>
+        </div>
+        <div class="formula-box neg" style="border-color:var(--sky)">
+          <strong>Negative:</strong> Subject + haven't / hasn't + past participle<br>
+          <span class="example">I <em>haven't tried</em> sushi yet. / He <em>hasn't called</em> back.</span>
+        </div>
+        <div class="formula-box" style="border-color:var(--sky)">
+          <strong>Question:</strong> Have / Has + subject + past participle?<br>
+          <span class="example"><em>Have</em> you ever been to London?</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONDITIONALS -->
+  <div class="grammar-panel" id="panel-conditionals">
+    <div class="grammar-panel-inner">
+      <h3 style="color:var(--lavender)">Conditionals 0 &amp; 1</h3>
+      <p class="note">Zero: general truths. First: real or possible situations in the future.</p>
+      <div class="row-formulas">
+        <div class="formula-box" style="border-color:var(--lavender)">
+          <strong>Zero (general truth):</strong> If + present, present<br>
+          <span class="example">If you <em>heat</em> water to 100°C, it <em>boils</em>.</span>
+        </div>
+        <div class="formula-box" style="border-color:var(--lavender)">
+          <strong>First (real future):</strong> If + present, will + verb<br>
+          <span class="example">If it <em>rains</em> tomorrow, I <em>will stay</em> home.</span>
+        </div>
+        <div class="formula-box neg" style="border-color:var(--lavender)">
+          <strong>Negative:</strong> If + don't / doesn't / won't...<br>
+          <span class="example">If you <em>don't study</em>, you <em>won't pass</em> the exam.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FUTURES -->
+  <div class="grammar-panel" id="panel-futures">
+    <div class="grammar-panel-inner">
+      <h3 style="color:var(--sage)">Talking About the Future</h3>
+      <p class="note">English has several ways to talk about the future — each one has a different feel.</p>
+      <div class="row-formulas">
+        <div class="formula-box" style="border-color:var(--sage)">
+          <strong>Will</strong> → spontaneous decisions, predictions, offers<br>
+          <span class="example">I <em>will help</em> you. / It <em>will be</em> a great trip!</span><br>
+          <span class="example" style="margin-top:2px">❌ I <em>won't forget</em> to call you.</span>
+        </div>
+        <div class="formula-box" style="border-color:var(--gold)">
+          <strong>Going to</strong> → plans already decided, predictions based on evidence<br>
+          <span class="example">We <em>are going to travel</em> next month. / It <em>is going to rain</em> — look at those clouds!</span><br>
+          <span class="example" style="margin-top:2px">❌ She <em>is not going to study</em> abroad.</span>
+        </div>
+        <div class="formula-box" style="border-color:var(--sky)">
+          <strong>Present Continuous</strong> → fixed arrangements with others<br>
+          <span class="example">I <em>am meeting</em> Maria at 6 pm. / We <em>are flying</em> to Rome on Friday.</span><br>
+          <span class="example" style="margin-top:2px">❌ They <em>aren't coming</em> to the party.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- end grammar panels -->
+
+<!-- ── MAIN LAYOUT ── -->
+<div class="main-layout">
+
+  <!-- SIDEBAR -->
+  <aside>
+    <h2>✍ Writing Topics</h2>
+
+    <div class="topic-group">
+      <div class="topic-group-label">Daily Life</div>
+      <button class="topic-btn" onclick="selectTopic(this, 'My Daily Routine', 'Describe a typical day in your life. What do you usually do in the morning, afternoon, and evening? What do you enjoy most about your routine?')">
+        <span class="emoji">🌅</span>My Daily Routine
+      </button>
+      <button class="topic-btn" onclick="selectTopic(this, 'My Favourite Meal', 'Write about a meal you love. What is it? Where do you usually eat it? Who makes it? Why is it special to you?')">
+        <span class="emoji">🍽️</span>My Favourite Meal
+      </button>
+      <button class="topic-btn" onclick="selectTopic(this, 'My Neighbourhood', 'Describe the area where you live. What places are nearby? What do you like or dislike about it?')">
+        <span class="emoji">🏘️</span>My Neighbourhood
+      </button>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">Travel & Places</div>
+      <button class="topic-btn" onclick="selectTopic(this, 'A Place I Have Visited', 'Think of a place you have been to. When did you go? What did you do there? Would you go back? Why or why not?')">
+        <span class="emoji">🗺️</span>A Place I Have Visited
+      </button>
+      <button class="topic-btn" onclick="selectTopic(this, 'My Dream Destination', 'Where would you love to travel? Describe the place and explain why you want to go there. What would you do if you visited?')">
+        <span class="emoji">✈️</span>My Dream Destination
+      </button>
+      <button class="topic-btn" onclick="selectTopic(this, 'A Memorable Trip', 'Write about a trip that stayed in your memory. What happened? Was it a good or bad experience? What did you learn?')">
+        <span class="emoji">🧳</span>A Memorable Trip
+      </button>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">Hobbies & Interests</div>
+      <button class="topic-btn" onclick="selectTopic(this, 'My Favourite Hobby', 'Write about something you enjoy doing in your free time. How did you start? Why do you like it? How often do you do it?')">
+        <span class="emoji">🎨</span>My Favourite Hobby
+      </button>
+      <button class="topic-btn" onclick="selectTopic(this, 'A Book or Film I Loved', 'Tell us about a book or film you really enjoyed. What is it about? Why did you like it? Would you recommend it?')">
+        <span class="emoji">📚</span>A Book or Film I Loved
+      </button>
+      <button class="topic-btn" onclick="selectTopic(this, 'Sport in My Life', 'Do you play or watch any sport? Write about your experience with sport — whether you love it or prefer other activities.')">
+        <span class="emoji">⚽</span>Sport in My Life
+      </button>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">Learning & School</div>
+      <button class="topic-btn" onclick="selectTopic(this, 'Why I Study English', 'What motivated you to learn English? How long have you been studying? What are your goals for the future?')">
+        <span class="emoji">🌍</span>Why I Study English
+      </button>
+      <button class="topic-btn" onclick="selectTopic(this, 'My Learning Challenges', 'What parts of learning English do you find difficult? What do you do to practise? What has helped you the most?')">
+        <span class="emoji">💪</span>My Learning Challenges
+      </button>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">Social & Creative</div>
+      <button class="topic-btn" onclick="selectTopic(this, 'Invite a Friend to a Concert', 'Write a friendly message inviting a friend to a concert or music event. Include the date, place, and why they should come!')">
+        <span class="emoji">🎵</span>Invite a Friend: Concert
+      </button>
+      <button class="topic-btn" onclick="selectTopic(this, 'Invite a Friend to a Trip', 'Write to a friend and invite them to travel with you somewhere. Describe the destination, the plan, and convince them it will be fun.')">
+        <span class="emoji">🏖️</span>Invite a Friend: Weekend Trip
+      </button>
+      <button class="topic-btn" onclick="selectTopic(this, 'Invite a Friend to Try Something New', 'Think of something new you have tried — a food, a class, a place — and write an invitation to a friend to try it too.')">
+        <span class="emoji">🌟</span>Invite a Friend: Try Something New
+      </button>
+      <button class="topic-btn" onclick="selectTopic(this, 'A Message to My Future Self', 'Write a short letter to yourself, five years from now. What do you hope you have achieved? What do you want to remember about today?')">
+        <span class="emoji">💌</span>Letter to My Future Self
+      </button>
+      <button class="topic-btn" onclick="selectTopic(this, 'If I Won the Lottery', 'Imagine you win a lot of money. What will you do first? Will you share it? Where will you travel? How will your life change?')">
+        <span class="emoji">🍀</span>If I Won the Lottery
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      Pick any topic — or write about something else entirely. The important thing is to express yourself in English. There are no wrong answers here.
+    </div>
+  </aside>
+
+  <!-- WRITING AREA -->
+  <main>
+    <div class="writing-header">
+      <div class="prompt-label">Today's writing</div>
+      <h2 id="promptTitle">Choose a topic or write freely ✍</h2>
+      <p class="prompt-desc" id="promptDesc">Pick a topic from the left, or simply start writing about anything that's on your mind. This is your space — no pressure, no grades. Just you and the language.</p>
+    </div>
+
+    <div class="meta-row">
+      <input type="text" id="authorName" placeholder="Your name (optional)" />
+      <input type="text" id="authorDate" placeholder="Date" />
+    </div>
+
+    <input type="text" id="entryTitle" class="entry-title-input" placeholder="Give your entry a title..." />
+
+    <div class="textarea-wrap">
+      <textarea class="writing-area" id="writingArea" placeholder="Start writing here... Take your time. You can use the grammar guides above if you need a quick reminder."></textarea>
+    </div>
+    <div class="word-count">Words: <span id="wordCount">0</span></div>
+
+    <div class="actions-row">
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="clearEntry()">🗑 Clear</button>
+        <button class="btn btn-secondary" onclick="copyToClipboard()">📋 Copy text</button>
+      </div>
+      <button class="btn btn-gold" onclick="saveEntry()">💾 Save entry</button>
+    </div>
+
+    <!-- SAVED POSTS -->
+    <div class="saved-section">
+      <h3>📝 Saved entries</h3>
+      <div class="posts-grid" id="postsGrid">
+        <p class="empty-posts" id="emptyMsg">Your saved entries will appear here.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Today's date
+  document.getElementById('authorDate').value = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'});
+
+  // ── Grammar toggle
+  let currentPanel = null;
+  let currentPill = null;
+
+  function toggleGrammar(id, btn) {
+    const panels = document.getElementById('grammarPanels');
+    const panel = document.getElementById('panel-' + id);
+
+    if (currentPill && currentPill !== btn) {
+      currentPill.classList.remove('open');
+    }
+
+    if (currentPanel === panel && panels.classList.contains('visible')) {
+      panels.classList.remove('visible');
+      panel.classList.remove('active');
+      btn.classList.remove('open');
+      currentPanel = null;
+      currentPill = null;
+    } else {
+      document.querySelectorAll('.grammar-panel').forEach(p => p.classList.remove('active'));
+      panel.classList.add('active');
+      panels.classList.add('visible');
+      btn.classList.add('open');
+      currentPanel = panel;
+      currentPill = btn;
+    }
+  }
+
+  // ── Topic selection
+  function selectTopic(btn, title, desc) {
+    document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('promptTitle').textContent = title;
+    document.getElementById('promptDesc').textContent = desc;
+    document.getElementById('entryTitle').placeholder = title + '...';
+    document.getElementById('writingArea').focus();
+  }
+
+  // ── Word count
+  document.getElementById('writingArea').addEventListener('input', function() {
+    const words = this.value.trim() === '' ? 0 : this.value.trim().split(/\s+/).length;
+    document.getElementById('wordCount').textContent = words;
+  });
+
+  // ── Save entry
+  const STORAGE_KEY = 'ews_entries';
+
+  function getEntries() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
+  }
+  function saveEntries(entries) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  }
+
+  function saveEntry() {
+    const title = document.getElementById('entryTitle').value.trim();
+    const body  = document.getElementById('writingArea').value.trim();
+    const author = document.getElementById('authorName').value.trim();
+    const date  = document.getElementById('authorDate').value.trim();
+    const topic = document.getElementById('promptTitle').textContent;
+
+    if (!body) { showToast('⚠️ Please write something first!'); return; }
+
+    const entry = {
+      id: Date.now(),
+      title: title || 'Untitled entry',
+      body,
+      author,
+      date,
+      topic,
+      words: body.split(/\s+/).length
+    };
+
+    const entries = getEntries();
+    entries.unshift(entry);
+    saveEntries(entries);
+    renderPosts();
+    showToast('✅ Entry saved!');
+  }
+
+  function deleteEntry(id) {
+    const entries = getEntries().filter(e => e.id !== id);
+    saveEntries(entries);
+    renderPosts();
+    showToast('🗑 Entry deleted.');
+  }
+
+  function loadEntry(entry) {
+    document.getElementById('entryTitle').value = entry.title;
+    document.getElementById('writingArea').value = entry.body;
+    document.getElementById('authorName').value = entry.author;
+    document.getElementById('authorDate').value = entry.date;
+    document.getElementById('promptTitle').textContent = entry.topic || 'Loaded entry';
+    document.getElementById('promptDesc').textContent = '';
+    const words = entry.body.trim().split(/\s+/).length;
+    document.getElementById('wordCount').textContent = words;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  const cardColors = ['var(--sage)', 'var(--terracotta)', 'var(--gold)', 'var(--sky)', 'var(--lavender)'];
+
+  function renderPosts() {
+    const entries = getEntries();
+    const grid = document.getElementById('postsGrid');
+    const empty = document.getElementById('emptyMsg');
+
+    if (entries.length === 0) {
+      grid.innerHTML = '<p class="empty-posts" id="emptyMsg">Your saved entries will appear here.</p>';
+      return;
+    }
+
+    grid.innerHTML = entries.map((e, i) => `
+      <div class="post-card" style="--card-color:${cardColors[i % cardColors.length]}" onclick="loadEntry(${JSON.stringify(e).replace(/"/g, '&quot;')})">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${cardColors[i % cardColors.length]};border-radius:10px 10px 0 0;"></div>
+        <button class="card-delete" onclick="event.stopPropagation(); deleteEntry(${e.id})">✕</button>
+        <div class="card-topic">${e.topic || ''}</div>
+        <div class="card-title">${e.title}</div>
+        <div class="card-preview">${e.body}</div>
+        <div class="card-meta">${e.author ? e.author + ' · ' : ''}${e.date} · ${e.words} words</div>
+      </div>
+    `).join('');
+  }
+
+  function clearEntry() {
+    document.getElementById('entryTitle').value = '';
+    document.getElementById('writingArea').value = '';
+    document.getElementById('wordCount').textContent = '0';
+    document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('promptTitle').textContent = 'Choose a topic or write freely ✍';
+    document.getElementById('promptDesc').textContent = 'Pick a topic from the left, or simply start writing about anything that\'s on your mind. This is your space — no pressure, no grades. Just you and the language.';
+  }
+
+  function copyToClipboard() {
+    const text = document.getElementById('writingArea').value;
+    if (!text) { showToast('Nothing to copy yet!'); return; }
+    navigator.clipboard.writeText(text).then(() => showToast('📋 Copied to clipboard!'));
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // Init
+  renderPosts();
+</script>
+</body>
+</html>
