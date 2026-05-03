@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B2 Monolog Prep Cards — Academic Topics</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;400i&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --accent: #c0392b;
+    --gold: #d4a017;
+    --muted: #7a7065;
+    --green: #2d6a4f;
+    --blue: #1a4a7a;
+    --purple: #5a3472;
+    --exam-bg: #1e3a2f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, #2a1a3e 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 90%, #1a2a3e 0%, transparent 50%);
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    min-height: 100vh;
+    gap: 0;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--exam-bg);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .sidebar-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    font-weight: 500;
+  }
+
+  .exam-card {
+    background: var(--paper);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .exam-card-header {
+    background: var(--accent);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .exam-card-header span {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  .exam-card-body { padding: 16px 14px; }
+
+  .exam-situation {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+
+  .exam-instruction {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .exam-bullets { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+  .exam-bullets li {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 8px 10px;
+    background: var(--cream);
+    border-radius: 8px;
+    border-left: 3px solid var(--gold);
+  }
+
+  .bullet-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: var(--gold);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .topic-select-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .topic-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .topic-item:hover { background: rgba(255,255,255,0.07); }
+  .topic-item.active {
+    background: rgba(212,160,23,0.15);
+    border-color: var(--gold);
+  }
+
+  .topic-item-name { font-size: 13px; font-weight: 500; color: var(--paper); margin-bottom: 2px; }
+  .topic-item-theme { font-size: 11px; color: var(--muted); }
+
+  .exam-mode-btn {
+    width: 100%;
+    padding: 11px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .exam-mode-btn.active { background: var(--accent); border-color: var(--accent); }
+
+  .sidebar-timer {
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .timer-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    color: var(--paper);
+    margin-bottom: 10px;
+    transition: color 0.3s;
+  }
+
+  .timer-big.warning { color: var(--accent); }
+  .timer-big.prep { color: var(--gold); }
+
+  .timer-controls { display: flex; gap: 8px; justify-content: center; }
+
+  .t-btn {
+    padding: 7px 14px;
+    border-radius: 50px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+
+  .t-btn.primary { background: var(--gold); color: var(--ink); }
+  .t-btn.secondary { background: rgba(255,255,255,0.1); color: var(--paper); }
+
+  .timer-label { font-size: 11px; color: var(--muted); margin-top: 8px; letter-spacing: 0.5px; }
+
+  .timer-tabs { display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; }
+
+  .timer-tab {
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--muted);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .timer-tab.active { background: rgba(255,255,255,0.1); color: var(--paper); border-color: rgba(255,255,255,0.3); }
+
+  .main { padding: 32px 28px 80px; max-width: 700px; }
+
+  header { margin-bottom: 28px; }
+
+  .label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 4vw, 36px);
+    color: var(--paper);
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+
+  .subtitle { color: var(--muted); font-size: 13px; }
+
+  .progress-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-label { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+  .cards-grid { display: grid; gap: 14px; }
+
+  .card {
+    background: var(--paper);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .card:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--cream);
+  }
+
+  .step-badge {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700;
+    flex-shrink: 0; color: white;
+  }
+
+  .card-title { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--ink); }
+  .card-subtitle { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .timing {
+    margin-left: auto;
+    font-size: 11px;
+    background: var(--cream);
+    padding: 3px 9px;
+    border-radius: 50px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .card-body { padding: 16px 20px 18px; }
+
+  .card-1 .step-badge { background: var(--accent); }
+  .card-2 .step-badge { background: var(--blue); }
+  .card-2b .step-badge { background: var(--purple); }
+  .card-3 .step-badge { background: var(--green); }
+  .card-1 .card-header { border-left: 4px solid var(--accent); }
+  .card-2 .card-header { border-left: 4px solid var(--blue); }
+  .card-2b .card-header { border-left: 4px solid var(--purple); }
+  .card-3 .card-header { border-left: 4px solid var(--green); }
+
+  .strategy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+
+  .strategy-box {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .strategy-box:hover { border-color: var(--gold); }
+  .strategy-box.selected { border-color: var(--accent); background: #fdf0ee; }
+  .strategy-box h4 { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .strategy-box p { font-size: 12px; color: var(--ink); line-height: 1.4; }
+
+  .write-section label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--cream);
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+
+  textarea:focus { outline: none; border-color: var(--gold); }
+  textarea::placeholder { color: #b0a898; }
+
+  .phrase-bank { margin-top: 12px; }
+
+  .phrase-bank-toggle {
+    background: none;
+    border: 1.5px solid var(--cream);
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .phrase-bank-toggle:hover { border-color: var(--ink); color: var(--ink); }
+
+  .phrase-list { display: none; margin-top: 8px; flex-wrap: wrap; gap: 5px; }
+  .phrase-list.open { display: flex; }
+
+  .phrase-chip {
+    background: var(--cream);
+    border: 1px solid #d5cfc5;
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-style: italic;
+  }
+
+  .phrase-chip:hover { background: var(--gold); border-color: var(--gold); color: white; font-style: normal; }
+
+  .checklist { list-style: none; margin-top: 12px; }
+
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: var(--ink);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--cream);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li.checked { color: var(--muted); text-decoration: line-through; }
+
+  .check-box {
+    width: 16px; height: 16px;
+    border: 1.5px solid #c5bfb5;
+    border-radius: 3px;
+    flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .checklist li.checked .check-box { background: var(--green); border-color: var(--green); }
+  .check-box::after { content: '✓'; font-size: 10px; color: white; display: none; }
+  .checklist li.checked .check-box::after { display: block; }
+
+  .model-toggle { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--cream); }
+
+  .model-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+
+  .model-btn:hover { background: #2d2d4e; }
+
+  .model-content {
+    display: none;
+    margin-top: 12px;
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .model-content.open { display: block; }
+
+  .model-section { margin-bottom: 14px; }
+
+  .model-section-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .model-section p { font-size: 13px; line-height: 1.7; color: var(--ink); }
+
+  .upgrade-table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 12px; }
+  .upgrade-table th { text-align: left; padding: 5px 8px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--cream); }
+  .upgrade-table td { padding: 6px 8px; vertical-align: top; border-bottom: 1px solid var(--cream); }
+  .upgrade-table tr:last-child td { border-bottom: none; }
+  .upgrade-table .avoid { color: #999; text-decoration: line-through; font-style: italic; }
+  .upgrade-table .use { color: var(--ink); font-weight: 500; }
+
+  .structure-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 12px; }
+  .mini-card { background: var(--cream); border-radius: 7px; padding: 8px; text-align: center; }
+  .mini-card-num { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .mini-card-text { font-size: 11px; color: var(--ink); font-weight: 500; }
+
+  body.exam-mode .phrase-bank { display: none !important; }
+  body.exam-mode .upgrade-table { display: none !important; }
+  body.exam-mode .strategy-grid { display: none !important; }
+  body.exam-mode .model-toggle { display: none !important; }
+  body.exam-mode .structure-row { display: none !important; }
+  body.exam-mode .exam-mode-notice { display: block !important; }
+
+  .exam-mode-notice {
+    display: none;
+    background: rgba(192,57,43,0.1);
+    border: 1px solid rgba(192,57,43,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .concl-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 12px; }
+  .concl-box { background: var(--cream); border-radius: 7px; padding: 8px; text-align: center; }
+  .concl-icon { font-size: 18px; margin-bottom: 3px; }
+  .concl-label { font-size: 11px; font-weight: 500; color: var(--ink); }
+  .concl-sub { font-size: 10px; color: var(--muted); }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: relative; height: auto; }
+    .main { padding: 20px 16px 60px; }
+    .strategy-grid { grid-template-columns: 1fr; }
+    .structure-row, .concl-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div>
+      <div class="sidebar-label" style="margin-bottom:12px;">Exam Card</div>
+      <div class="exam-card">
+        <div class="exam-card-header">
+          <span>📋 B2 Speaking Task</span>
+        </div>
+        <div class="exam-card-body">
+          <p class="exam-situation" id="examSituation">Loading...</p>
+          <div class="exam-instruction">Take into account the following:</div>
+          <ul class="exam-bullets" id="examBullets"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timer -->
+    <div class="sidebar-timer">
+      <div class="timer-tabs">
+        <button class="timer-tab active" onclick="setTimerMode('prep', this)">⏳ Prep</button>
+        <button class="timer-tab" onclick="setTimerMode('delivery', this)">🎤 Delivery</button>
+      </div>
+      <div class="timer-big prep" id="timerDisplay">3:00</div>
+      <div class="timer-controls">
+        <button class="t-btn primary" id="timerBtn" onclick="toggleTimer()">▶ Start</button>
+        <button class="t-btn secondary" onclick="resetTimer()">↺</button>
+      </div>
+      <div class="timer-label" id="timerLabel">3 min preparation</div>
+    </div>
+
+    <!-- Exam mode -->
+    <button class="exam-mode-btn" id="examModeBtn" onclick="toggleExamMode()">🎓 Exam Mode — OFF</button>
+
+    <!-- Topic list -->
+    <div>
+      <div class="sidebar-label" style="margin-bottom:10px;">Academic Topics</div>
+      <div class="topic-select-list" id="topicList"></div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header>
+      <div class="label">B2 Speaking — Academic Prep</div>
+      <h1>Monolog Prep Cards</h1>
+      <p class="subtitle">Follow each card in order · Use the exam card on the left as your guide</p>
+    </header>
+
+    <div class="progress-bar">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">0 / 4 sections</div>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- CARD 1: INTRO -->
+      <div class="card card-1">
+        <div class="card-header">
+          <div class="step-badge">1</div>
+          <div>
+            <div class="card-title">The Introduction</div>
+            <div class="card-subtitle">Hook · Background · Road Map</div>
+          </div>
+          <div class="timing">⏱ ~45–60 sec</div>
+        </div>
+        <div class="card-body">
+          <div class="exam-mode-notice">⚠️ Exam Mode — no aids available. Write from memory.</div>
+
+          <div class="strategy-grid">
+            <div class="strategy-box" onclick="selectStrategy(this)">
+              <h4>🌍 Global Frame</h4>
+              <p>Frame the topic as a widespread issue in today's world.</p>
+            </div>
+            <div class="strategy-box" onclick="selectStrategy(this)">
+              <h4>⚖️ Dual Perspective</h4>
+              <p>Acknowledge both advantages and challenges from the start.</p>
+            </div>
+            <div class="strategy-box" onclick="selectStrategy(this)">
+              <h4>❓ Rhetorical Question</h4>
+              <p>Open with a question that makes the examiner think.</p>
+            </div>
+            <div class="strategy-box" onclick="selectStrategy(this)">
+              <h4>📊 Striking Fact</h4>
+              <p>Start with a statistic or finding that demands attention.</p>
+            </div>
+          </div>
+
+          <div class="structure-row">
+            <div class="mini-card"><div class="mini-card-num">Part A</div><div class="mini-card-text">Hook</div></div>
+            <div class="mini-card"><div class="mini-card-num">Part B</div><div class="mini-card-text">Background</div></div>
+            <div class="mini-card"><div class="mini-card-num">Part C</div><div class="mini-card-text">Road Map</div></div>
+          </div>
+
+          <div class="write-section">
+            <label>Write your introduction</label>
+            <textarea id="intro-text" rows="4" placeholder="e.g. Have you ever wondered whether the way we teach students is truly preparing them for the future? In today's rapidly changing world…" oninput="updateProgress()"></textarea>
+          </div>
+
+          <div class="phrase-bank">
+            <button class="phrase-bank-toggle" onclick="toggleBank('intro-phrases', this)"><span>📚</span> Phrase bank</button>
+            <div class="phrase-list" id="intro-phrases">
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', 'In today\'s world, it is widely recognised that...')">In today's world, it is widely recognised that...</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', 'Have you ever considered whether...')">Have you ever considered whether...</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', 'This is a question that is becoming increasingly relevant in academic circles.')">This is a question that is becoming increasingly relevant in academic circles.</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', 'I\'ve decided to focus on two key areas today.')">I've decided to focus on two key areas today.</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', 'First of all, I will examine... After that, I will consider...')">First of all, I will examine... After that, I will consider...</span>
+              <span class="phrase-chip" onclick="insertPhrase('intro-text', 'As someone studying/working in this field, I find this topic particularly relevant.')">As someone studying/working in this field, I find this topic particularly relevant.</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Hook: a question, fact, or observation that engages the listener</li>
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Background: brief context that sets the scene</li>
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Road map: clearly state what you will cover and in what order</li>
+          </ul>
+
+          <div class="model-toggle">
+            <button class="model-btn" onclick="toggleModel('model-intro', this)">📖 See model Introduction</button>
+            <div class="model-content" id="model-intro">
+              <div class="model-section">
+                <div class="model-section-label">Hook</div>
+                <p id="model-intro-hook"></p>
+              </div>
+              <div class="model-section">
+                <div class="model-section-label">Background</div>
+                <p id="model-intro-bg"></p>
+              </div>
+              <div class="model-section">
+                <div class="model-section-label">Road Map</div>
+                <p id="model-intro-map"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: POINT 1 -->
+      <div class="card card-2">
+        <div class="card-header">
+          <div class="step-badge">2</div>
+          <div>
+            <div class="card-title">Point 1</div>
+            <div class="card-subtitle" id="point1-label">Loading...</div>
+          </div>
+          <div class="timing">⏱ ~60 sec</div>
+        </div>
+        <div class="card-body">
+          <div class="exam-mode-notice">⚠️ Exam Mode — no aids available. Write from memory.</div>
+
+          <div class="structure-row">
+            <div class="mini-card"><div class="mini-card-num">Step 1</div><div class="mini-card-text">State the point</div></div>
+            <div class="mini-card"><div class="mini-card-num">Step 2</div><div class="mini-card-text">Explain / reason</div></div>
+            <div class="mini-card"><div class="mini-card-num">Step 3</div><div class="mini-card-text">Give an example</div></div>
+          </div>
+
+          <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Avoid simple vocabulary — upgrade your language:</p>
+          <table class="upgrade-table">
+            <tr><th>Avoid</th><th>Use instead</th></tr>
+            <tr><td class="avoid">because</td><td class="use">This can be attributed to the fact that...</td></tr>
+            <tr><td class="avoid">also / and also</td><td class="use">What's more, / Furthermore, / Not only that, but...</td></tr>
+            <tr><td class="avoid">for example</td><td class="use">A clear illustration of this is... / This is evident in...</td></tr>
+            <tr><td class="avoid">so</td><td class="use">Consequently, / As a result, / Therefore,</td></tr>
+          </table>
+
+          <div class="write-section" style="margin-top:14px;">
+            <label>Develop your first point</label>
+            <textarea id="point1-text" rows="4" placeholder="To begin with, one key aspect to consider is… This can be attributed to… A clear illustration of this is…" oninput="updateProgress()"></textarea>
+          </div>
+
+          <div class="phrase-bank">
+            <button class="phrase-bank-toggle" onclick="toggleBank('p1-phrases', this)"><span>📚</span> Phrase bank</button>
+            <div class="phrase-list" id="p1-phrases">
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', 'To begin with, one key aspect to consider is...')">To begin with, one key aspect to consider is...</span>
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', 'This can be attributed to the fact that...')">This can be attributed to the fact that...</span>
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', 'A clear illustration of this is...')">A clear illustration of this is...</span>
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', 'Research consistently shows that...')">Research consistently shows that...</span>
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', 'Having considered this point, let\'s now turn to...')">Having considered this point, let's now turn to...</span>
+              <span class="phrase-chip" onclick="insertPhrase('point1-text', 'As a result, many experts argue that...')">As a result, many experts argue that...</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Clear topic sentence introducing the point</li>
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Explanation or reason with advanced language</li>
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Concrete example, statistic, or evidence</li>
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Linking phrase to transition to Point 2</li>
+          </ul>
+
+          <div class="model-toggle">
+            <button class="model-btn" onclick="toggleModel('model-p1', this)">📖 See model Point 1</button>
+            <div class="model-content" id="model-p1-content">
+              <p id="model-p1"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2b: POINT 2 -->
+      <div class="card card-2b">
+        <div class="card-header">
+          <div class="step-badge">3</div>
+          <div>
+            <div class="card-title">Point 2</div>
+            <div class="card-subtitle" id="point2-label">Loading...</div>
+          </div>
+          <div class="timing">⏱ ~60 sec</div>
+        </div>
+        <div class="card-body">
+          <div class="exam-mode-notice">⚠️ Exam Mode — no aids available. Write from memory.</div>
+
+          <div class="structure-row">
+            <div class="mini-card"><div class="mini-card-num">Step 1</div><div class="mini-card-text">Introduce with contrast</div></div>
+            <div class="mini-card"><div class="mini-card-num">Step 2</div><div class="mini-card-text">Develop & reason</div></div>
+            <div class="mini-card"><div class="mini-card-num">Step 3</div><div class="mini-card-text">Evidence / result</div></div>
+          </div>
+
+          <div class="write-section">
+            <label>Develop your second point</label>
+            <textarea id="point2-text" rows="4" placeholder="Turning to… / On the other hand,… What's more,… Consequently,…" oninput="updateProgress()"></textarea>
+          </div>
+
+          <div class="phrase-bank">
+            <button class="phrase-bank-toggle" onclick="toggleBank('p2-phrases', this)"><span>📚</span> Phrase bank</button>
+            <div class="phrase-list" id="p2-phrases">
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', 'Turning to the second point,')">Turning to the second point,</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', 'On the other hand, it is equally important to consider...')">On the other hand, it is equally important to consider...</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', 'What\'s more, / Furthermore,')">What's more, / Furthermore,</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', 'It is worth noting that...')">It is worth noting that...</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', 'Consequently, many institutions are now...')">Consequently, many institutions are now...</span>
+              <span class="phrase-chip" onclick="insertPhrase('point2-text', 'This raises important questions about...')">This raises important questions about...</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Use a linking phrase to introduce Point 2</li>
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Develop the idea with reasoning and evidence</li>
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Use varied vocabulary — no repetition from Point 1</li>
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>End with a consequence or implication</li>
+          </ul>
+
+          <div class="model-toggle">
+            <button class="model-btn" onclick="toggleModel('model-p2', this)">📖 See model Point 2</button>
+            <div class="model-content" id="model-p2-content">
+              <p id="model-p2"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3: CONCLUSION -->
+      <div class="card card-3">
+        <div class="card-header">
+          <div class="step-badge">4</div>
+          <div>
+            <div class="card-title">The Conclusion</div>
+            <div class="card-subtitle">Summary · Opinion · Close</div>
+          </div>
+          <div class="timing">⏱ ~30–45 sec</div>
+        </div>
+        <div class="card-body">
+          <div class="exam-mode-notice">⚠️ Exam Mode — no aids available. Write from memory.</div>
+
+          <div class="concl-row">
+            <div class="concl-box"><div class="concl-icon">🔄</div><div class="concl-label">Summarise</div><div class="concl-sub">We have seen that…</div></div>
+            <div class="concl-box"><div class="concl-icon">💬</div><div class="concl-label">Your View</div><div class="concl-sub">Personally, I believe…</div></div>
+            <div class="concl-box"><div class="concl-icon">🎯</div><div class="concl-label">Close</div><div class="concl-sub">That brings me to the end…</div></div>
+          </div>
+
+          <div class="write-section">
+            <label>Write your conclusion</label>
+            <textarea id="concl-text" rows="4" placeholder="To sum up, we have seen that… Personally, I believe… That brings me to the end of my monolog." oninput="updateProgress()"></textarea>
+          </div>
+
+          <div class="phrase-bank">
+            <button class="phrase-bank-toggle" onclick="toggleBank('concl-phrases', this)"><span>📚</span> Phrase bank</button>
+            <div class="phrase-list" id="concl-phrases">
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', 'To sum up, we have seen that...')">To sum up, we have seen that...</span>
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', 'Personally, I believe that...')">Personally, I believe that...</span>
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', 'Ultimately, what matters most is...')">Ultimately, what matters most is...</span>
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', 'It will be interesting to see how this issue evolves in the coming years.')">It will be interesting to see how this issue evolves in the coming years.</span>
+              <span class="phrase-chip" onclick="insertPhrase('concl-text', 'That brings me to the end of my monolog. Thank you for listening.')">That brings me to the end of my monolog. Thank you for listening.</span>
+            </div>
+          </div>
+
+          <ul class="checklist">
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Signal the end clearly: "To sum up…"</li>
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Briefly recap both points without repeating them word for word</li>
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Give a personal opinion or reflection</li>
+            <li onclick="toggleCheck(this)"><span class="check-box"></span>Close with a polished final sentence</li>
+          </ul>
+
+          <div class="model-toggle">
+            <button class="model-btn" onclick="toggleModel('model-concl', this)">📖 See model Conclusion</button>
+            <div class="model-content" id="model-concl-content">
+              <p id="model-concl"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end cards-grid -->
+  </div><!-- end main -->
+</div><!-- end layout -->
+
+<script>
+const topics = [
+  {
+    name: "Critical Thinking in Education",
+    theme: "Education & Pedagogy",
+    situation: "Many educators and researchers argue that traditional education systems focus too much on memorisation and not enough on developing students' ability to think critically and independently.",
+    bullets: [
+      "Why critical thinking skills are essential for academic and professional success",
+      "How education systems can be reformed to better develop these skills"
+    ],
+    model: {
+      hook: "Have you ever sat through a lesson where you were expected to memorise facts without ever questioning them? This experience is more common than we might think — and it raises a fundamental question about what education is actually for.",
+      bg: "The debate over critical thinking in education is not new, but it has gained renewed urgency in a world where access to information is instant and unlimited. The challenge for today's students is not to remember facts, but to evaluate them — to distinguish reliable evidence from misinformation, and reasoned arguments from empty rhetoric.",
+      map: "I've decided to address two key areas today. First of all, I will examine why critical thinking has become such an essential academic and professional skill. After that, I will consider how education systems can be reformed to place this skill at the centre of learning.",
+      p1: "To begin with, one of the most compelling reasons to prioritise critical thinking is its direct impact on academic performance and long-term professional success. This can be attributed to the fact that graduates who can analyse, evaluate, and construct arguments are better equipped for the demands of higher education and the modern workplace. A clear illustration of this is the growing emphasis on analytical writing and problem-solving tasks in university entrance exams and graduate recruitment processes. What's more, research from the OECD's PISA framework consistently shows that students trained in higher-order thinking outperform their peers in complex reasoning tasks. Having established its importance, let's now consider how to teach it more effectively.",
+      p2: "Turning to educational reform, the challenge lies in shifting from content-based to competency-based learning. This can be attributed to the fact that many current curricula are still designed around standardised testing, which rewards memorisation over reasoning. On the other hand, models like Finland's inquiry-based curriculum demonstrate that it is possible to create systems where students are regularly asked to question, debate, and justify their ideas. Consequently, a growing number of universities and secondary schools are introducing seminars, debate programmes, and project-based assessments as alternatives to traditional written exams.",
+      concl: "To sum up, we have seen that critical thinking is not a luxury in modern education — it is a fundamental skill that shapes how students engage with knowledge and navigate the world. Personally, I believe that the most important reform we can make is to give students more opportunities to ask questions, not just answer them. That brings me to the end of my monolog — thank you for listening."
+    }
+  },
+  {
+    name: "Academic Integrity & AI",
+    theme: "Education & Technology",
+    situation: "The rapid rise of artificial intelligence tools such as ChatGPT has raised serious questions about academic integrity, plagiarism, and what it means to do original work in higher education.",
+    bullets: [
+      "The main challenges that AI tools pose to academic integrity",
+      "How universities and educators should respond to these challenges"
+    ],
+    model: {
+      hook: "What does it mean to write your own essay when a machine can produce a convincing one in seconds? This is a question that universities around the world are now grappling with — and there are no easy answers.",
+      bg: "The arrival of large language models like ChatGPT has fundamentally changed the landscape of academic work. Students now have access to tools that can generate coherent, well-structured arguments on almost any topic — raising profound questions about authorship, effort, and the value of academic qualifications.",
+      map: "I've decided to focus on two key areas today. First of all, I will examine the specific challenges that AI tools pose to academic integrity. After that, I will consider how universities and educators might respond in a meaningful and effective way.",
+      p1: "To begin with, one of the most significant challenges is the difficulty of detecting AI-generated content. Unlike traditional plagiarism, where text can be traced to an identifiable source, AI-generated writing is technically original — making it extremely difficult to identify using existing detection software. This can be attributed to the sophisticated nature of models trained on vast quantities of human-written text. A clear illustration of this is the growing number of academic misconduct cases in which students have submitted AI-written work, often without their tutors being aware. Consequently, the traditional essay format is being called into question as a reliable measure of student learning.",
+      p2: "On the other hand, outright bans on AI tools may be neither practical nor desirable. What's more, many educators argue that the real issue is not the existence of these tools, but the way assessments are designed. Universities such as Cambridge and ETH Zurich are already experimenting with oral examinations, in-class writing tasks, and portfolio-based assessment as alternatives that better reflect genuine student understanding. It is worth noting that teaching students to use AI critically and ethically — rather than simply banning it — may be the more sustainable long-term response.",
+      concl: "To sum up, we have seen that AI presents a genuine challenge to academic integrity, but also an opportunity to rethink how we assess and develop student learning. Personally, I believe that the answer lies not in resistance, but in adaptation — designing assessments that reward thinking, not just output. It will be fascinating to see how higher education evolves in response to this challenge over the next decade. Thank you for listening."
+    }
+  },
+  {
+    name: "Mental Health at University",
+    theme: "Health & Academic Life",
+    situation: "University students are increasingly reporting high levels of stress, anxiety, and burnout, prompting debate about the responsibilities of academic institutions towards student wellbeing.",
+    bullets: [
+      "The main factors contributing to poor mental health among university students",
+      "What universities can and should do to support student wellbeing"
+    ],
+    model: {
+      hook: "Did you know that, according to recent studies, more than one in three university students report experiencing significant levels of anxiety or depression during their studies? This is a figure that demands our attention — and our action.",
+      bg: "University has long been seen as one of the most formative periods of a person's life. But for a growing number of students, it is also one of the most challenging. The combination of academic pressure, financial stress, social isolation, and uncertainty about the future is creating a mental health crisis that institutions can no longer afford to ignore.",
+      map: "I've decided to address two key areas today. First of all, I will examine the main factors that are contributing to poor mental health among university students. After that, I will consider what universities can — and should — do to respond.",
+      p1: "To begin with, one of the most significant contributing factors is academic pressure. This can be attributed to increasingly competitive university environments, where students feel that their entire future depends on their grades. A clear illustration of this is the rise in demand for counselling services during exam periods — a pattern observed in universities across Europe and North America. What's more, financial stress plays a considerable role: many students work part-time jobs alongside full-time studies, leaving little time for rest, social connection, or the kinds of experiences that make university life meaningful.",
+      p2: "Turning to institutional responses, universities have a clear responsibility to act — and some are already doing so. What's more, approaches that have shown promise include embedding mental health education into the curriculum, training academic staff to identify students in distress, and making counselling services genuinely accessible, rather than subject to long waiting lists. It is worth noting, however, that structural solutions are more effective than individual ones: reducing assessment loads, offering flexible deadlines, and building community on campus can make a more lasting difference than crisis intervention alone. Consequently, the most effective universities are those that treat student wellbeing not as an add-on, but as a core academic value.",
+      concl: "To sum up, we have seen that the mental health challenges facing university students are real and complex, rooted in both academic and social pressures — and that institutions have a genuine duty to respond. Personally, I believe that a university which produces academically successful but mentally exhausted graduates has not fulfilled its purpose. Ultimately, education should enable people to flourish — not just to pass. That brings me to the end of my monolog."
+    }
+  },
+  {
+    name: "Open Access & Knowledge",
+    theme: "Academia & Society",
+    situation: "There is a growing global debate about who has the right to access academic knowledge, and whether the current system — in which most research is locked behind expensive paywalls — is fair or sustainable.",
+    bullets: [
+      "The arguments in favour of making academic research freely available to all",
+      "The challenges and limitations of moving towards open access publishing"
+    ],
+    model: {
+      hook: "Imagine spending years conducting groundbreaking research — only to have it locked behind a paywall that most of the world cannot afford to access. This is the reality for the vast majority of academic publications today, and it raises a fundamental question about who knowledge actually belongs to.",
+      bg: "The academic publishing industry generates billions of euros in revenue each year, largely by charging institutions and individuals to access research that was often publicly funded. This model is increasingly being challenged by academics, universities, and governments who argue that knowledge should be a public good — freely available to anyone who wants to use it.",
+      map: "I've decided to focus on two key areas today. First of all, I will examine the case for open access publishing. After that, I will consider the real challenges involved in making this transition.",
+      p1: "To begin with, the most powerful argument in favour of open access is one of equity. This can be attributed to the fact that the current system creates a profound imbalance: well-funded universities in wealthy countries can afford journal subscriptions, while institutions in the Global South often cannot. A clear illustration of this is the situation in many African and Latin American universities, where researchers may be unable to access recent studies in their own fields. What's more, much of the research that is locked behind paywalls was funded by public money — which means the public is essentially paying twice: once to fund the research, and again to read it. Consequently, the open access movement has gained significant momentum, with the European Union now requiring that research funded through its Horizon programme be made freely available.",
+      p2: "On the other hand, the transition to open access is not without its challenges. One key concern is the financial model: if journals can no longer charge readers, they must find alternative sources of revenue. What's more, many open access journals have adopted 'article processing charges' — fees paid by authors to publish their work — which can disadvantage researchers from less well-funded institutions. It is worth noting that predatory journals — low-quality publications that charge fees without providing meaningful peer review — have also proliferated in the open access space, raising concerns about research quality and credibility.",
+      concl: "To sum up, we have seen that the case for open access to academic knowledge is compelling, but that the practical transition presents real challenges around funding, quality, and equity. Personally, I believe that knowledge — especially knowledge produced with public funds — should be a shared resource. The challenge is not whether to open access, but how to do so fairly and sustainably. That brings me to the end of my monolog — thank you for listening."
+    }
+  },
+  {
+    name: "Language & Academic Success",
+    theme: "Linguistics & Education",
+    situation: "In an increasingly globalised academic world, the dominance of English as the language of scholarship raises important questions about access, fairness, and the future of linguistic diversity in higher education.",
+    bullets: [
+      "The advantages of English as a global academic language",
+      "The challenges and risks that English dominance poses for non-native speakers and other languages"
+    ],
+    model: {
+      hook: "If you are studying in a language that is not your mother tongue, you already know what it costs — not just in effort, but in confidence, in nuance, in the ability to express your most complex ideas. And yet, for millions of academics around the world, publishing in English is not a choice — it is a necessity.",
+      bg: "English has become the undisputed lingua franca of global academia. The vast majority of top-ranked journals, international conferences, and cross-border research collaborations operate primarily or exclusively in English. This reality brings both opportunities and serious inequalities that are only beginning to be fully acknowledged.",
+      map: "I've decided to address two key areas today. First of all, I will consider the genuine advantages that English provides as a global academic language. After that, I will examine the significant challenges and risks that this dominance creates — both for individual researchers and for linguistic diversity more broadly.",
+      p1: "To begin with, the most obvious advantage of a shared academic language is the ability to communicate across borders with unprecedented efficiency. This can be attributed to the fact that English allows researchers from different countries and disciplines to share findings, collaborate on projects, and build on each other's work without the need for translation. A clear illustration of this is the rapid international dissemination of COVID-19 research during the pandemic, where English-language publications allowed findings to cross borders within days. Consequently, English proficiency has become one of the most important academic skills a researcher can possess — regardless of their field or nationality.",
+      p2: "On the other hand, the dominance of English creates significant barriers for researchers who did not grow up speaking it. What's more, studies show that non-native English speakers face higher rejection rates from international journals, spend considerably more time preparing manuscripts, and are less likely to be invited to speak at prestigious conferences. It is worth noting that this disadvantage is not simply a matter of language ability — it reflects deeper structural inequalities in the academic system. Furthermore, as English continues to expand, there is a very real risk that knowledge produced in other languages becomes marginalised or invisible, impoverishing the diversity of ideas and perspectives that academia depends on.",
+      concl: "To sum up, we have seen that English as a global academic language offers real communicative advantages, but also perpetuates inequalities that the academic community can no longer afford to ignore. Personally, I believe that the goal should not be to replace English, but to build more genuinely multilingual systems — ones that value and reward scholarship in all languages. Ultimately, a truly global academy should reflect the full richness of human thought. That brings me to the end of my monolog — thank you for listening."
+    }
+  }
+];
+
+let currentTopicIndex = 0;
+let timerInterval = null;
+let timerSeconds = 180;
+let timerMode = 'prep';
+let timerRunning = false;
+let examModeOn = false;
+
+function init() {
+  const list = document.getElementById('topicList');
+  topics.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'topic-item' + (i === 0 ? ' active' : '');
+    div.innerHTML = `<div class="topic-item-name">${t.name}</div><div class="topic-item-theme">${t.theme}</div>`;
+    div.onclick = () => loadTopic(i, div);
+    list.appendChild(div);
+  });
+  loadTopic(0, list.children[0]);
+}
+
+function loadTopic(i, el) {
+  currentTopicIndex = i;
+  document.querySelectorAll('.topic-item').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+
+  const t = topics[i];
+  document.getElementById('examSituation').textContent = t.situation;
+
+  const bulletsEl = document.getElementById('examBullets');
+  bulletsEl.innerHTML = t.bullets.map((b, n) =>
+    `<li><span class="bullet-num">${n + 1}</span><span>${b}</span></li>`
+  ).join('');
+
+  document.getElementById('point1-label').textContent = t.bullets[0];
+  document.getElementById('point2-label').textContent = t.bullets[1];
+
+  document.getElementById('model-intro-hook').textContent = t.model.hook;
+  document.getElementById('model-intro-bg').textContent = t.model.bg;
+  document.getElementById('model-intro-map').textContent = t.model.map;
+  document.getElementById('model-p1').textContent = t.model.p1;
+  document.getElementById('model-p2').textContent = t.model.p2;
+  document.getElementById('model-concl').textContent = t.model.concl;
+
+  ['intro-text','point1-text','point2-text','concl-text'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.querySelectorAll('.checklist li').forEach(li => li.classList.remove('checked'));
+  document.querySelectorAll('.model-content').forEach(m => m.classList.remove('open'));
+
+  updateProgress();
+  resetTimer();
+}
+
+function selectStrategy(el) {
+  document.querySelectorAll('.strategy-box').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function toggleBank(id, btn) {
+  const list = document.getElementById(id);
+  list.classList.toggle('open');
+  btn.querySelector('span').textContent = list.classList.contains('open') ? '📖' : '📚';
+}
+
+function insertPhrase(id, phrase) {
+  const ta = document.getElementById(id);
+  ta.value = ta.value ? ta.value + ' ' + phrase : phrase;
+  ta.focus();
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('checked');
+}
+
+function updateProgress() {
+  const fields = ['intro-text','point1-text','point2-text','concl-text'];
+  const filled = fields.filter(id => document.getElementById(id).value.trim().length > 10).length;
+  document.getElementById('progressFill').style.width = (filled / 4 * 100) + '%';
+  document.getElementById('progressLabel').textContent = `${filled} / 4 sections`;
+}
+
+function toggleModel(id, btn) {
+  const contentId = id === 'model-intro' ? 'model-intro' : id + '-content';
+  const m = document.getElementById(contentId);
+  m.classList.toggle('open');
+  const label = id === 'model-intro' ? 'Introduction' : id === 'model-p1' ? 'Point 1' : id === 'model-p2' ? 'Point 2' : 'Conclusion';
+  btn.textContent = m.classList.contains('open') ? `📕 Hide model` : `📖 See model ${label}`;
+}
+
+function setTimerMode(mode, btn) {
+  timerMode = mode;
+  document.querySelectorAll('.timer-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  resetTimer();
+}
+
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timerBtn').textContent = '▶ Resume';
+  } else {
+    timerRunning = true;
+    document.getElementById('timerBtn').textContent = '⏸ Pause';
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      const display = document.getElementById('timerDisplay');
+      const m = Math.floor(timerSeconds / 60);
+      const s = timerSeconds % 60;
+      display.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      display.className = 'timer-big';
+      if (timerSeconds <= 15) display.classList.add('warning');
+      else if (timerMode === 'prep') display.classList.add('prep');
+      if (timerSeconds <= 0) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        display.textContent = 'Time!';
+        document.getElementById('timerBtn').textContent = '▶ Start';
+      }
+    }, 1000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = timerMode === 'prep' ? 180 : 60;
+  const display = document.getElementById('timerDisplay');
+  display.textContent = timerMode === 'prep' ? '3:00' : '1:00';
+  display.className = 'timer-big ' + (timerMode === 'prep' ? 'prep' : '');
+  document.getElementById('timerBtn').textContent = '▶ Start';
+  document.getElementById('timerLabel').textContent = timerMode === 'prep' ? '3 min preparation' : '1 min delivery';
+}
+
+function toggleExamMode() {
+  examModeOn = !examModeOn;
+  const btn = document.getElementById('examModeBtn');
+  if (examModeOn) {
+    document.body.classList.add('exam-mode');
+    btn.classList.add('active');
+    btn.textContent = '🎓 Exam Mode — ON';
+  } else {
+    document.body.classList.remove('exam-mode');
+    btn.classList.remove('active');
+    btn.textContent = '🎓 Exam Mode — OFF';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
