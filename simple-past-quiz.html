@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Past Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f5f0e8;
+      --paper: #fffdf7;
+      --ink: #1a1612;
+      --muted: #8c8070;
+      --border: #ddd5c0;
+      --accent: #c0392b;
+      --accent2: #2c6e49;
+      --accent3: #1d4e8f;
+      --tag-reg: #2c6e49;
+      --tag-irr: #c0392b;
+      --tag-neg: #1d4e8f;
+      --correct: #2c6e49;
+      --wrong: #c0392b;
+      --highlight: #f7e99e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 27px,
+          rgba(180,160,120,0.13) 27px,
+          rgba(180,160,120,0.13) 28px
+        );
+      color: var(--ink);
+      font-family: 'Source Sans 3', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1rem 5rem;
+    }
+
+    .wrapper { width: 100%; max-width: 640px; }
+
+    /* Header */
+    header { margin-bottom: 2rem; }
+
+    .header-top {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 400;
+      border-left: 2px solid var(--accent);
+      padding-left: 0.6rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 0.3rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.8rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tag {
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+
+    .tag.treg { background: rgba(44,110,73,0.12); color: var(--tag-reg); }
+    .tag.tirr { background: rgba(192,57,43,0.10); color: var(--tag-irr); }
+    .tag.tneg { background: rgba(29,78,143,0.10); color: var(--tag-neg); }
+
+    /* Stats row */
+    .stats-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat {
+      flex: 1;
+      text-align: center;
+      padding: 0.6rem 0;
+      border: 1px solid var(--border);
+      background: var(--paper);
+    }
+
+    .stat:first-child { border-radius: 6px 0 0 6px; }
+    .stat:last-child  { border-radius: 0 6px 6px 0; }
+    .stat + .stat { border-left: none; }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+      display: block;
+    }
+
+    .stat-num.c { color: var(--correct); }
+    .stat-num.w { color: var(--wrong); }
+    .stat-num.p { color: var(--accent3); }
+
+    .stat-lbl {
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* Progress */
+    .prog-bar {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 1.8rem;
+      overflow: hidden;
+    }
+
+    .prog-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.35s ease;
+    }
+
+    /* Card */
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem 2rem 1.75rem;
+      box-shadow: 0 2px 0 var(--border), 0 6px 24px rgba(0,0,0,0.06);
+      position: relative;
+      animation: cardIn 0.28s ease;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Red margin line */
+    .card::before {
+      content: '';
+      position: absolute;
+      left: 2.8rem;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: rgba(192,57,43,0.18);
+      border-radius: 1px;
+    }
+
+    .card-inner { padding-left: 1rem; }
+
+    .q-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .q-num {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .q-prompt {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.15rem, 3.5vw, 1.45rem);
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 0.5rem;
+    }
+
+    .q-context {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 1.6rem;
+      font-weight: 300;
+    }
+
+    .q-context strong {
+      color: var(--ink);
+      font-style: normal;
+      font-weight: 600;
+      background: var(--highlight);
+      padding: 0 3px;
+      border-radius: 2px;
+    }
+
+    /* Options */
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 0;
+    }
+
+    .opt-btn {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      border-radius: 5px;
+      color: var(--ink);
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      padding: 0.75rem 0.9rem;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s, transform 0.08s;
+      text-align: left;
+      letter-spacing: 0.01em;
+    }
+
+    .opt-btn:hover:not(:disabled) {
+      border-color: var(--accent3);
+      background: rgba(29,78,143,0.05);
+      transform: translateX(2px);
+    }
+
+    .opt-btn.correct {
+      border-color: var(--correct);
+      background: rgba(44,110,73,0.09);
+      color: var(--correct);
+      font-weight: 600;
+    }
+
+    .opt-btn.wrong {
+      border-color: var(--wrong);
+      background: rgba(192,57,43,0.08);
+      color: var(--wrong);
+    }
+
+    .opt-btn:disabled { cursor: default; }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 1.2rem 0;
+    }
+
+    /* Feedback */
+    .feedback {
+      font-size: 0.82rem;
+      line-height: 1.6;
+      display: none;
+      padding: 0.8rem 1rem;
+      border-radius: 5px;
+      border-left: 3px solid;
+    }
+
+    .feedback.show { display: block; animation: fadeIn 0.2s ease; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .feedback.fb-ok {
+      background: rgba(44,110,73,0.07);
+      border-color: var(--correct);
+      color: #1e4d30;
+    }
+
+    .feedback.fb-err {
+      background: rgba(192,57,43,0.07);
+      border-color: var(--wrong);
+      color: #7a1e14;
+    }
+
+    .feedback strong { font-weight: 600; }
+    .feedback .rule  { display: block; margin-top: 0.3rem; opacity: 0.8; font-style: italic; font-size: 0.78rem; }
+
+    /* Next button */
+    .next-btn {
+      display: none;
+      width: 100%;
+      margin-top: 1rem;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      border-radius: 5px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      padding: 0.85rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.08s;
+    }
+
+    .next-btn.show { display: block; animation: fadeIn 0.2s ease; }
+    .next-btn:hover { background: #2e2820; transform: translateY(-1px); }
+    .next-btn:active { transform: translateY(0); }
+
+    /* Results */
+    .results {
+      display: none;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3rem 2rem;
+      box-shadow: 0 2px 0 var(--border), 0 6px 24px rgba(0,0,0,0.06);
+      text-align: center;
+      animation: cardIn 0.35s ease;
+    }
+
+    .results.show { display: block; }
+
+    .results-mark {
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .results h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .results-pct {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--ink);
+      margin: 0.5rem 0;
+    }
+
+    .results-tally {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      margin: 1rem 0 0.5rem;
+    }
+
+    .rt-item { text-align: center; }
+
+    .rt-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      display: block;
+    }
+
+    .rt-num.c { color: var(--correct); }
+    .rt-num.w { color: var(--wrong); }
+
+    .rt-lbl { font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+    .results-msg {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-style: italic;
+      margin: 1rem 0 1.8rem;
+      font-weight: 300;
+    }
+
+    .restart-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.85rem 2.5rem;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.08s;
+    }
+
+    .restart-btn:hover { opacity: 0.87; transform: translateY(-1px); }
+
+    @media (max-width: 440px) {
+      .options { grid-template-columns: 1fr; }
+      .card::before { display: none; }
+      .card-inner { padding-left: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="header-top">
+      <span class="eyebrow">Grammar Quiz · English</span>
+    </div>
+    <h1>Simple <em>Past</em></h1>
+    <p class="subtitle">Choose the correct simple past form of each verb.</p>
+  </header>
+
+  <div class="legend">
+    <span class="tag treg">Regular (-ed)</span>
+    <span class="tag tirr">Irregular</span>
+    <span class="tag tneg">Negative / Question</span>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat">
+      <span class="stat-num p" id="statQ">1/20</span>
+      <span class="stat-lbl">Question</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num c" id="statC">0</span>
+      <span class="stat-lbl">Correct</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num w" id="statW">0</span>
+      <span class="stat-lbl">Wrong</span>
+    </div>
+  </div>
+
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+
+  <div class="card" id="qCard">
+    <div class="card-inner">
+      <div class="q-meta">
+        <span class="q-num" id="qNum">01</span>
+        <span class="tag" id="qTag"></span>
+      </div>
+      <p class="q-prompt" id="qPrompt"></p>
+      <p class="q-context" id="qContext"></p>
+      <div class="options" id="optGrid"></div>
+      <hr class="divider" id="divider" style="display:none">
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn">Continue →</button>
+    </div>
+  </div>
+
+  <div class="results" id="results">
+    <div class="results-mark" id="rMark"></div>
+    <h2 id="rTitle"></h2>
+    <div class="results-pct" id="rPct"></div>
+    <div class="results-tally">
+      <div class="rt-item"><span class="rt-num c" id="rC"></span><span class="rt-lbl">Correct</span></div>
+      <div class="rt-item"><span class="rt-num w" id="rW"></span><span class="rt-lbl">Wrong</span></div>
+    </div>
+    <p class="results-msg" id="rMsg"></p>
+    <button class="restart-btn" onclick="restart()">Try again</button>
+  </div>
+
+</div>
+
+<script>
+// Types: 'reg' | 'irr' | 'neg'
+const bank = [
+  // ── REGULAR ──
+  {
+    type: "reg",
+    prompt: 'What is the simple past of "walk"?',
+    context: 'She ___ to school yesterday.',
+    correct: "walked",
+    options: ["walked", "walk", "woked", "was walk"],
+    rule: "Regular verbs → base + <strong>-ed</strong>.",
+    tip: "walk → <strong>walked</strong>"
+  },
+  {
+    type: "reg",
+    prompt: 'What is the simple past of "play"?',
+    context: 'They ___ football last Saturday.',
+    correct: "played",
+    options: ["played", "plaied", "was played", "playd"],
+    rule: "Regular verbs ending in a vowel + y → add <strong>-ed</strong>.",
+    tip: "play → <strong>played</strong>"
+  },
+  {
+    type: "reg",
+    prompt: 'What is the simple past of "study"?',
+    context: 'She ___ all night for the exam.',
+    correct: "studied",
+    options: ["studied", "studyed", "studed", "was studying"],
+    rule: "Consonant + y → change <strong>y → ied</strong>.",
+    tip: "study → <strong>studied</strong>"
+  },
+  {
+    type: "reg",
+    prompt: 'What is the simple past of "stop"?',
+    context: 'The bus ___ in front of the school.',
+    correct: "stopped",
+    options: ["stopped", "stoped", "stopted", "stop"],
+    rule: "CVC ending → double consonant + <strong>-ed</strong>.",
+    tip: "stop → <strong>stopped</strong> (double p)"
+  },
+  {
+    type: "reg",
+    prompt: 'What is the simple past of "live"?',
+    context: 'My grandparents ___ in Paris for ten years.',
+    correct: "lived",
+    options: ["lived", "liveed", "livd", "was living"],
+    rule: "Verbs ending in silent <strong>-e</strong> → add only <strong>-d</strong>.",
+    tip: "live → <strong>lived</strong>"
+  },
+  {
+    type: "reg",
+    prompt: 'What is the simple past of "watch"?',
+    context: 'We ___ a great movie last night.',
+    correct: "watched",
+    options: ["watched", "watcht", "watchd", "were watching"],
+    rule: "Regular verb → add <strong>-ed</strong>.",
+    tip: "watch → <strong>watched</strong>"
+  },
+  {
+    type: "reg",
+    prompt: 'What is the simple past of "try"?',
+    context: 'He ___ the new restaurant downtown.',
+    correct: "tried",
+    options: ["tried", "tryed", "try", "treid"],
+    rule: "Consonant + y → change <strong>y → ied</strong>.",
+    tip: "try → <strong>tried</strong>"
+  },
+  // ── IRREGULAR ──
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "go"?',
+    context: 'We ___ to the beach last summer.',
+    correct: "went",
+    options: ["went", "goed", "gone", "was going"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "go → <strong>went</strong>"
+  },
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "eat"?',
+    context: 'She ___ a big breakfast this morning.',
+    correct: "ate",
+    options: ["ate", "eated", "eaten", "ated"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "eat → <strong>ate</strong>"
+  },
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "have"?',
+    context: 'I ___ a really good time at the party.',
+    correct: "had",
+    options: ["had", "haved", "have", "has"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "have → <strong>had</strong>"
+  },
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "write"?',
+    context: 'She ___ a letter to her friend.',
+    correct: "wrote",
+    options: ["wrote", "written", "writed", "was written"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "write → <strong>wrote</strong>"
+  },
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "see"?',
+    context: 'I ___ an accident on my way to work.',
+    correct: "saw",
+    options: ["saw", "seen", "seed", "sawed"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "see → <strong>saw</strong>"
+  },
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "take"?',
+    context: 'He ___ the last slice of pizza.',
+    correct: "took",
+    options: ["took", "taken", "taked", "toke"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "take → <strong>took</strong>"
+  },
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "buy"?',
+    context: 'She ___ a new laptop last week.',
+    correct: "bought",
+    options: ["bought", "buyed", "boughted", "buyd"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "buy → <strong>bought</strong>"
+  },
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "come"?',
+    context: 'They ___ home very late last night.',
+    correct: "came",
+    options: ["came", "comed", "come", "camed"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "come → <strong>came</strong>"
+  },
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "think"?',
+    context: 'I ___ the test was going to be easy.',
+    correct: "thought",
+    options: ["thought", "thinked", "thunk", "thinkt"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "think → <strong>thought</strong>"
+  },
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "make"?',
+    context: 'She ___ a delicious cake for the party.',
+    correct: "made",
+    options: ["made", "maked", "make", "maded"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "make → <strong>made</strong>"
+  },
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "know"?',
+    context: 'He ___ the answer right away.',
+    correct: "knew",
+    options: ["knew", "knowed", "known", "newed"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "know → <strong>knew</strong>"
+  },
+  {
+    type: "irr",
+    prompt: 'What is the simple past of "find"?',
+    context: 'She ___ her keys under the sofa.',
+    correct: "found",
+    options: ["found", "finded", "find", "foud"],
+    rule: "Irregular verb — must be memorized.",
+    tip: "find → <strong>found</strong>"
+  },
+  // ── NEGATIVE / QUESTION ──
+  {
+    type: "neg",
+    prompt: 'Choose the correct negative form.',
+    context: 'She ___ go to school yesterday. (She stayed home.)',
+    correct: "didn't go",
+    options: ["didn't go", "didn't went", "not went", "wasn't go"],
+    rule: "Negatives: <strong>didn't</strong> + base verb (NOT past form).",
+    tip: "She <strong>didn't go</strong> (not 'didn't went')"
+  },
+  {
+    type: "neg",
+    prompt: 'Choose the correct question form.',
+    context: '___ he call you last night?',
+    correct: "Did",
+    options: ["Did", "Does", "Was", "Had"],
+    rule: "Yes/No questions: <strong>Did</strong> + subject + base verb.",
+    tip: "<strong>Did</strong> he call you? (not 'Does' or 'Was')"
+  },
+  {
+    type: "neg",
+    prompt: 'Choose the correct negative form.',
+    context: 'They ___ the movie. (It was bad.)',
+    correct: "didn't enjoy",
+    options: ["didn't enjoy", "didn't enjoyed", "not enjoyed", "wasn't enjoy"],
+    rule: "Negatives: <strong>didn't</strong> + base verb.",
+    tip: "They <strong>didn't enjoy</strong> (not 'didn't enjoyed')"
+  },
+  {
+    type: "neg",
+    prompt: 'Choose the correct question form.',
+    context: '___ you sleep well last night?',
+    correct: "Did",
+    options: ["Did", "Were", "Have", "Do"],
+    rule: "Yes/No questions in the past: <strong>Did</strong> + subject + base verb.",
+    tip: "<strong>Did</strong> you sleep…? (not 'Were' or 'Have')"
+  },
+];
+
+const tagInfo = {
+  reg: { label: "Regular (-ed)", cls: "treg" },
+  irr: { label: "Irregular",     cls: "tirr" },
+  neg: { label: "Negative / Q",  cls: "tneg" },
+};
+
+let questions = [], idx = 0, correct = 0, wrong = 0, done = false;
+
+function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
+
+function init() {
+  questions = shuffle(bank).slice(0, 20);
+  idx = 0; correct = 0; wrong = 0; done = false;
+  document.getElementById('statC').textContent = 0;
+  document.getElementById('statW').textContent = 0;
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('qCard').style.display = '';
+  render();
+}
+
+function render() {
+  done = false;
+  const q = questions[idx];
+  const total = questions.length;
+
+  // Stats
+  document.getElementById('statQ').textContent = `${idx + 1}/${total}`;
+  document.getElementById('progFill').style.width = (idx / total * 100) + '%';
+
+  // Number, tag
+  document.getElementById('qNum').textContent = String(idx + 1).padStart(2, '0');
+  const ti = tagInfo[q.type];
+  const tagEl = document.getElementById('qTag');
+  tagEl.textContent = ti.label;
+  tagEl.className = `tag ${ti.cls}`;
+
+  // Prompt & context
+  document.getElementById('qPrompt').textContent = q.prompt;
+  const ctx = document.getElementById('qContext');
+  ctx.innerHTML = q.context.replace(/_+/, '<strong>___</strong>');
+
+  // Options
+  const grid = document.getElementById('optGrid');
+  grid.innerHTML = '';
+  shuffle(q.options).forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => pick(opt, btn, q);
+    grid.appendChild(btn);
+  });
+
+  // Reset
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+  document.getElementById('divider').style.display = 'none';
+  document.getElementById('nextBtn').className = 'next-btn';
+}
+
+function pick(chosen, btn, q) {
+  if (done) return;
+  done = true;
+  const ok = chosen === q.correct;
+
+  document.querySelectorAll('.opt-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.correct) b.classList.add('correct');
+  });
+
+  if (!ok) {
+    btn.classList.add('wrong');
+    wrong++;
+    document.getElementById('statW').textContent = wrong;
+  } else {
+    correct++;
+    document.getElementById('statC').textContent = correct;
+  }
+
+  document.getElementById('divider').style.display = '';
+  const fb = document.getElementById('feedback');
+  if (ok) {
+    fb.className = 'feedback fb-ok show';
+    fb.innerHTML = `✓ Correct! &nbsp;${q.tip}<span class="rule">${q.rule}</span>`;
+  } else {
+    fb.className = 'feedback fb-err show';
+    fb.innerHTML = `✗ The answer is <strong>${q.correct}</strong>.<br>${q.tip}<span class="rule">${q.rule}</span>`;
+  }
+
+  const nb = document.getElementById('nextBtn');
+  nb.className = 'next-btn show';
+  nb.textContent = idx + 1 < questions.length ? 'Continue →' : 'See my results →';
+}
+
+document.getElementById('nextBtn').onclick = () => {
+  idx++;
+  if (idx < questions.length) { render(); }
+  else { showResults(); }
+};
+
+function showResults() {
+  document.getElementById('progFill').style.width = '100%';
+  document.getElementById('qCard').style.display = 'none';
+  const pct = Math.round(correct / questions.length * 100);
+  let mark, title, msg;
+  if (pct === 100) { mark = 'A+'; title = 'Outstanding!'; msg = 'Every single answer correct. Excellent command of the simple past!'; }
+  else if (pct >= 80) { mark = 'A'; title = 'Well done!'; msg = 'Strong performance. Review the few you missed and you\'ll be perfect.'; }
+  else if (pct >= 60) { mark = 'B'; title = 'Good effort!'; msg = 'You\'re on the right track. Focus especially on irregular verbs.'; }
+  else if (pct >= 40) { mark = 'C'; title = 'Keep going!'; msg = 'Study the rules for regular verbs and practice those irregular forms.'; }
+  else { mark = 'D'; title = 'More practice!'; msg = 'Don\'t give up — review each verb category and try again!'; }
+
+  document.getElementById('rMark').textContent = mark;
+  document.getElementById('rTitle').textContent = title;
+  document.getElementById('rPct').textContent = pct + '%';
+  document.getElementById('rC').textContent = correct;
+  document.getElementById('rW').textContent = wrong;
+  document.getElementById('rMsg').textContent = msg;
+  document.getElementById('results').classList.add('show');
+}
+
+function restart() { init(); }
+
+init();
+</script>
+</body>
+</html>

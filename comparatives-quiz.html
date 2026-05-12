@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Comparatives Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0e0e12;
+      --card: #18181f;
+      --border: #2a2a38;
+      --accent: #c8f04a;
+      --accent2: #7b5ef8;
+      --text: #f0f0f5;
+      --muted: #6b6b82;
+      --correct: #4affa0;
+      --wrong: #ff5e7a;
+      --tag-1syl: #c8f04a;
+      --tag-2syl: #7b5ef8;
+      --tag-y: #f07a4a;
+      --tag-irr: #4ac8ff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* Noise overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    .wrapper { position: relative; z-index: 1; width: 100%; max-width: 680px; }
+
+    header {
+      margin-bottom: 2.5rem;
+      text-align: left;
+    }
+
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 6vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    h1 span {
+      color: var(--accent);
+    }
+
+    .subtitle {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-weight: 500;
+      border: 1px solid;
+    }
+
+    .tag.t1  { color: var(--tag-1syl); border-color: var(--tag-1syl); }
+    .tag.t2  { color: var(--tag-2syl); border-color: var(--tag-2syl); }
+    .tag.ty  { color: var(--tag-y);    border-color: var(--tag-y); }
+    .tag.tirr{ color: var(--tag-irr);  border-color: var(--tag-irr); }
+
+    /* Progress bar */
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* Score */
+    .score-display {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .score-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .score-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .score-num.correct-num { color: var(--correct); }
+    .score-num.wrong-num   { color: var(--wrong); }
+
+    .score-lbl {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* Question card */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .q-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .q-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .q-prompt {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+
+    .q-base {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .q-base strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Options */
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .option-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent2);
+      background: rgba(123, 94, 248, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .option-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .option-btn.correct {
+      border-color: var(--correct);
+      background: rgba(74, 255, 160, 0.1);
+      color: var(--correct);
+    }
+
+    .option-btn.wrong {
+      border-color: var(--wrong);
+      background: rgba(255, 94, 122, 0.1);
+      color: var(--wrong);
+    }
+
+    .option-btn:disabled { cursor: default; }
+
+    /* Feedback */
+    .feedback {
+      margin-top: 1.2rem;
+      padding: 0.9rem 1.1rem;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .feedback.show { display: block; animation: fadeIn 0.2s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    .feedback.correct-fb {
+      background: rgba(74, 255, 160, 0.08);
+      border: 1px solid rgba(74, 255, 160, 0.2);
+      color: var(--correct);
+    }
+
+    .feedback.wrong-fb {
+      background: rgba(255, 94, 122, 0.08);
+      border: 1px solid rgba(255, 94, 122, 0.2);
+      color: var(--wrong);
+    }
+
+    .feedback strong { font-weight: 500; }
+
+    /* Next button */
+    .next-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #0e0e12;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 0.95rem;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .next-btn.show { display: block; animation: fadeIn 0.2s ease; }
+    .next-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .next-btn:active { transform: translateY(0); }
+
+    /* Results screen */
+    .results {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      display: none;
+      animation: slideIn 0.4s ease;
+    }
+
+    .results.show { display: block; }
+
+    .results-emoji {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .results h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .results-score {
+      font-size: 3.5rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 1rem 0;
+    }
+
+    .results-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .restart-btn {
+      background: var(--accent2);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.9rem 2rem;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .restart-btn:hover { opacity: 0.85; }
+
+    /* Breakdown in results */
+    .breakdown {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .bd-item { text-align: center; }
+    .bd-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+    .bd-lbl { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    @media (max-width: 480px) {
+      .options { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <header>
+    <p class="eyebrow">Grammar Quiz · English</p>
+    <h1>Compara<span>tives</span></h1>
+    <p class="subtitle">Choose the correct comparative form of each adjective.</p>
+  </header>
+
+  <div class="legend">
+    <span class="tag t1">1 syllable</span>
+    <span class="tag t2">2+ syllables</span>
+    <span class="tag ty">ends in -y</span>
+    <span class="tag tirr">irregular</span>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0 / 20</span>
+  </div>
+
+  <div class="score-display">
+    <div class="score-item">
+      <span class="score-num correct-num" id="correctCount">0</span>
+      <span class="score-lbl">Correct</span>
+    </div>
+    <div class="score-item">
+      <span class="score-num wrong-num" id="wrongCount">0</span>
+      <span class="score-lbl">Wrong</span>
+    </div>
+  </div>
+
+  <!-- Question card -->
+  <div class="card" id="questionCard">
+    <div class="q-meta">
+      <span class="q-num" id="qNum">Question 1</span>
+      <span class="tag" id="qTag"></span>
+    </div>
+    <p class="q-prompt" id="qPrompt"></p>
+    <p class="q-base" id="qBase"></p>
+    <div class="options" id="optionsGrid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn">Next question →</button>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="resultsScreen">
+    <div class="results-emoji" id="resultsEmoji"></div>
+    <h2 id="resultsTitle"></h2>
+    <div class="results-score" id="resultsScore"></div>
+    <div class="breakdown">
+      <div class="bd-item"><div class="bd-num" style="color:var(--correct)" id="rdCorrect"></div><div class="bd-lbl">Correct</div></div>
+      <div class="bd-item"><div class="bd-num" style="color:var(--wrong)" id="rdWrong"></div><div class="bd-lbl">Wrong</div></div>
+    </div>
+    <p class="results-sub" id="resultsSub"></p>
+    <button class="restart-btn" onclick="restart()">Try again ↺</button>
+  </div>
+</div>
+
+<script>
+  // Types: '1syl' | '2syl' | 'y' | 'irr'
+  const allQuestions = [
+    // 1-syllable
+    {
+      base: "fast",
+      correct: "faster",
+      options: ["faster", "more fast", "fastest", "more faster"],
+      type: "1syl",
+      rule: "1-syllable adjectives → add <strong>-er</strong>",
+      tip: "fast → fast<strong>er</strong>"
+    },
+    {
+      base: "tall",
+      correct: "taller",
+      options: ["taller", "more tall", "tallest", "more taller"],
+      type: "1syl",
+      rule: "1-syllable adjectives → add <strong>-er</strong>",
+      tip: "tall → tall<strong>er</strong>"
+    },
+    {
+      base: "short",
+      correct: "shorter",
+      options: ["shorter", "more short", "shortest", "more shorter"],
+      type: "1syl",
+      rule: "1-syllable adjectives → add <strong>-er</strong>",
+      tip: "short → short<strong>er</strong>"
+    },
+    {
+      base: "big",
+      correct: "bigger",
+      options: ["bigger", "more big", "biger", "more bigger"],
+      type: "1syl",
+      rule: "CVC pattern → double the final consonant + <strong>-er</strong>",
+      tip: "big → big<strong>ger</strong> (double g)"
+    },
+    {
+      base: "hot",
+      correct: "hotter",
+      options: ["hotter", "hoter", "more hot", "hottest"],
+      type: "1syl",
+      rule: "CVC pattern → double the final consonant + <strong>-er</strong>",
+      tip: "hot → hot<strong>ter</strong> (double t)"
+    },
+    {
+      base: "cheap",
+      correct: "cheaper",
+      options: ["cheaper", "more cheap", "cheapier", "more cheaper"],
+      type: "1syl",
+      rule: "1-syllable adjectives → add <strong>-er</strong>",
+      tip: "cheap → cheap<strong>er</strong>"
+    },
+    {
+      base: "smart",
+      correct: "smarter",
+      options: ["smarter", "more smart", "smartter", "more smarter"],
+      type: "1syl",
+      rule: "1-syllable adjectives → add <strong>-er</strong>",
+      tip: "smart → smart<strong>er</strong>"
+    },
+    // 2+ syllables
+    {
+      base: "beautiful",
+      correct: "more beautiful",
+      options: ["more beautiful", "beautifuler", "beautifuller", "beautifulest"],
+      type: "2syl",
+      rule: "2+ syllable adjectives → use <strong>more</strong>",
+      tip: "beautiful → <strong>more</strong> beautiful"
+    },
+    {
+      base: "interesting",
+      correct: "more interesting",
+      options: ["more interesting", "interestinger", "most interesting", "interestingger"],
+      type: "2syl",
+      rule: "2+ syllable adjectives → use <strong>more</strong>",
+      tip: "interesting → <strong>more</strong> interesting"
+    },
+    {
+      base: "expensive",
+      correct: "more expensive",
+      options: ["more expensive", "expensiver", "most expensive", "expensiveer"],
+      type: "2syl",
+      rule: "2+ syllable adjectives → use <strong>more</strong>",
+      tip: "expensive → <strong>more</strong> expensive"
+    },
+    {
+      base: "comfortable",
+      correct: "more comfortable",
+      options: ["more comfortable", "comfortabler", "comfortableer", "most comfortable"],
+      type: "2syl",
+      rule: "2+ syllable adjectives → use <strong>more</strong>",
+      tip: "comfortable → <strong>more</strong> comfortable"
+    },
+    {
+      base: "modern",
+      correct: "more modern",
+      options: ["more modern", "moderner", "modernner", "most modern"],
+      type: "2syl",
+      rule: "2-syllable adjective (not ending in -y) → use <strong>more</strong>",
+      tip: "modern → <strong>more</strong> modern"
+    },
+    // Ends in -y
+    {
+      base: "healthy",
+      correct: "healthier",
+      options: ["healthier", "more healthy", "healthyer", "healthlier"],
+      type: "y",
+      rule: "Adjectives ending in <strong>-y</strong> → change y to <strong>i</strong> + -er",
+      tip: "health<strong>y</strong> → health<strong>ier</strong>"
+    },
+    {
+      base: "happy",
+      correct: "happier",
+      options: ["happier", "more happy", "happyer", "happyier"],
+      type: "y",
+      rule: "Adjectives ending in <strong>-y</strong> → change y to <strong>i</strong> + -er",
+      tip: "happ<strong>y</strong> → happ<strong>ier</strong>"
+    },
+    {
+      base: "busy",
+      correct: "busier",
+      options: ["busier", "more busy", "busyer", "more busier"],
+      type: "y",
+      rule: "Adjectives ending in <strong>-y</strong> → change y to <strong>i</strong> + -er",
+      tip: "bus<strong>y</strong> → bus<strong>ier</strong>"
+    },
+    {
+      base: "funny",
+      correct: "funnier",
+      options: ["funnier", "more funny", "funnyer", "funnyier"],
+      type: "y",
+      rule: "Adjectives ending in <strong>-y</strong> → change y to <strong>i</strong> + -er",
+      tip: "funn<strong>y</strong> → funn<strong>ier</strong>"
+    },
+    {
+      base: "easy",
+      correct: "easier",
+      options: ["easier", "more easy", "easyer", "easierer"],
+      type: "y",
+      rule: "Adjectives ending in <strong>-y</strong> → change y to <strong>i</strong> + -er",
+      tip: "eas<strong>y</strong> → eas<strong>ier</strong>"
+    },
+    // Irregular
+    {
+      base: "bad",
+      correct: "worse",
+      options: ["worse", "badder", "more bad", "worser"],
+      type: "irr",
+      rule: "Irregular comparative — must be memorized!",
+      tip: "bad → <strong>worse</strong> (irregular)"
+    },
+    {
+      base: "good",
+      correct: "better",
+      options: ["better", "gooder", "more good", "betterer"],
+      type: "irr",
+      rule: "Irregular comparative — must be memorized!",
+      tip: "good → <strong>better</strong> (irregular)"
+    },
+    {
+      base: "far",
+      correct: "farther",
+      options: ["farther", "farer", "more far", "further away"],
+      type: "irr",
+      rule: "Irregular comparative — must be memorized!",
+      tip: "far → <strong>farther</strong> (irregular, also 'further')"
+    },
+    {
+      base: "little",
+      correct: "less",
+      options: ["less", "littler", "more little", "lesser"],
+      type: "irr",
+      rule: "Irregular comparative — must be memorized!",
+      tip: "little → <strong>less</strong> (irregular)"
+    },
+    {
+      base: "many / much",
+      correct: "more",
+      options: ["more", "many-er", "mucher", "most"],
+      type: "irr",
+      rule: "Irregular comparative — must be memorized!",
+      tip: "many / much → <strong>more</strong> (irregular)"
+    }
+  ];
+
+  const tagLabels = {
+    "1syl": { label: "1 syllable", cls: "t1" },
+    "2syl": { label: "2+ syllables", cls: "t2" },
+    "y":    { label: "ends in -y", cls: "ty" },
+    "irr":  { label: "irregular", cls: "tirr" },
+  };
+
+  let questions = [];
+  let current = 0;
+  let correct = 0;
+  let wrong = 0;
+  let answered = false;
+
+  function shuffle(arr) {
+    return [...arr].sort(() => Math.random() - 0.5);
+  }
+
+  function init() {
+    questions = shuffle(allQuestions).slice(0, 20);
+    current = 0; correct = 0; wrong = 0; answered = false;
+    document.getElementById('correctCount').textContent = 0;
+    document.getElementById('wrongCount').textContent = 0;
+    document.getElementById('questionCard').style.display = '';
+    document.getElementById('resultsScreen').classList.remove('show');
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    answered = false;
+    const q = questions[current];
+    const total = questions.length;
+
+    // Progress
+    document.getElementById('progressFill').style.width = (current / total * 100) + '%';
+    document.getElementById('progressLabel').textContent = `${current} / ${total}`;
+
+    // Meta
+    document.getElementById('qNum').textContent = `Question ${current + 1}`;
+    const tag = tagLabels[q.type];
+    const tagEl = document.getElementById('qTag');
+    tagEl.textContent = tag.label;
+    tagEl.className = `tag ${tag.cls}`;
+
+    // Prompt
+    document.getElementById('qPrompt').textContent =
+      `What is the comparative form of "${q.base}"?`;
+    document.getElementById('qBase').innerHTML =
+      `Base adjective: <strong>${q.base}</strong>`;
+
+    // Options
+    const grid = document.getElementById('optionsGrid');
+    grid.innerHTML = '';
+    const opts = shuffle(q.options);
+    opts.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.onclick = () => selectAnswer(opt, btn, q);
+      grid.appendChild(btn);
+    });
+
+    // Reset feedback & next
+    const fb = document.getElementById('feedback');
+    fb.className = 'feedback';
+    fb.innerHTML = '';
+    document.getElementById('nextBtn').className = 'next-btn';
+  }
+
+  function selectAnswer(chosen, btn, q) {
+    if (answered) return;
+    answered = true;
+
+    const isCorrect = chosen === q.correct;
+    const allBtns = document.querySelectorAll('.option-btn');
+
+    allBtns.forEach(b => {
+      b.disabled = true;
+      if (b.textContent === q.correct) b.classList.add('correct');
+    });
+
+    if (!isCorrect) {
+      btn.classList.add('wrong');
+      wrong++;
+      document.getElementById('wrongCount').textContent = wrong;
+    } else {
+      correct++;
+      document.getElementById('correctCount').textContent = correct;
+    }
+
+    const fb = document.getElementById('feedback');
+    if (isCorrect) {
+      fb.className = 'feedback correct-fb show';
+      fb.innerHTML = `✓ Correct! &nbsp;${q.tip}<br><span style="opacity:.7;font-size:.78rem">${q.rule}</span>`;
+    } else {
+      fb.className = 'feedback wrong-fb show';
+      fb.innerHTML = `✗ The answer is <strong>${q.correct}</strong>.<br>${q.tip}<br><span style="opacity:.7;font-size:.78rem">${q.rule}</span>`;
+    }
+
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.className = 'next-btn show';
+    nextBtn.textContent = current + 1 < questions.length ? 'Next question →' : 'See results →';
+  }
+
+  document.getElementById('nextBtn').onclick = () => {
+    current++;
+    if (current < questions.length) {
+      loadQuestion();
+    } else {
+      showResults();
+    }
+  };
+
+  function showResults() {
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressLabel').textContent = `${questions.length} / ${questions.length}`;
+    document.getElementById('questionCard').style.display = 'none';
+
+    const total = questions.length;
+    const pct = Math.round(correct / total * 100);
+
+    let emoji, title, sub;
+    if (pct === 100) { emoji = '🏆'; title = 'Perfect score!'; sub = 'Absolutely flawless. You really know your comparatives!'; }
+    else if (pct >= 80) { emoji = '🎉'; title = 'Great job!'; sub = 'You have a strong grasp of comparative adjectives.'; }
+    else if (pct >= 60) { emoji = '💪'; title = 'Good effort!'; sub = 'Review the rules for the ones you missed and try again.'; }
+    else { emoji = '📖'; title = 'Keep studying!'; sub = 'Check the rules for each category and give it another go!'; }
+
+    document.getElementById('resultsEmoji').textContent = emoji;
+    document.getElementById('resultsTitle').textContent = title;
+    document.getElementById('resultsScore').textContent = `${pct}%`;
+    document.getElementById('rdCorrect').textContent = correct;
+    document.getElementById('rdWrong').textContent = wrong;
+    document.getElementById('resultsSub').textContent = sub;
+
+    document.getElementById('resultsScreen').classList.add('show');
+  }
+
+  function restart() { init(); }
+
+  init();
+</script>
+</body>
+</html>
