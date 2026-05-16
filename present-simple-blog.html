@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My English Practice Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --paper: #f5f0e8;
+    --paper-dark: #ede7d9;
+    --accent: #8b4513;
+    --accent-light: #c4793a;
+    --accent-pale: #f0dfc8;
+    --rule: #c8b89a;
+    --muted: #7a6a55;
+    --green: #2d5a27;
+    --red: #7a1a1a;
+    --blue: #1a3a6b;
+    --highlight: #fef3c7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 27px,
+        var(--rule) 27px,
+        var(--rule) 28px
+      );
+    background-attachment: fixed;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 18px 32px 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    border-bottom: 4px double var(--accent);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    letter-spacing: .02em;
+    color: var(--paper);
+  }
+
+  header .subtitle {
+    font-size: .9rem;
+    color: var(--rule);
+    font-style: italic;
+  }
+
+  /* ── Grammar Reference Bar ── */
+  .grammar-bar {
+    background: #2b1f12;
+    padding: 10px 32px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  .grammar-bar .bar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    color: var(--rule);
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    margin-right: 6px;
+  }
+
+  .ref-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    padding: 5px 13px;
+    border: 1px solid var(--accent-light);
+    background: transparent;
+    color: var(--accent-pale);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all .2s;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  .ref-btn:hover, .ref-btn.active {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+  }
+
+  /* ── Grammar Panel ── */
+  .grammar-panel {
+    display: none;
+    background: #fffdf7;
+    border-bottom: 3px solid var(--accent);
+    padding: 28px 36px;
+    animation: slideDown .25s ease;
+  }
+
+  .grammar-panel.visible { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .grammar-panel h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--rule);
+    grid-column: 1 / -1;
+  }
+
+  .grammar-block { margin-bottom: 14px; }
+
+  .grammar-block .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .formula {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .82rem;
+    background: var(--paper-dark);
+    border-left: 3px solid var(--accent);
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .formula .kw { color: var(--blue); font-weight: 500; }
+  .formula .neg { color: var(--red); }
+  .formula .pos { color: var(--green); }
+
+  .example-line {
+    font-size: .88rem;
+    color: var(--muted);
+    font-style: italic;
+    padding-left: 4px;
+    margin-top: 3px;
+  }
+
+  .example-line span { color: var(--ink); font-style: normal; }
+
+  /* ── Layout ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    min-height: calc(100vh - 120px);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ── Sidebar ── */
+  aside {
+    border-right: 1px solid var(--rule);
+    padding: 24px 0;
+    position: sticky;
+    top: 100px;
+    height: calc(100vh - 100px);
+    overflow-y: auto;
+    background: rgba(245,240,232,.96);
+  }
+
+  aside h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--muted);
+    padding: 0 20px 10px;
+    border-bottom: 1px dashed var(--rule);
+    margin-bottom: 8px;
+  }
+
+  .topic-group { margin-bottom: 4px; }
+
+  .topic-group-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .62rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--accent);
+    padding: 8px 20px 4px;
+  }
+
+  .topic-item {
+    display: block;
+    padding: 7px 20px 7px 26px;
+    font-size: .9rem;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    border-left: 3px solid transparent;
+    text-decoration: none;
+    font-family: 'Crimson Pro', serif;
+    line-height: 1.3;
+  }
+
+  .topic-item:hover {
+    background: var(--accent-pale);
+    border-left-color: var(--accent-light);
+    color: var(--accent);
+  }
+
+  .topic-item.selected {
+    background: var(--accent-pale);
+    border-left-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── Main Editor ── */
+  main {
+    padding: 36px 48px;
+    background: transparent;
+  }
+
+  .journal-header {
+    margin-bottom: 28px;
+  }
+
+  .journal-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-bottom: 6px;
+  }
+
+  .topic-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--ink);
+    font-weight: 700;
+    line-height: 1.2;
+    border-bottom: 2px solid var(--rule);
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+    min-height: 48px;
+  }
+
+  .topic-title[contenteditable]:focus { outline: none; }
+
+  .topic-prompt {
+    font-size: .9rem;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 8px;
+  }
+
+  /* ── Sentence Rows ── */
+  .sentences-area { margin-top: 20px; }
+
+  .sentence-row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: start;
+  }
+
+  .sentence-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    padding-top: 14px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .sentence-tag.pos { color: var(--green); }
+  .sentence-tag.neg { color: var(--red); }
+  .sentence-tag.q   { color: var(--blue); }
+
+  .sentence-input {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid var(--rule);
+    padding: 10px 4px;
+    width: 100%;
+    transition: border-color .2s;
+    line-height: 1.5;
+  }
+
+  .sentence-input:focus {
+    outline: none;
+    border-bottom-color: var(--accent);
+    background: var(--highlight);
+  }
+
+  .sentence-input::placeholder { color: var(--rule); font-style: italic; }
+
+  .free-area {
+    margin-top: 28px;
+    border-top: 1px dashed var(--rule);
+    padding-top: 20px;
+  }
+
+  .free-area label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .free-textarea {
+    width: 100%;
+    min-height: 180px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid var(--rule);
+    resize: vertical;
+    line-height: 2;
+    padding: 8px 4px;
+  }
+
+  .free-textarea:focus {
+    outline: none;
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── Word count & actions ── */
+  .editor-footer {
+    margin-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .word-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    color: var(--muted);
+  }
+
+  .btn-save {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    padding: 9px 22px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background .2s;
+  }
+
+  .btn-save:hover { background: var(--accent); }
+
+  /* ── Entries List ── */
+  .entries-section {
+    margin-top: 48px;
+    border-top: 2px solid var(--rule);
+    padding-top: 28px;
+  }
+
+  .entries-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+
+  .entry-card {
+    background: #fffdf7;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-bottom: 14px;
+    position: relative;
+    cursor: pointer;
+    transition: box-shadow .2s, transform .15s;
+  }
+
+  .entry-card:hover {
+    box-shadow: 3px 3px 0 var(--rule);
+    transform: translateY(-1px);
+  }
+
+  .entry-card .ec-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  .entry-card .ec-topic {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+    margin: 4px 0 6px;
+  }
+
+  .entry-card .ec-preview {
+    font-size: .9rem;
+    color: var(--muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .entry-card .ec-delete {
+    position: absolute;
+    top: 14px; right: 16px;
+    background: none;
+    border: none;
+    color: var(--rule);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: color .2s;
+  }
+
+  .entry-card .ec-delete:hover { color: var(--red); }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--paper-dark); }
+  ::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--rule); padding: 16px 0; }
+    main { padding: 24px 20px; }
+    .grammar-panel.visible { grid-template-columns: 1fr; }
+    .sentence-row { grid-template-columns: 90px 1fr; }
+    header { flex-direction: column; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📖 My English Practice Journal</h1>
+  <span class="subtitle">Present Simple — Action Verbs &amp; To Be</span>
+</header>
+
+<!-- Grammar Reference Bar -->
+<div class="grammar-bar">
+  <span class="bar-label">📚 Grammar Reference →</span>
+  <button class="ref-btn" onclick="togglePanel('action-aff')">✔ Action Affirmative</button>
+  <button class="ref-btn" onclick="togglePanel('action-neg')">✘ Action Negative</button>
+  <button class="ref-btn" onclick="togglePanel('action-q')">? Action Question</button>
+  <button class="ref-btn" onclick="togglePanel('be-aff')">✔ To Be Affirmative</button>
+  <button class="ref-btn" onclick="togglePanel('be-neg')">✘ To Be Negative</button>
+  <button class="ref-btn" onclick="togglePanel('be-q')">? To Be Question</button>
+</div>
+
+<!-- Grammar Panels (hidden by default) -->
+<div id="panel-action-aff" class="grammar-panel">
+  <h3>Action Verbs — Affirmative (Present Simple)</h3>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Structure</div>
+      <div class="formula">
+        <span class="kw">I / You / We / They</span> + <span class="pos">verb (base form)</span>
+      </div>
+      <div class="formula">
+        <span class="kw">He / She / It</span> + <span class="pos">verb + -s / -es / -ies</span>
+      </div>
+      <div class="example-line">→ <span>I work every day.</span> / <span>She works every day.</span></div>
+    </div>
+    <div class="grammar-block">
+      <div class="label">Examples</div>
+      <div class="formula">I <span class="pos">play</span> soccer on weekends.</div>
+      <div class="formula">They <span class="pos">eat</span> breakfast at 7 a.m.</div>
+      <div class="formula">He <span class="pos">watches</span> TV at night.</div>
+      <div class="formula">She <span class="pos">studies</span> English every day.</div>
+    </div>
+  </div>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Spelling rules for He / She / It</div>
+      <div class="formula">Most verbs → add <span class="pos">-s</span> &nbsp;&nbsp; <em>(work → works)</em></div>
+      <div class="formula">-ch / -sh / -o / -x / -s → add <span class="pos">-es</span> &nbsp;&nbsp; <em>(watch → watches)</em></div>
+      <div class="formula">consonant + y → drop y, add <span class="pos">-ies</span> &nbsp;&nbsp; <em>(study → studies)</em></div>
+    </div>
+    <div class="grammar-block">
+      <div class="label">Time expressions</div>
+      <div class="formula">always · usually · often · sometimes · rarely · never</div>
+      <div class="formula">every day / week / year · on Mondays · in the morning</div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-action-neg" class="grammar-panel">
+  <h3>Action Verbs — Negative (Present Simple)</h3>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Structure</div>
+      <div class="formula">
+        <span class="kw">I / You / We / They</span> + <span class="neg">do not (don't)</span> + verb (base)
+      </div>
+      <div class="formula">
+        <span class="kw">He / She / It</span> + <span class="neg">does not (doesn't)</span> + verb (base)
+      </div>
+      <div class="example-line">→ <span>I don't eat meat.</span> / <span>He doesn't eat meat.</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Examples</div>
+      <div class="formula">We <span class="neg">don't</span> play video games during school.</div>
+      <div class="formula">She <span class="neg">doesn't</span> drink coffee in the morning.</div>
+      <div class="formula">They <span class="neg">don't</span> travel every year.</div>
+      <div class="formula">It <span class="neg">doesn't</span> rain much in summer here.</div>
+    </div>
+    <div class="grammar-block">
+      <div class="label">⚠ Common mistake</div>
+      <div class="formula"><span class="neg">✘</span> She doesn't <s>works</s> on Sundays.</div>
+      <div class="formula"><span class="pos">✔</span> She doesn't <span class="pos">work</span> on Sundays.</div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-action-q" class="grammar-panel">
+  <h3>Action Verbs — Questions (Present Simple)</h3>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Yes/No Questions</div>
+      <div class="formula">
+        <span class="kw">Do</span> + I / you / we / they + verb (base) + ?
+      </div>
+      <div class="formula">
+        <span class="kw">Does</span> + he / she / it + verb (base) + ?
+      </div>
+      <div class="example-line">→ <span>Do you like music?</span> / <span>Does she like music?</span></div>
+    </div>
+    <div class="grammar-block">
+      <div class="label">Short Answers</div>
+      <div class="formula"><span class="pos">Yes, I do.</span> / <span class="neg">No, I don't.</span></div>
+      <div class="formula"><span class="pos">Yes, she does.</span> / <span class="neg">No, she doesn't.</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Wh- Questions</div>
+      <div class="formula"><span class="kw">Where</span> do you live?</div>
+      <div class="formula"><span class="kw">What</span> does she do every morning?</div>
+      <div class="formula"><span class="kw">How often</span> do they visit their grandparents?</div>
+      <div class="formula"><span class="kw">When</span> does he go to the gym?</div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-be-aff" class="grammar-panel">
+  <h3>Verb To Be — Affirmative (Present Simple)</h3>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Forms</div>
+      <div class="formula">I → <span class="pos">am</span> &nbsp;&nbsp;&nbsp; He / She / It → <span class="pos">is</span> &nbsp;&nbsp;&nbsp; You / We / They → <span class="pos">are</span></div>
+    </div>
+    <div class="grammar-block">
+      <div class="label">Contractions</div>
+      <div class="formula">I'm · he's · she's · it's · you're · we're · they're</div>
+    </div>
+  </div>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Examples</div>
+      <div class="formula">I <span class="pos">am</span> a student.</div>
+      <div class="formula">She <span class="pos">is</span> very friendly.</div>
+      <div class="formula">They <span class="pos">are</span> from Colombia.</div>
+      <div class="formula">It <span class="pos">is</span> cold today.</div>
+    </div>
+    <div class="grammar-block">
+      <div class="label">Uses: descriptions, nationalities, professions, feelings, location</div>
+      <div class="formula">He <span class="pos">is</span> tired. · We <span class="pos">are</span> at school. · She <span class="pos">is</span> a doctor.</div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-be-neg" class="grammar-panel">
+  <h3>Verb To Be — Negative (Present Simple)</h3>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Structure</div>
+      <div class="formula">I <span class="neg">am not (I'm not)</span></div>
+      <div class="formula">He / She / It <span class="neg">is not (isn't)</span></div>
+      <div class="formula">You / We / They <span class="neg">are not (aren't)</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Examples</div>
+      <div class="formula">I <span class="neg">am not</span> happy today.</div>
+      <div class="formula">He <span class="neg">isn't</span> a teacher.</div>
+      <div class="formula">We <span class="neg">aren't</span> ready yet.</div>
+      <div class="formula">It <span class="neg">isn't</span> raining outside.</div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-be-q" class="grammar-panel">
+  <h3>Verb To Be — Questions (Present Simple)</h3>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Yes/No Questions</div>
+      <div class="formula"><span class="kw">Am</span> I late?</div>
+      <div class="formula"><span class="kw">Is</span> he / she / it ready?</div>
+      <div class="formula"><span class="kw">Are</span> you / we / they students?</div>
+    </div>
+    <div class="grammar-block">
+      <div class="label">Short Answers</div>
+      <div class="formula"><span class="pos">Yes, I am.</span> / <span class="neg">No, I'm not.</span></div>
+      <div class="formula"><span class="pos">Yes, she is.</span> / <span class="neg">No, she isn't.</span></div>
+      <div class="formula"><span class="pos">Yes, they are.</span> / <span class="neg">No, they aren't.</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="grammar-block">
+      <div class="label">Wh- Questions with To Be</div>
+      <div class="formula"><span class="kw">Where</span> are you from?</div>
+      <div class="formula"><span class="kw">What</span> is your favorite food?</div>
+      <div class="formula"><span class="kw">Who</span> is your best friend?</div>
+      <div class="formula"><span class="kw">How old</span> are you?</div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Layout -->
+<div class="layout">
+
+  <!-- Sidebar Topics -->
+  <aside>
+    <h2>Writing Topics</h2>
+
+    <div class="topic-group">
+      <div class="topic-group-label">🏠 Daily Life</div>
+      <span class="topic-item" onclick="selectTopic(this, 'My Daily Routine', 'Describe what you do every day from morning to night. Use time expressions like every morning, always, usually.')">My Daily Routine</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Home', 'Describe your house or apartment. What rooms does it have? What do you and your family do at home?')">My Home</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Neighborhood', 'What is your neighborhood like? What places are nearby? What do people do there?')">My Neighborhood</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Meals', 'What do you eat every day? What does your family cook? Do you like to cook?')">My Meals</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Morning', 'What do you do every morning before school or work? Be specific with times and actions.')">My Morning</span>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">👨‍👩‍👧 Family & Friends</div>
+      <span class="topic-item" onclick="selectTopic(this, 'My Family', 'Who is in your family? Describe each person: name, age, job, personality, and daily habits.')">My Family</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Best Friend', 'Describe your best friend. What does he/she look like? What do you do together?')">My Best Friend</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Pet', 'Do you have a pet? What does it look like? What does it eat and do every day?')">My Pet</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Classmates', 'Describe some of your classmates. What are they like? What do they study or like to do?')">My Classmates</span>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">🎮 Hobbies & Free Time</div>
+      <span class="topic-item" onclick="selectTopic(this, 'My Hobbies', 'What do you like to do in your free time? How often do you practice your hobbies?')">My Hobbies</span>
+      <span class="topic-item" onclick="selectTopic(this, 'Sports I Play', 'What sports do you play? How often? Where do you play? Who do you play with?')">Sports I Play</span>
+      <span class="topic-item" onclick="selectTopic(this, 'Video Games', 'Do you play video games? What games do you play? When and how often?')">Video Games</span>
+      <span class="topic-item" onclick="selectTopic(this, 'Music I Like', 'What music do you listen to? Who is your favorite artist? What instruments do they play?')">Music I Like</span>
+      <span class="topic-item" onclick="selectTopic(this, 'Books & Reading', 'Do you like to read? What books or genres do you read? How often?')">Books &amp; Reading</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Weekend', 'What do you usually do on weekends? Does your routine change from the weekdays?')">My Weekend</span>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">🎬 Entertainment</div>
+      <span class="topic-item" onclick="selectTopic(this, 'My Favorite Movie', 'What is your favorite movie? What is it about? Who are the main characters? Why do you like it?')">My Favorite Movie</span>
+      <span class="topic-item" onclick="selectTopic(this, 'TV Shows I Watch', 'What shows do you watch? When and how often? What are they about?')">TV Shows I Watch</span>
+      <span class="topic-item" onclick="selectTopic(this, 'Social Media', 'What social media apps do you use? How often? What do people post there?')">Social Media</span>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">🏫 School & Work</div>
+      <span class="topic-item" onclick="selectTopic(this, 'My School', 'Describe your school. Where is it? How many students go there? What do students do?')">My School</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Favorite Subject', 'What is your favorite subject? Why? What do you learn in that class?')">My Favorite Subject</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Teacher', 'Describe a teacher you have. What does he/she teach? What is he/she like?')">My Teacher</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Job / Chores', 'Do you have a job or chores at home? What do you do? When and how often?')">My Job / Chores</span>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">🌎 The World Around Me</div>
+      <span class="topic-item" onclick="selectTopic(this, 'My City / Town', 'Describe the place where you live. What makes it special? What do people do there?')">My City / Town</span>
+      <span class="topic-item" onclick="selectTopic(this, 'The Weather', 'What is the weather like in your country? What do people do in different seasons?')">The Weather</span>
+      <span class="topic-item" onclick="selectTopic(this, 'Animals I Know', 'Describe two or three animals. Where do they live? What do they eat? What do they do?')">Animals I Know</span>
+      <span class="topic-item" onclick="selectTopic(this, 'Nature & Environment', 'What is nature like around you? What do people do to protect the environment?')">Nature &amp; Environment</span>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">💭 Opinions & Preferences</div>
+      <span class="topic-item" onclick="selectTopic(this, 'My Favorite Food', 'What is your favorite food? Where does it come from? How do people make it?')">My Favorite Food</span>
+      <span class="topic-item" onclick="selectTopic(this, 'Things I Like & Dislike', 'What do you love? What do you hate? Use I like, I don't like, I love, I hate.')">Things I Like &amp; Dislike</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Ideal Day', 'Describe a perfect day. What do you do? Where do you go? Who are you with?')">My Ideal Day</span>
+      <span class="topic-item" onclick="selectTopic(this, 'Technology in My Life', 'What technology do you use every day? What does it help you do?')">Technology in My Life</span>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">🧍 Describing People</div>
+      <span class="topic-item" onclick="selectTopic(this, 'My Personality', 'Describe yourself. What are you like? Are you shy or outgoing? Serious or funny?')">My Personality</span>
+      <span class="topic-item" onclick="selectTopic(this, 'A Famous Person', 'Choose a famous person. Who are they? What do they do? Why are they famous?')">A Famous Person</span>
+      <span class="topic-item" onclick="selectTopic(this, 'My Role Model', 'Who is your role model? Why do you admire them? What do they do that inspires you?')">My Role Model</span>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">✈️ Travel & Culture</div>
+      <span class="topic-item" onclick="selectTopic(this, 'A Place I Know', 'Describe a place you know well: a park, a beach, a market. What is it like?')">A Place I Know</span>
+      <span class="topic-item" onclick="selectTopic(this, 'Traditions in My Country', 'What traditions or celebrations are common in your country? What do people do?')">Traditions in My Country</span>
+      <span class="topic-item" onclick="selectTopic(this, 'Food Around the World', 'What food do people eat in different countries? Compare two or more countries.')">Food Around the World</span>
+    </div>
+
+    <div class="topic-group">
+      <div class="topic-group-label">💡 Open Topic</div>
+      <span class="topic-item" onclick="selectTopic(this, 'Free Writing', 'Write about anything you want! Practice present simple with your own ideas.')">Free Writing</span>
+    </div>
+  </aside>
+
+  <!-- Editor -->
+  <main>
+    <div class="journal-header">
+      <div class="journal-date" id="current-date"></div>
+      <div class="topic-title" id="topic-title">← Select a topic to begin</div>
+      <div class="topic-prompt" id="topic-prompt">Choose a topic from the left sidebar, or click on a grammar reference button above to study structures before writing.</div>
+    </div>
+
+    <div class="sentences-area" id="sentences-area">
+      <!-- Sentence rows injected here -->
+      <div style="color:var(--rule); font-style:italic; font-size:.95rem; padding:12px 0;">
+        Your guided sentence prompts will appear here once you choose a topic.
+      </div>
+    </div>
+
+    <div class="free-area">
+      <label>📝 Your full entry — write as many sentences as you can:</label>
+      <textarea class="free-textarea" id="free-textarea" placeholder="Start writing here..." oninput="updateWordCount()"></textarea>
+    </div>
+
+    <div class="editor-footer">
+      <span class="word-count" id="word-count">0 words</span>
+      <button class="btn-save" onclick="saveEntry()">Save Entry ✓</button>
+    </div>
+
+    <!-- Saved Entries -->
+    <div class="entries-section" id="entries-section" style="display:none;">
+      <h2>📚 Saved Entries</h2>
+      <div id="entries-list"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // ── Date ──
+  const dateEl = document.getElementById('current-date');
+  const now = new Date();
+  dateEl.textContent = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  // ── Grammar panels ──
+  let activePanel = null;
+  function togglePanel(id) {
+    const panel = document.getElementById('panel-' + id);
+    const btn = [...document.querySelectorAll('.ref-btn')].find(b => b.getAttribute('onclick').includes(id));
+    if (activePanel && activePanel !== panel) {
+      activePanel.classList.remove('visible');
+      document.querySelectorAll('.ref-btn').forEach(b => b.classList.remove('active'));
+    }
+    panel.classList.toggle('visible');
+    btn.classList.toggle('active');
+    activePanel = panel.classList.contains('visible') ? panel : null;
+  }
+
+  // ── Topic selection ──
+  let currentTopic = '';
+  const sentencePrompts = [
+    { tag: 'AFFIRMATIVE', cls: 'pos', ph: 'Write an affirmative sentence about this topic...' },
+    { tag: 'AFFIRMATIVE', cls: 'pos', ph: 'Write another affirmative sentence (try a different subject)...' },
+    { tag: 'NEGATIVE', cls: 'neg', ph: 'Write a negative sentence about this topic...' },
+    { tag: 'NEGATIVE', cls: 'neg', ph: 'Write another negative sentence...' },
+    { tag: 'YES/NO QUESTION', cls: 'q', ph: 'Write a yes/no question about this topic...' },
+    { tag: 'WH- QUESTION', cls: 'q', ph: 'Write a wh- question (who, what, where, when, how)...' },
+  ];
+
+  function selectTopic(el, title, prompt) {
+    document.querySelectorAll('.topic-item').forEach(t => t.classList.remove('selected'));
+    el.classList.add('selected');
+    currentTopic = title;
+    document.getElementById('topic-title').textContent = title;
+    document.getElementById('topic-prompt').textContent = '💡 ' + prompt;
+    document.getElementById('free-textarea').value = '';
+    updateWordCount();
+
+    const area = document.getElementById('sentences-area');
+    area.innerHTML = '';
+    sentencePrompts.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.className = 'sentence-row';
+      row.innerHTML = `
+        <div class="sentence-tag ${p.cls}">${p.tag}</div>
+        <input class="sentence-input" type="text" placeholder="${p.ph}" id="sent-${i}">
+      `;
+      area.appendChild(row);
+    });
+  }
+
+  // ── Word count ──
+  function updateWordCount() {
+    const text = document.getElementById('free-textarea').value.trim();
+    const words = text === '' ? 0 : text.split(/\s+/).length;
+    document.getElementById('word-count').textContent = words + (words === 1 ? ' word' : ' words');
+  }
+
+  // ── Save entry ──
+  const entries = JSON.parse(localStorage.getItem('ps-journal-entries') || '[]');
+
+  function saveEntry() {
+    if (!currentTopic) { alert('Please select a topic first!'); return; }
+    const sentences = [];
+    sentencePrompts.forEach((_, i) => {
+      const val = document.getElementById('sent-' + i);
+      if (val && val.value.trim()) sentences.push(val.value.trim());
+    });
+    const freeText = document.getElementById('free-textarea').value.trim();
+    if (sentences.length === 0 && !freeText) { alert('Write at least one sentence before saving!'); return; }
+
+    const entry = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString('en-US', { weekday:'short', year:'numeric', month:'short', day:'numeric' }),
+      topic: currentTopic,
+      sentences,
+      freeText,
+    };
+    entries.unshift(entry);
+    localStorage.setItem('ps-journal-entries', JSON.stringify(entries));
+    renderEntries();
+    alert('✓ Entry saved!');
+  }
+
+  function renderEntries() {
+    const list = document.getElementById('entries-list');
+    const section = document.getElementById('entries-section');
+    if (entries.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    list.innerHTML = entries.map(e => `
+      <div class="entry-card" onclick="loadEntry(${e.id})">
+        <button class="ec-delete" onclick="event.stopPropagation(); deleteEntry(${e.id})">✕</button>
+        <div class="ec-date">${e.date}</div>
+        <div class="ec-topic">${e.topic}</div>
+        <div class="ec-preview">${(e.freeText || e.sentences.join(' ')).substring(0, 160)}…</div>
+      </div>
+    `).join('');
+  }
+
+  function deleteEntry(id) {
+    if (!confirm('Delete this entry?')) return;
+    const idx = entries.findIndex(e => e.id === id);
+    if (idx > -1) entries.splice(idx, 1);
+    localStorage.setItem('ps-journal-entries', JSON.stringify(entries));
+    renderEntries();
+  }
+
+  function loadEntry(id) {
+    const e = entries.find(e => e.id === id);
+    if (!e) return;
+    currentTopic = e.topic;
+    document.getElementById('topic-title').textContent = e.topic;
+    document.getElementById('topic-prompt').textContent = '📖 Loaded entry from ' + e.date;
+    const area = document.getElementById('sentences-area');
+    area.innerHTML = '';
+    sentencePrompts.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.className = 'sentence-row';
+      row.innerHTML = `
+        <div class="sentence-tag ${p.cls}">${p.tag}</div>
+        <input class="sentence-input" type="text" value="${(e.sentences[i] || '').replace(/"/g, '&quot;')}" placeholder="${p.ph}" id="sent-${i}">
+      `;
+      area.appendChild(row);
+    });
+    document.getElementById('free-textarea').value = e.freeText || '';
+    updateWordCount();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  renderEntries();
+</script>
+</body>
+</html>
