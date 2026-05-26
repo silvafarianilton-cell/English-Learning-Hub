@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Superlatives Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #f5f2ed;
+    --surface: #ffffff;
+    --border: #ddd8d0;
+    --text: #2c2820;
+    --muted: #8a8278;
+    --accent: #3d6b5a;
+    --accent-light: #edf3f0;
+    --wrong: #c0392b;
+    --wrong-light: #fdf0ef;
+    --right: #2e7d5e;
+    --right-light: #eef6f2;
+    --tag-1: #4a6fa5;
+    --tag-1-bg: #eef2f8;
+    --tag-2: #7a5c9e;
+    --tag-2-bg: #f3eef8;
+    --tag-irr: #b5621a;
+    --tag-irr-bg: #fdf3eb;
+    --tag-y: #2e7d7d;
+    --tag-y-bg: #edf6f6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  header {
+    max-width: 680px;
+    margin: 0 auto 28px;
+  }
+
+  h1 {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  /* ── Reference Panel ─────────────────────────────── */
+  .ref-panel {
+    max-width: 680px;
+    margin: 0 auto 28px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .ref-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .ref-tab {
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 0.78rem;
+    font-family: 'DM Mono', monospace;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+    text-align: center;
+  }
+
+  .ref-tab:hover { color: var(--text); }
+
+  .ref-tab.active[data-cat="1syl"]  { color: var(--tag-1);   border-color: var(--tag-1); }
+  .ref-tab.active[data-cat="2syl"]  { color: var(--tag-2);   border-color: var(--tag-2); }
+  .ref-tab.active[data-cat="irr"]   { color: var(--tag-irr); border-color: var(--tag-irr); }
+  .ref-tab.active[data-cat="y"]     { color: var(--tag-y);   border-color: var(--tag-y); }
+
+  .ref-body {
+    padding: 16px 18px;
+    display: none;
+    font-size: 0.83rem;
+    line-height: 1.7;
+  }
+
+  .ref-body.active { display: block; }
+
+  .ref-rule {
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: var(--bg);
+    border-left: 3px solid var(--border);
+  }
+
+  .ref-rule[data-cat="1syl"] { border-color: var(--tag-1); }
+  .ref-rule[data-cat="2syl"] { border-color: var(--tag-2); }
+  .ref-rule[data-cat="irr"]  { border-color: var(--tag-irr); }
+  .ref-rule[data-cat="y"]    { border-color: var(--tag-y); }
+
+  .ref-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .ref-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    padding: 3px 9px;
+    border-radius: 4px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Quiz ─────────────────────────────────────────── */
+  .quiz-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .progress-bar-wrap {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 22px 20px;
+    margin-bottom: 12px;
+  }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .q-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .q-tag {
+    font-size: 0.68rem;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .q-tag[data-cat="1syl"] { background: var(--tag-1-bg); color: var(--tag-1); }
+  .q-tag[data-cat="2syl"] { background: var(--tag-2-bg); color: var(--tag-2); }
+  .q-tag[data-cat="irr"]  { background: var(--tag-irr-bg); color: var(--tag-irr); }
+  .q-tag[data-cat="y"]    { background: var(--tag-y-bg); color: var(--tag-y); }
+
+  .q-text {
+    font-size: 1rem;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .q-text em {
+    font-style: normal;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.95rem;
+    background: var(--bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  @media (max-width: 420px) {
+    .options { grid-template-columns: 1fr; }
+  }
+
+  .opt-btn {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.12s, border-color 0.12s;
+    color: var(--text);
+  }
+
+  .opt-btn:hover:not(:disabled) {
+    background: var(--accent-light);
+    border-color: var(--accent);
+  }
+
+  .opt-btn.correct {
+    background: var(--right-light);
+    border-color: var(--right);
+    color: var(--right);
+  }
+
+  .opt-btn.wrong {
+    background: var(--wrong-light);
+    border-color: var(--wrong);
+    color: var(--wrong);
+  }
+
+  .opt-btn:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 12px;
+    font-size: 0.82rem;
+    color: var(--muted);
+    min-height: 18px;
+    font-style: italic;
+  }
+
+  .feedback.show-right { color: var(--right); }
+  .feedback.show-wrong { color: var(--wrong); }
+
+  /* ── Controls ─────────────────────────────────────── */
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .score-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .btn-next {
+    padding: 9px 20px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn-next:hover { opacity: 0.85; }
+  .btn-next:disabled { opacity: 0.35; cursor: default; }
+
+  /* ── Results ──────────────────────────────────────── */
+  .results-card {
+    max-width: 680px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 36px 28px;
+    text-align: center;
+    display: none;
+  }
+
+  .results-card.visible { display: block; }
+
+  .big-score {
+    font-family: 'DM Mono', monospace;
+    font-size: 3rem;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .results-msg {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .btn-restart {
+    padding: 10px 24px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-restart:hover { opacity: 0.85; }
+
+  .breakdown {
+    margin-top: 22px;
+    text-align: left;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .breakdown-row:last-child { border: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Superlatives Quiz</h1>
+  <p class="subtitle">Choose the correct superlative form. 20 questions.</p>
+</header>
+
+<!-- Reference Panel -->
+<div class="ref-panel">
+  <div class="ref-tabs">
+    <button class="ref-tab active" data-cat="1syl" onclick="openRef('1syl')">1 syllable</button>
+    <button class="ref-tab" data-cat="2syl" onclick="openRef('2syl')">2+ syllables</button>
+    <button class="ref-tab" data-cat="irr" onclick="openRef('irr')">Irregular</button>
+    <button class="ref-tab" data-cat="y" onclick="openRef('y')">Ends in -y</button>
+  </div>
+  <div class="ref-body active" id="ref-1syl">
+    <div class="ref-rule" data-cat="1syl">
+      <strong>Rule:</strong> Use <strong>the</strong> + adjective + <strong>-est</strong>.<br>
+      If it ends in consonant-vowel-consonant, double the last consonant.<br>
+      <em>big → the biggest &nbsp;|&nbsp; tall → the tallest &nbsp;|&nbsp; hot → the hottest</em>
+    </div>
+    <div class="ref-examples">
+      <span class="ref-chip">old → the oldest</span>
+      <span class="ref-chip">fast → the fastest</span>
+      <span class="ref-chip">cold → the coldest</span>
+      <span class="ref-chip">small → the smallest</span>
+      <span class="ref-chip">thin → the thinnest</span>
+      <span class="ref-chip">sad → the saddest</span>
+    </div>
+  </div>
+  <div class="ref-body" id="ref-2syl">
+    <div class="ref-rule" data-cat="2syl">
+      <strong>Rule:</strong> Use <strong>the most</strong> + adjective.<br>
+      <em>expensive → the most expensive &nbsp;|&nbsp; comfortable → the most comfortable</em>
+    </div>
+    <div class="ref-examples">
+      <span class="ref-chip">beautiful → the most beautiful</span>
+      <span class="ref-chip">careful → the most careful</span>
+      <span class="ref-chip">important → the most important</span>
+      <span class="ref-chip">boring → the most boring</span>
+      <span class="ref-chip">modern → the most modern</span>
+    </div>
+  </div>
+  <div class="ref-body" id="ref-irr">
+    <div class="ref-rule" data-cat="irr">
+      <strong>Rule:</strong> These forms must be memorised — no pattern applies.<br>
+    </div>
+    <div class="ref-examples">
+      <span class="ref-chip">good → the best</span>
+      <span class="ref-chip">bad → the worst</span>
+      <span class="ref-chip">far → the farthest / furthest</span>
+      <span class="ref-chip">little → the least</span>
+      <span class="ref-chip">much/many → the most</span>
+    </div>
+  </div>
+  <div class="ref-body" id="ref-y">
+    <div class="ref-rule" data-cat="y">
+      <strong>Rule:</strong> Drop the <strong>-y</strong>, add <strong>-iest</strong>. Always use <strong>the</strong>.<br>
+      <em>happy → the happiest &nbsp;|&nbsp; easy → the easiest &nbsp;|&nbsp; pretty → the prettiest</em>
+    </div>
+    <div class="ref-examples">
+      <span class="ref-chip">funny → the funniest</span>
+      <span class="ref-chip">busy → the busiest</span>
+      <span class="ref-chip">heavy → the heaviest</span>
+      <span class="ref-chip">noisy → the noisiest</span>
+      <span class="ref-chip">lazy → the laziest</span>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz -->
+<div class="quiz-wrap" id="quiz-wrap">
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="question-card" id="question-card">
+    <div class="q-meta">
+      <span class="q-num" id="q-num">1 / 20</span>
+      <span class="q-tag" id="q-tag" data-cat="1syl">1 syllable</span>
+    </div>
+    <p class="q-text" id="q-text"></p>
+    <div class="options" id="options"></div>
+    <p class="feedback" id="feedback"></p>
+  </div>
+  <div class="controls">
+    <span class="score-label" id="score-label">Score: 0 / 0</span>
+    <button class="btn-next" id="btn-next" disabled onclick="nextQuestion()">Next →</button>
+  </div>
+</div>
+
+<!-- Results -->
+<div class="results-card" id="results-card">
+  <div class="big-score" id="big-score">–</div>
+  <p class="results-msg" id="results-msg"></p>
+  <button class="btn-restart" onclick="restart()">Try again</button>
+  <div class="breakdown" id="breakdown"></div>
+</div>
+
+<script>
+const CAT_LABELS = {
+  '1syl': '1 syllable',
+  '2syl': '2+ syllables',
+  'irr':  'Irregular',
+  'y':    'Ends in -y'
+};
+
+const ALL_QUESTIONS = [
+  // 1 syllable
+  {
+    cat: '1syl',
+    q: 'Complete the sentence: "This is ___ city in the country." (big)',
+    correct: 'the biggest',
+    options: ['the bigger', 'the most big', 'the biggest', 'the bigest']
+  },
+  {
+    cat: '1syl',
+    q: 'Choose the correct superlative of <em>tall</em>:',
+    correct: 'the tallest',
+    options: ['the talliest', 'the most tall', 'the taller', 'the tallest']
+  },
+  {
+    cat: '1syl',
+    q: 'Complete: "January is ___ month of the year." (cold)',
+    correct: 'the coldest',
+    options: ['the coldiest', 'the most cold', 'the coldest', 'the colder']
+  },
+  {
+    cat: '1syl',
+    q: 'Choose the correct superlative of <em>fast</em>:',
+    correct: 'the fastest',
+    options: ['the most fast', 'the fastiest', 'the faster', 'the fastest']
+  },
+  {
+    cat: '1syl',
+    q: 'Complete: "That was ___ day of my life." (sad)',
+    correct: 'the saddest',
+    options: ['the sadest', 'the most sad', 'the saddest', 'the saddiest']
+  },
+  {
+    cat: '1syl',
+    q: 'Choose the correct superlative of <em>thin</em>:',
+    correct: 'the thinnest',
+    options: ['the thinest', 'the most thin', 'the thinnest', 'the thinner']
+  },
+  // 2+ syllables
+  {
+    cat: '2syl',
+    q: 'Complete: "This is ___ restaurant in town." (expensive)',
+    correct: 'the most expensive',
+    options: ['the expensivist', 'the expensivest', 'the most expensive', 'the most expensivest']
+  },
+  {
+    cat: '2syl',
+    q: 'Choose the correct superlative of <em>comfortable</em>:',
+    correct: 'the most comfortable',
+    options: ['the comfortablest', 'the most comfortable', 'the comfortabliest', 'the most comfortablest']
+  },
+  {
+    cat: '2syl',
+    q: 'Complete: "That was ___ lecture of the semester." (boring)',
+    correct: 'the most boring',
+    options: ['the boringest', 'the boringiest', 'the most boring', 'the most boringest']
+  },
+  {
+    cat: '2syl',
+    q: 'Choose the correct superlative of <em>important</em>:',
+    correct: 'the most important',
+    options: ['the importantest', 'the most important', 'the importantiest', 'the more important']
+  },
+  {
+    cat: '2syl',
+    q: 'Complete: "She is ___ student in the class." (careful)',
+    correct: 'the most careful',
+    options: ['the carefullest', 'the most carefullest', 'the most careful', 'the carefulliest']
+  },
+  {
+    cat: '2syl',
+    q: 'Choose the correct superlative of <em>modern</em>:',
+    correct: 'the most modern',
+    options: ['the modernest', 'the most modern', 'the moderniest', 'the more modern']
+  },
+  // Ends in -y
+  {
+    cat: 'y',
+    q: 'Complete: "This is ___ joke I have ever heard." (funny)',
+    correct: 'the funniest',
+    options: ['the most funny', 'the funniest', 'the funnyest', 'the funniest most']
+  },
+  {
+    cat: 'y',
+    q: 'Choose the correct superlative of <em>pretty</em>:',
+    correct: 'the prettiest',
+    options: ['the most pretty', 'the prettyest', 'the prettiest', 'the prettist']
+  },
+  {
+    cat: 'y',
+    q: 'Complete: "Monday is ___ day of the week for me." (busy)',
+    correct: 'the busiest',
+    options: ['the most busy', 'the busyest', 'the busiest', 'the busiест']
+  },
+  {
+    cat: 'y',
+    q: 'Choose the correct superlative of <em>heavy</em>:',
+    correct: 'the heaviest',
+    options: ['the most heavy', 'the heavyest', 'the heaviest', 'the heavist']
+  },
+  {
+    cat: 'y',
+    q: 'Complete: "This is ___ neighbourhood in the city." (noisy)',
+    correct: 'the noisiest',
+    options: ['the most noisy', 'the noisyest', 'the noisiest', 'the noisiест']
+  },
+  // Irregular
+  {
+    cat: 'irr',
+    q: 'Complete: "She is ___ player on the team." (good)',
+    correct: 'the best',
+    options: ['the goodest', 'the most good', 'the better', 'the best']
+  },
+  {
+    cat: 'irr',
+    q: 'Choose the correct superlative of <em>bad</em>:',
+    correct: 'the worst',
+    options: ['the baddest', 'the most bad', 'the worse', 'the worst']
+  },
+  {
+    cat: 'irr',
+    q: 'Complete: "That is ___ point from the city centre." (far)',
+    correct: 'the farthest',
+    options: ['the most far', 'the farrest', 'the farthest', 'the furthest most']
+  },
+];
+
+function shuffle(arr) {
+  return arr.slice().sort(() => Math.random() - 0.5);
+}
+
+let questions = [];
+let current = 0;
+let score = 0;
+let answered = false;
+let catScore = { '1syl': [0,0], '2syl': [0,0], 'irr': [0,0], 'y': [0,0] };
+
+function start() {
+  questions = shuffle(ALL_QUESTIONS);
+  current = 0;
+  score = 0;
+  answered = false;
+  catScore = { '1syl': [0,0], '2syl': [0,0], 'irr': [0,0], 'y': [0,0] };
+  document.getElementById('results-card').classList.remove('visible');
+  document.getElementById('quiz-wrap').style.display = '';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const total = questions.length;
+
+  document.getElementById('progress-bar').style.width = (current / total * 100) + '%';
+  document.getElementById('q-num').textContent = (current + 1) + ' / ' + total;
+
+  const tag = document.getElementById('q-tag');
+  tag.textContent = CAT_LABELS[q.cat];
+  tag.setAttribute('data-cat', q.cat);
+
+  document.getElementById('q-text').innerHTML = q.q;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  const shuffled = shuffle(q.options);
+  shuffled.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(btn, opt, q.correct, q.cat);
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('btn-next').disabled = true;
+  document.getElementById('score-label').textContent = 'Score: ' + score + ' / ' + current;
+  answered = false;
+}
+
+function selectAnswer(btn, chosen, correct, cat) {
+  if (answered) return;
+  answered = true;
+
+  catScore[cat][1]++;
+
+  const allBtns = document.querySelectorAll('.opt-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    if (b.textContent === correct) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById('feedback');
+  if (chosen === correct) {
+    score++;
+    catScore[cat][0]++;
+    btn.classList.add('correct');
+    fb.textContent = '✓ Correct!';
+    fb.className = 'feedback show-right';
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent = '✗ The correct answer is: ' + correct;
+    fb.className = 'feedback show-wrong';
+  }
+
+  document.getElementById('score-label').textContent = 'Score: ' + score + ' / ' + (current + 1);
+  document.getElementById('btn-next').disabled = false;
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-wrap').style.display = 'none';
+  const card = document.getElementById('results-card');
+  card.classList.add('visible');
+
+  const total = questions.length;
+  const pct = Math.round(score / total * 100);
+  document.getElementById('big-score').textContent = score + '/' + total;
+
+  let msg = '';
+  if (pct >= 90) msg = 'Excellent! You have mastered the superlative forms.';
+  else if (pct >= 70) msg = 'Good job! Review the categories where you lost points.';
+  else if (pct >= 50) msg = 'Keep practising — check the reference tabs above.';
+  else msg = 'Don\'t give up! Use the reference panel and try again.';
+  document.getElementById('results-msg').textContent = msg;
+
+  let html = '<div class="breakdown-row"><strong>Category</strong><strong>Score</strong></div>';
+  Object.entries(catScore).forEach(([cat, [got, tot]]) => {
+    if (tot === 0) return;
+    html += `<div class="breakdown-row"><span>${CAT_LABELS[cat]}</span><span>${got} / ${tot}</span></div>`;
+  });
+  document.getElementById('breakdown').innerHTML = html;
+}
+
+function restart() { start(); }
+
+function openRef(cat) {
+  document.querySelectorAll('.ref-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ref-body').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.ref-tab[data-cat="${cat}"]`).classList.add('active');
+  document.getElementById('ref-' + cat).classList.add('active');
+}
+
+start();
+</script>
+</body>
+</html>
