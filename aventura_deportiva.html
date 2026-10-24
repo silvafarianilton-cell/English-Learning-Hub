@@ -3,463 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Aventura Deportiva! - Español A2</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Actividad ELE - Deportes</title>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1e3a8a 0%, #6d28d9 100%);
-            color: #333;
-            min-height: 100vh;
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 1.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        .word-badge {
-            transition: all 0.3s ease;
-        }
-        .word-badge.completed {
-            background-color: #10b981; /* Emerald 500 */
-            color: white;
-            text-decoration: line-through;
-            opacity: 0.7;
-            transform: scale(0.95);
-        }
-        /* Loading spinner */
-        .spinner {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top: 3px solid white;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 8px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .hidden { display: none !important; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; color: #333; text-align: center; padding: 20px; }
+        .container { max-width: 600px; background: white; padding: 30px; border-radius: 10px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .hidden { display: none; }
+        .word-bank { display: flex; gap: 10px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+        .word { background: #e2e8f0; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
+        .word.found { background: #48bb78; color: white; text-decoration: line-through; }
+        input[type="text"] { width: 80%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { background: #4299e1; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #3182ce; }
+        button:disabled { background: #a0aec0; cursor: not-allowed; }
+        #timer { font-size: 24px; font-weight: bold; color: #e53e3e; margin: 15px 0; }
+        .feedback { margin-top: 10px; font-size: 14px; color: #e53e3e; }
+        .success { color: #48bb78; }
     </style>
 </head>
-<body class="flex items-center justify-center p-4">
+<body>
 
-    <!-- Start Screen -->
-    <div id="start-screen" class="glass-panel w-full max-w-2xl p-8 transform transition-all">
-        <h1 class="text-4xl md:text-5xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-2">¡Aventura Deportiva!</h1>
-        <p class="text-center text-gray-600 mb-8 font-semibold">Español A2 - Deportes y Presente Simple</p>
+<div id="pantalla-inicio" class="container">
+    <h2>Registro de Equipo</h2>
+    <input type="text" id="nombre-equipo" placeholder="Nombre del equipo (ej. Los Leones)">
+    <input type="text" id="nombres-alumnos" placeholder="Nombres de los integrantes (3 o 4)">
+    <br><br>
+    <button onclick="iniciarJuego()">Comenzar Actividad</button>
+</div>
+
+<div id="pantalla-juego" class="container hidden">
+    <h2 id="equipo-display"></h2>
+    <div id="timer">02:00</div>
+    <h3 id="historia-curso"></h3>
+    
+    <div class="word-bank" id="banco-palabras"></div>
+    
+    <input type="text" id="input-oracion" placeholder="Escribe tu oración aquí...">
+    <button id="btn-enviar" onclick="validarOracion()">Enviar Oración</button>
+    <div id="feedback" class="feedback"></div>
+
+    <br><br>
+    <button id="btn-siguiente" class="hidden" onclick="siguienteActividad()">Siguiente Actividad</button>
+</div>
+
+<script>
+    const actividades = [
+        {
+            historia: "Mi amigo Carlos quiere empezar a hacer ejercicio. Me pregunta...",
+            palabras: [
+                { base: "jugar", variantes: ["juego", "juegas", "juega", "jugamos", "jugáis", "juegan", "jugar"] },
+                { base: "correr", variantes: ["corro", "corres", "corre", "corremos", "corréis", "corren", "correr"] },
+                { base: "equipo", variantes: ["equipo", "equipos"] },
+                { base: "pelota", variantes: ["pelota", "pelotas", "balón"] },
+                { base: "ganar", variantes: ["gano", "ganas", "gana", "ganamos", "ganáis", "ganan", "ganar"] }
+            ]
+        },
+        {
+            historia: "Estamos viendo las olimpiadas en la televisión. La comentarista dice...",
+            palabras: [
+                { base: "nadar", variantes: ["nado", "nadas", "nada", "nadamos", "nadáis", "nadan", "nadar"] },
+                { base: "entrenar", variantes: ["entreno", "entrenas", "entrena", "entrenamos", "entrenáis", "entrenan", "entrenar"] },
+                { base: "cancha", variantes: ["cancha", "canchas", "pista"] },
+                { base: "rápido", variantes: ["rápido", "rápida", "rápidos", "rápidas"] },
+                { base: "perder", variantes: ["pierdo", "pierdes", "pierde", "perdemos", "perdéis", "pierden", "perder"] }
+            ]
+        }
+        // Puedes copiar este bloque para añadir las 5 actividades restantes.
+    ];
+
+    let indiceActual = 0;
+    let palabrasRestantes = [];
+    let tiempoRestante = 120;
+    let intervaloTimer;
+
+    function iniciarJuego() {
+        const equipo = document.getElementById("nombre-equipo").value;
+        if (!equipo) return alert("Por favor ingresa el nombre del equipo.");
         
-        <div class="space-y-6">
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Nombre del Equipo</label>
-                <input type="text" id="team-name" placeholder="Ej: Los Campeones" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors">
-            </div>
-            
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Nombres de los Jugadores (Mínimo 3)</label>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="player-1" placeholder="Jugador 1" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors">
-                    <input type="text" id="player-2" placeholder="Jugador 2" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors">
-                    <input type="text" id="player-3" placeholder="Jugador 3" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors">
-                    <input type="text" id="player-4" placeholder="Jugador 4 (Opcional)" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors">
-                </div>
-            </div>
-
-            <div id="start-error" class="text-red-500 text-sm font-bold hidden text-center">Por favor, completa el nombre del equipo y al menos 3 jugadores.</div>
-
-            <button onclick="startGame()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
-                ¡Comenzar Aventura!
-            </button>
-        </div>
-    </div>
-
-    <!-- Game Screen -->
-    <div id="game-screen" class="glass-panel w-full max-w-4xl p-6 md:p-8 hidden flex flex-col h-full md:h-auto">
+        document.getElementById("pantalla-inicio").classList.add("hidden");
+        document.getElementById("pantalla-juego").classList.remove("hidden");
+        document.getElementById("equipo-display").innerText = "Equipo: " + equipo;
         
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 pb-4 border-b-2 border-gray-100">
-            <div>
-                <h2 id="display-team-name" class="text-2xl font-extrabold text-gray-800">Equipo</h2>
-                <p id="activity-counter" class="text-sm font-bold text-purple-600 uppercase tracking-wide">Actividad 1 de 7</p>
-            </div>
-            <div class="mt-4 md:mt-0 flex items-center bg-gray-100 px-4 py-2 rounded-full shadow-inner">
-                <svg class="w-6 h-6 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span id="timer-display" class="text-2xl font-mono font-bold text-gray-700">02:00</span>
-            </div>
-        </div>
+        cargarActividad();
+    }
 
-        <!-- Story Context -->
-        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
-            <p class="text-sm text-blue-800 font-bold mb-1 uppercase tracking-wider">Historia en curso</p>
-            <p id="story-text" class="text-lg text-gray-800 italic">Cargando historia...</p>
-        </div>
+    function cargarActividad() {
+        if (indiceActual >= actividades.length) {
+            document.getElementById("pantalla-juego").innerHTML = "<h2>¡Actividad completada con éxito!</h2>";
+            return;
+        }
 
-        <!-- Word Bank -->
-        <div class="mb-6">
-            <h3 class="text-sm font-bold text-gray-700 mb-3">Banco de Palabras (Usa el Presente Simple):</h3>
-            <div id="word-bank" class="flex flex-wrap gap-2">
-                <!-- Words will be injected here -->
-            </div>
-        </div>
+        const act = actividades[indiceActual];
+        document.getElementById("historia-curso").innerText = act.historia;
+        document.getElementById("btn-siguiente").classList.add("hidden");
+        document.getElementById("input-oracion").disabled = false;
+        document.getElementById("btn-enviar").disabled = false;
+        document.getElementById("feedback").innerText = "";
+        document.getElementById("input-oracion").value = "";
+        
+        palabrasRestantes = act.palabras.map(p => p.base);
+        
+        const banco = document.getElementById("banco-palabras");
+        banco.innerHTML = "";
+        act.palabras.forEach(p => {
+            let span = document.createElement("span");
+            span.className = "word";
+            span.id = "word-" + p.base;
+            span.innerText = p.base;
+            banco.appendChild(span);
+        });
 
-        <!-- Input Area -->
-        <div class="flex-grow flex flex-col justify-end">
-            <div id="feedback-area" class="mb-4 p-4 rounded-lg hidden text-sm font-semibold">
-                <!-- Feedback messages will appear here -->
-            </div>
+        iniciarTemporizador();
+    }
 
-            <div class="flex flex-col sm:flex-row gap-3">
-                <input type="text" id="sentence-input" placeholder="Escribe tu oración aquí..." class="flex-grow px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-500 focus:outline-none transition-colors text-lg" onkeypress="handleEnter(event)">
-                <button id="btn-submit" onclick="submitSentence()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-colors flex items-center justify-center min-w-[140px]">
-                    <span id="btn-submit-text">Enviar</span>
-                    <div id="btn-submit-spinner" class="spinner hidden"></div>
-                </button>
-            </div>
-            
-            <button id="btn-next" onclick="nextActivity()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition-colors hidden text-lg">
-                ¡Siguiente Actividad!
-            </button>
-        </div>
-    </div>
-
-    <!-- End Screen -->
-    <div id="end-screen" class="glass-panel w-full max-w-2xl p-10 text-center hidden">
-        <div class="text-6xl mb-4">🏆</div>
-        <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 mb-4">¡Felicidades!</h1>
-        <h2 id="final-team-name" class="text-3xl font-bold text-gray-800 mb-6">Equipo</h2>
-        <p class="text-lg text-gray-600 mb-8">Han completado con éxito la aventura deportiva demostrando un excelente dominio del Presente Simple y el vocabulario.</p>
-        <div class="bg-gray-100 rounded-xl p-6 mb-8 inline-block w-full">
-            <h3 class="font-bold text-gray-700 mb-2">Jugadores Estrella:</h3>
-            <ul id="final-players-list" class="text-lg font-semibold text-purple-600">
-                <!-- Players injected here -->
-            </ul>
-        </div>
-        <button onclick="location.reload()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-8 rounded-lg shadow transition-colors">
-            Volver a Jugar
-        </button>
-    </div>
-
-    <script>
-        // --- DATA ---
-        const activities = [
-            {
-                story: "Es sábado por la mañana. Mis amigos y yo estamos en el parque polideportivo. Tenemos mucha energía hoy...",
-                words: ["jugar", "pelota", "equipo", "ganar", "rápido"]
-            },
-            {
-                story: "En la pista de atletismo, mi hermano se prepara para su competición del mes...",
-                words: ["correr", "pista", "entrenar", "zapatillas", "lento"]
-            },
-            {
-                story: "El verano es perfecto para los deportes acuáticos. En el club de la ciudad...",
-                words: ["nadar", "piscina", "agua", "competir", "fuerte"]
-            },
-            {
-                story: "Hoy hay un gran evento en la ciudad. Mucha gente va a ver a sus ídolos...",
-                words: ["partido", "estadio", "mirar", "aficionado", "emocionante"]
-            },
-            {
-                story: "El encuentro está muy igualado. El delantero tiene una oportunidad de oro...",
-                words: ["marcar", "gol", "fútbol", "campo", "jugador"]
-            },
-            {
-                story: "Para estar en forma, mi amiga María va todos los días a hacer ejercicio...",
-                words: ["sudar", "esfuerzo", "gimnasio", "levantar", "pesado"]
-            },
-            {
-                story: "Termina el torneo anual. Todos los participantes se reúnen en el centro...",
-                words: ["descansar", "campeón", "medalla", "celebrar", "feliz"]
+    function iniciarTemporizador() {
+        clearInterval(intervaloTimer);
+        tiempoRestante = 120;
+        actualizarDisplayReloj();
+        intervaloTimer = setInterval(() => {
+            tiempoRestante--;
+            actualizarDisplayReloj();
+            if (tiempoRestante <= 0) {
+                clearInterval(intervaloTimer);
+                tiempoAgotado();
             }
-        ];
+        }, 1000);
+    }
 
-        // --- STATE ---
-        let currentActivityIndex = 0;
-        let timerInterval;
-        let timeLeft = 120; // 2 minutes in seconds
-        let currentRemainingWords = [];
-        let isProcessing = false;
+    function actualizarDisplayReloj() {
+        let min = Math.floor(tiempoRestante / 60);
+        let sec = tiempoRestante % 60;
+        document.getElementById("timer").innerText = (min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec);
+    }
 
-        // --- GEMINI API CONFIG ---
-        // Empty string as requested; platform will inject if applicable, or user provides.
-        const apiKey = ""; 
+    function tiempoAgotado() {
+        document.getElementById("input-oracion").disabled = true;
+        document.getElementById("btn-enviar").disabled = true;
+        document.getElementById("feedback").innerHTML = "<span style='color:red'>¡Tiempo agotado! Pasando a la siguiente...</span>";
+        document.getElementById("btn-siguiente").classList.remove("hidden");
+        setTimeout(siguienteActividad, 3000);
+    }
 
-        // --- FUNCTIONS ---
-
-        function startGame() {
-            const teamName = document.getElementById('team-name').value.trim();
-            const p1 = document.getElementById('player-1').value.trim();
-            const p2 = document.getElementById('player-2').value.trim();
-            const p3 = document.getElementById('player-3').value.trim();
-            const p4 = document.getElementById('player-4').value.trim();
-            const errorDiv = document.getElementById('start-error');
-
-            if (!teamName || !p1 || !p2 || !p3) {
-                errorDiv.classList.remove('hidden');
-                return;
-            }
-
-            errorDiv.classList.add('hidden');
-            
-            // Store data in UI for end screen
-            document.getElementById('display-team-name').innerText = teamName;
-            document.getElementById('final-team-name').innerText = teamName;
-            
-            const playersList = document.getElementById('final-players-list');
-            playersList.innerHTML = '';
-            [p1, p2, p3, p4].forEach(p => {
-                if(p) playersList.innerHTML += `<li>${p}</li>`;
-            });
-
-            // Switch screens
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-
-            loadActivity(0);
+    function validarOracion() {
+        const inputStr = document.getElementById("input-oracion").value.trim().toLowerCase();
+        const feedback = document.getElementById("feedback");
+        
+        if (inputStr.split(" ").length < 3) {
+            feedback.innerText = "La oración es muy corta. Usa al menos 3 palabras para darle sentido.";
+            return;
         }
 
-        function loadActivity(index) {
-            currentActivityIndex = index;
-            const activity = activities[index];
-            currentRemainingWords = [...activity.words];
+        const act = actividades[indiceActual];
+        let palabraEncontrada = null;
 
-            // Update UI
-            document.getElementById('activity-counter').innerText = `Actividad ${index + 1} de ${activities.length}`;
-            document.getElementById('story-text').innerText = `"${activity.story}"`;
-            
-            // Render Word Bank
-            const wordBankContainer = document.getElementById('word-bank');
-            wordBankContainer.innerHTML = '';
-            activity.words.forEach(word => {
-                const span = document.createElement('span');
-                span.innerText = word;
-                span.id = `word-${word}`;
-                span.className = 'word-badge bg-white border-2 border-gray-200 text-gray-700 font-bold py-2 px-4 rounded-full shadow-sm';
-                wordBankContainer.appendChild(span);
-            });
-
-            // Reset Inputs & Feedback
-            const input = document.getElementById('sentence-input');
-            input.value = '';
-            input.disabled = false;
-            
-            document.getElementById('btn-submit').classList.remove('hidden');
-            document.getElementById('btn-submit').disabled = false;
-            document.getElementById('btn-next').classList.add('hidden');
-            hideFeedback();
-
-            // Start Timer
-            startTimer();
-            input.focus();
-        }
-
-        function startTimer() {
-            clearInterval(timerInterval);
-            timeLeft = 120; // Reset to 2:00
-            updateTimerDisplay();
-
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    timeUp();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const display = document.getElementById('timer-display');
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            if (timeLeft <= 10) {
-                display.classList.add('text-red-600', 'animate-pulse');
-                display.classList.remove('text-gray-700');
-            } else {
-                display.classList.remove('text-red-600', 'animate-pulse');
-                display.classList.add('text-gray-700');
-            }
-        }
-
-        function timeUp() {
-            document.getElementById('sentence-input').disabled = true;
-            document.getElementById('btn-submit').classList.add('hidden');
-            
-            const btnNext = document.getElementById('btn-next');
-            btnNext.classList.remove('hidden');
-            btnNext.innerText = "Tiempo agotado - Siguiente Actividad";
-            btnNext.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-            btnNext.classList.add('bg-red-500', 'hover:bg-red-600');
-            
-            showFeedback("¡Se acabó el tiempo! Debes continuar a la siguiente actividad.", "error");
-        }
-
-        function handleEnter(e) {
-            if (e.key === 'Enter' && !isProcessing && !document.getElementById('sentence-input').disabled) {
-                submitSentence();
-            }
-        }
-
-        async function submitSentence() {
-            const inputEl = document.getElementById('sentence-input');
-            const sentence = inputEl.value.trim();
-
-            if (!sentence) return;
-
-            setLoadingState(true);
-            hideFeedback();
-
-            try {
-                // Construct prompt
-                const prompt = `Eres un profesor de español estricto. El estudiante de nivel A2 escribió: '${sentence}'. El banco de palabras disponible es: ${currentRemainingWords.join(', ')}. Analiza la oración y responde SOLO en formato JSON. Criterios para que sea válida (valid: true): 1) Es gramaticalmente correcta y tiene sentido lógico (rechaza tonterías como 'La pelota come'). 2) Usa correctamente el Presente Simple. 3) Usa al menos UNA palabra del banco de palabras (DEBES aceptar conjugaciones, ej. 'juego' cuenta como 'jugar', 'ganamos' cuenta como 'ganar', 'zapatillas' cuenta aunque sea plural). JSON format: { "valid": true/false, "matchedWords": [array of the base words from the bank that were successfully used], "feedback": "Explicación corta en español de por qué es incorrecto, o un '¡Muy bien!' si es correcto" }.`;
-
-                const payload = {
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                "valid": { type: "BOOLEAN" },
-                                "matchedWords": { type: "ARRAY", items: { type: "STRING" } },
-                                "feedback": { type: "STRING" }
-                            },
-                            required: ["valid", "matchedWords", "feedback"]
-                        }
-                    }
-                };
-
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    throw new Error("Error en la API de corrección.");
-                }
-
-                const result = await response.json();
-                
-                if (result.candidates && result.candidates[0].content.parts[0].text) {
-                    const jsonText = result.candidates[0].content.parts[0].text;
-                    const evaluation = JSON.parse(jsonText);
-                    
-                    handleEvaluationResult(evaluation, inputEl);
-                } else {
-                    throw new Error("Respuesta inesperada de la IA.");
-                }
-
-            } catch (error) {
-                console.error(error);
-                showFeedback("Hubo un error de conexión al corregir. Por favor, intenta de nuevo.", "error");
-            } finally {
-                setLoadingState(false);
-            }
-        }
-
-        function handleEvaluationResult(evaluation, inputEl) {
-            if (evaluation.valid) {
-                showFeedback(evaluation.feedback || "¡Excelente!", "success");
-                inputEl.value = ''; // clear for next student
-                
-                // Cross out words
-                if (evaluation.matchedWords && evaluation.matchedWords.length > 0) {
-                    evaluation.matchedWords.forEach(word => {
-                        const wordBadge = document.getElementById(`word-${word}`);
-                        if (wordBadge && currentRemainingWords.includes(word)) {
-                            wordBadge.classList.remove('bg-white', 'border-gray-200', 'text-gray-700');
-                            wordBadge.classList.add('completed');
-                            // Remove from remaining
-                            currentRemainingWords = currentRemainingWords.filter(w => w !== word);
-                        }
-                    });
-                }
-
-                // Check win condition for this activity
-                if (currentRemainingWords.length === 0) {
-                    clearInterval(timerInterval);
-                    inputEl.disabled = true;
-                    document.getElementById('btn-submit').classList.add('hidden');
-                    
-                    const btnNext = document.getElementById('btn-next');
-                    btnNext.classList.remove('hidden', 'bg-red-500', 'hover:bg-red-600');
-                    btnNext.classList.add('bg-blue-600', 'hover:bg-blue-700');
-                    btnNext.innerText = "¡Actividad Completada! Siguiente";
-                }
-
-            } else {
-                showFeedback(evaluation.feedback || "Oración incorrecta. Revisa la gramática o el banco de palabras.", "error");
-            }
-        }
-
-        function nextActivity() {
-            currentActivityIndex++;
-            if (currentActivityIndex < activities.length) {
-                loadActivity(currentActivityIndex);
-            } else {
-                // Game Over - Show End Screen
-                document.getElementById('game-screen').classList.add('hidden');
-                document.getElementById('end-screen').classList.remove('hidden');
-            }
-        }
-
-        // --- UI UTILS ---
-
-        function setLoadingState(isLoading) {
-            isProcessing = isLoading;
-            const btn = document.getElementById('btn-submit');
-            const spinner = document.getElementById('btn-submit-spinner');
-            const btnText = document.getElementById('btn-submit-text');
-            const input = document.getElementById('sentence-input');
-
-            if (isLoading) {
-                btn.disabled = true;
-                btn.classList.add('opacity-75', 'cursor-not-allowed');
-                spinner.classList.remove('hidden');
-                btnText.innerText = "Revisando";
-                input.disabled = true;
-            } else {
-                btn.disabled = false;
-                btn.classList.remove('opacity-75', 'cursor-not-allowed');
-                spinner.classList.add('hidden');
-                btnText.innerText = "Enviar";
-                input.disabled = false;
-                if(!document.getElementById('btn-next').classList.contains('hidden')) {
-                     // If next button is visible (meaning time up or activity done), keep input disabled
-                     input.disabled = true;
-                } else {
-                     input.focus();
+        for (let p of act.palabras) {
+            if (palabrasRestantes.includes(p.base)) {
+                // Chequea si alguna variante está en la oración
+                const usaVariante = p.variantes.some(v => new RegExp(`\\b${v}\\b`).test(inputStr));
+                if (usaVariante) {
+                    palabraEncontrada = p.base;
+                    break;
                 }
             }
         }
 
-        function showFeedback(message, type) {
-            const feedbackEl = document.getElementById('feedback-area');
-            feedbackEl.innerText = message;
-            feedbackEl.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'border-red-400', 'bg-green-100', 'text-green-700', 'border-green-400');
-            
-            if (type === 'error') {
-                feedbackEl.classList.add('bg-red-100', 'text-red-700', 'border-l-4', 'border-red-500');
-            } else {
-                feedbackEl.classList.add('bg-green-100', 'text-green-800', 'border-l-4', 'border-green-500');
+        if (palabraEncontrada) {
+            palabrasRestantes = palabrasRestantes.filter(w => w !== palabraEncontrada);
+            document.getElementById("word-" + palabraEncontrada).classList.add("found");
+            feedback.innerHTML = `<span class="success">¡Bien hecho! Validado.</span>`;
+            document.getElementById("input-oracion").value = "";
+
+            if (palabrasRestantes.length === 0) {
+                clearInterval(intervaloTimer);
+                document.getElementById("input-oracion").disabled = true;
+                document.getElementById("btn-enviar").disabled = true;
+                document.getElementById("btn-siguiente").classList.remove("hidden");
+                feedback.innerHTML = `<span class="success">¡Excelente! Has completado el banco de palabras.</span>`;
             }
+        } else {
+            feedback.innerText = "No se detectó ninguna palabra del banco (o ya fue usada). Revisa la conjugación.";
         }
+    }
 
-        function hideFeedback() {
-            document.getElementById('feedback-area').classList.add('hidden');
-        }
-
-    </script>
+    function siguienteActividad() {
+        indiceActual++;
+        cargarActividad();
+    }
+</script>
 </body>
 </html>
