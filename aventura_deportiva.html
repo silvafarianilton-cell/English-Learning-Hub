@@ -5,19 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actividad ELE - Deportes</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; color: #333; text-align: center; padding: 20px; }
-        .container { max-width: 600px; background: white; padding: 30px; border-radius: 10px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .hidden { display: none; }
-        .word-bank { display: flex; gap: 10px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
-        .word { background: #e2e8f0; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
-        .word.found { background: #48bb78; color: white; text-decoration: line-through; }
-        input[type="text"] { width: 80%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
-        button { background: #4299e1; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f0f4f8; 
+            color: #333; 
+            display: flex; 
+            justify-content: center; 
+            padding-top: 50px;
+            margin: 0; 
+            min-height: 100vh;
+        }
+        .container { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            width: 100%;
+            max-width: 600px; 
+            text-align: center; 
+        }
+        h2 { margin-top: 0; color: #2d3748; margin-bottom: 20px; }
+        h3 { font-size: 18px; color: #2d3748; margin-bottom: 20px; }
+        
+        input[type="text"] { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 15px; 
+            border: 1px solid #cbd5e0; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            color: #4a5568; 
+            outline: none; 
+        }
+        input[type="text"]:focus {
+            border: 2px solid #000;
+        }
+        
+        button { 
+            background: #4299e1; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 16px; 
+        }
         button:hover { background: #3182ce; }
         button:disabled { background: #a0aec0; cursor: not-allowed; }
-        #timer { font-size: 24px; font-weight: bold; color: #e53e3e; margin: 15px 0; }
-        .feedback { margin-top: 10px; font-size: 14px; color: #e53e3e; }
+        
+        .hidden { display: none; }
+        
+        #timer { 
+            font-size: 28px; 
+            font-weight: bold; 
+            color: #e53e3e; 
+            margin: 15px 0; 
+        }
+        
+        .word-bank { 
+            display: flex; 
+            gap: 12px; 
+            justify-content: center; 
+            margin: 25px 0; 
+            flex-wrap: wrap; 
+        }
+        .word { 
+            background: #e2e8f0; 
+            padding: 8px 18px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            color: #2d3748;
+        }
+        .word.found { 
+            background: #48bb78; 
+            color: white; 
+        }
+        
+        .feedback { margin-top: 15px; font-size: 15px; }
         .success { color: #48bb78; }
+        .error { color: #e53e3e; }
     </style>
 </head>
 <body>
@@ -67,7 +134,7 @@
                 { base: "perder", variantes: ["pierdo", "pierdes", "pierde", "perdemos", "perdéis", "pierden", "perder"] }
             ]
         }
-        // Puedes copiar este bloque para añadir las 5 actividades restantes.
+        // Puedes agregar más actividades aquí.
     ];
 
     let indiceActual = 0;
@@ -77,117 +144,4 @@
 
     function iniciarJuego() {
         const equipo = document.getElementById("nombre-equipo").value;
-        if (!equipo) return alert("Por favor ingresa el nombre del equipo.");
-        
-        document.getElementById("pantalla-inicio").classList.add("hidden");
-        document.getElementById("pantalla-juego").classList.remove("hidden");
-        document.getElementById("equipo-display").innerText = "Equipo: " + equipo;
-        
-        cargarActividad();
-    }
-
-    function cargarActividad() {
-        if (indiceActual >= actividades.length) {
-            document.getElementById("pantalla-juego").innerHTML = "<h2>¡Actividad completada con éxito!</h2>";
-            return;
-        }
-
-        const act = actividades[indiceActual];
-        document.getElementById("historia-curso").innerText = act.historia;
-        document.getElementById("btn-siguiente").classList.add("hidden");
-        document.getElementById("input-oracion").disabled = false;
-        document.getElementById("btn-enviar").disabled = false;
-        document.getElementById("feedback").innerText = "";
-        document.getElementById("input-oracion").value = "";
-        
-        palabrasRestantes = act.palabras.map(p => p.base);
-        
-        const banco = document.getElementById("banco-palabras");
-        banco.innerHTML = "";
-        act.palabras.forEach(p => {
-            let span = document.createElement("span");
-            span.className = "word";
-            span.id = "word-" + p.base;
-            span.innerText = p.base;
-            banco.appendChild(span);
-        });
-
-        iniciarTemporizador();
-    }
-
-    function iniciarTemporizador() {
-        clearInterval(intervaloTimer);
-        tiempoRestante = 120;
-        actualizarDisplayReloj();
-        intervaloTimer = setInterval(() => {
-            tiempoRestante--;
-            actualizarDisplayReloj();
-            if (tiempoRestante <= 0) {
-                clearInterval(intervaloTimer);
-                tiempoAgotado();
-            }
-        }, 1000);
-    }
-
-    function actualizarDisplayReloj() {
-        let min = Math.floor(tiempoRestante / 60);
-        let sec = tiempoRestante % 60;
-        document.getElementById("timer").innerText = (min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec);
-    }
-
-    function tiempoAgotado() {
-        document.getElementById("input-oracion").disabled = true;
-        document.getElementById("btn-enviar").disabled = true;
-        document.getElementById("feedback").innerHTML = "<span style='color:red'>¡Tiempo agotado! Pasando a la siguiente...</span>";
-        document.getElementById("btn-siguiente").classList.remove("hidden");
-        setTimeout(siguienteActividad, 3000);
-    }
-
-    function validarOracion() {
-        const inputStr = document.getElementById("input-oracion").value.trim().toLowerCase();
-        const feedback = document.getElementById("feedback");
-        
-        if (inputStr.split(" ").length < 3) {
-            feedback.innerText = "La oración es muy corta. Usa al menos 3 palabras para darle sentido.";
-            return;
-        }
-
-        const act = actividades[indiceActual];
-        let palabraEncontrada = null;
-
-        for (let p of act.palabras) {
-            if (palabrasRestantes.includes(p.base)) {
-                // Chequea si alguna variante está en la oración
-                const usaVariante = p.variantes.some(v => new RegExp(`\\b${v}\\b`).test(inputStr));
-                if (usaVariante) {
-                    palabraEncontrada = p.base;
-                    break;
-                }
-            }
-        }
-
-        if (palabraEncontrada) {
-            palabrasRestantes = palabrasRestantes.filter(w => w !== palabraEncontrada);
-            document.getElementById("word-" + palabraEncontrada).classList.add("found");
-            feedback.innerHTML = `<span class="success">¡Bien hecho! Validado.</span>`;
-            document.getElementById("input-oracion").value = "";
-
-            if (palabrasRestantes.length === 0) {
-                clearInterval(intervaloTimer);
-                document.getElementById("input-oracion").disabled = true;
-                document.getElementById("btn-enviar").disabled = true;
-                document.getElementById("btn-siguiente").classList.remove("hidden");
-                feedback.innerHTML = `<span class="success">¡Excelente! Has completado el banco de palabras.</span>`;
-            }
-        } else {
-            feedback.innerText = "No se detectó ninguna palabra del banco (o ya fue usada). Revisa la conjugación.";
-        }
-    }
-
-    function siguienteActividad() {
-        indiceActual++;
-        cargarActividad();
-    }
-</script>
-</body>
-</html>
+        if (!equipo) return alert("Por favor ingresa el
