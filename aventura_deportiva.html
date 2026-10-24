@@ -3,140 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Actividad ELE - Deportes</title>
+    <title>Aventura Deportiva - Español A2</title>
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f0f4f8; 
+            background-color: #4c3ba5; 
             color: #333; 
             display: flex; 
             justify-content: center; 
-            align-items: flex-start;
-            padding-top: 50px;
+            align-items: center;
+            padding: 20px;
             margin: 0; 
             min-height: 100vh;
+            box-sizing: border-box;
         }
         .container { 
             background: white; 
             padding: 40px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
             width: 100%;
-            max-width: 550px; 
-            text-align: center; 
+            max-width: 650px; 
         }
-        h2 { font-size: 22px; color: #2d3748; margin-top: 0; margin-bottom: 25px; font-weight: bold; }
-        h3 { font-size: 16px; color: #2d3748; margin-bottom: 20px; font-weight: bold; }
+        
+        /* Pantalla Inicio */
+        .title-main { text-align: center; color: #8b5cf6; font-size: 38px; margin: 0 0 5px 0; font-weight: 800; }
+        .subtitle { text-align: center; color: #4a5568; font-size: 16px; font-weight: bold; margin-bottom: 30px; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 14px; font-weight: bold; color: #2d3748; margin-bottom: 8px; }
         
         input[type="text"] { 
             width: 100%; 
             padding: 12px; 
-            margin-bottom: 15px; 
-            border: 1px solid #cbd5e0; 
-            border-radius: 4px; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 8px; 
             box-sizing: border-box; 
             font-size: 15px; 
             color: #4a5568; 
             outline: none; 
         }
-        input[type="text"]:focus {
-            border: 1px solid #000;
-        }
+        input[type="text"]:focus { border: 2px solid #8b5cf6; }
         
-        button { 
-            background: #4a90e2; 
-            color: white; 
-            border: none; 
-            padding: 10px 20px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-size: 15px; 
-            margin-top: 10px;
-        }
-        button:hover { background: #357abd; }
-        button:disabled { background: #a0aec0; cursor: not-allowed; }
+        .players-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
-        .hidden { display: none; }
-        
-        #timer { 
-            font-size: 24px; 
-            font-weight: bold; 
-            color: #d9534f; 
-            margin: 15px 0 25px 0; 
+        .btn-gradient {
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: opacity 0.2s;
         }
+        .btn-gradient:hover { opacity: 0.9; }
+
+        /* Pantalla Juego */
+        .header-game { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .team-info h2 { margin: 0; font-size: 22px; color: #1a202c; font-weight: 800; }
+        .act-counter { font-size: 12px; color: #8b5cf6; font-weight: bold; margin-top: 4px; letter-spacing: 1px; }
         
-        .word-bank { 
-            display: flex; 
-            gap: 10px; 
-            justify-content: center; 
-            margin: 20px 0; 
-            flex-wrap: wrap; 
+        .timer-pill {
+            background: #f1f5f9;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a202c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .historia-box {
+            background: #f0f7ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+        }
+        .historia-title { font-size: 12px; color: #3b82f6; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px; }
+        .historia-text { font-size: 16px; color: #2d3748; font-style: italic; margin: 0; line-height: 1.5; }
+
+        .word-bank-label { font-size: 14px; font-weight: bold; color: #4a5568; margin-bottom: 10px; }
+        .word-bank { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; }
         .word { 
-            background: #e2e8f0; 
+            background: white; 
+            border: 1px solid #e2e8f0;
             padding: 8px 16px; 
             border-radius: 20px; 
             font-weight: bold; 
             color: #2d3748;
             font-size: 14px;
         }
-        .word.found { 
-            background: #48bb78; 
-            color: white; 
+        .word.found { background: #48bb78; color: white; border-color: #48bb78; }
+
+        .input-area { display: flex; gap: 10px; }
+        .btn-purple {
+            background: #a855f7;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
         }
-        
-        .feedback { margin-top: 15px; font-size: 14px; }
-        .success { color: #48bb78; }
-        .error { color: #d9534f; }
+        .btn-purple:hover { background: #9333ea; }
+        .btn-purple:disabled { background: #d1d5db; cursor: not-allowed; }
+
+        .feedback { margin-top: 15px; font-size: 14px; text-align: left; }
+        .success { color: #48bb78; font-weight: bold; }
+        .error { color: #e53e3e; font-weight: bold; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
+<!-- Pantalla de Inicio -->
 <div id="pantalla-inicio" class="container">
-    <h2>Registro de Equipo</h2>
-    <input type="text" id="nombre-equipo" placeholder="Nombre del equipo (ej. Los Leones)">
-    <input type="text" id="nombres-alumnos" placeholder="Nombres de los integrantes (3 o 4)">
-    <br>
-    <button onclick="iniciarJuego()">Comenzar Actividad</button>
+    <h1 class="title-main">¡Aventura Deportiva!</h1>
+    <div class="subtitle">Español A2 - Deportes y Presente Simple</div>
+    
+    <div class="form-group">
+        <label>Nombre del Equipo</label>
+        <input type="text" id="nombre-equipo" placeholder="Ej: Los Campeones">
+    </div>
+    
+    <div class="form-group">
+        <label>Nombres de los Jugadores (Mínimo 3)</label>
+        <div class="players-grid">
+            <input type="text" placeholder="Jugador 1">
+            <input type="text" placeholder="Jugador 2">
+            <input type="text" placeholder="Jugador 3">
+            <input type="text" placeholder="Jugador 4 (Opcional)">
+        </div>
+    </div>
+    
+    <button class="btn-gradient" onclick="iniciarJuego()">¡Comenzar Aventura!</button>
 </div>
 
+<!-- Pantalla de Juego -->
 <div id="pantalla-juego" class="container hidden">
-    <h2 id="equipo-display"></h2>
-    <div id="timer">02:00</div>
-    <h3 id="historia-curso"></h3>
+    <div class="header-game">
+        <div class="team-info">
+            <h2 id="equipo-display">Equipo</h2>
+            <div id="actividad-counter" class="act-counter">ACTIVIDAD 1 DE 7</div>
+        </div>
+        <div class="timer-pill">
+            ⏱ <span id="timer">02:00</span>
+        </div>
+    </div>
     
+    <div class="historia-box">
+        <div class="historia-title">HISTORIA EN CURSO</div>
+        <p id="historia-curso" class="historia-text"></p>
+    </div>
+    
+    <div class="word-bank-label">Banco de Palabras (Usa el Presente Simple):</div>
     <div class="word-bank" id="banco-palabras"></div>
     
-    <input type="text" id="input-oracion" placeholder="Escribe tu oración aquí...">
-    <button id="btn-enviar" onclick="validarOracion()">Enviar Oración</button>
+    <div class="input-area">
+        <input type="text" id="input-oracion" placeholder="Escribe tu oración aquí...">
+        <button id="btn-enviar" class="btn-purple" onclick="validarOracion()">Enviar</button>
+    </div>
     <div id="feedback" class="feedback"></div>
 
-    <br>
-    <button id="btn-siguiente" class="hidden" onclick="siguienteActividad()">Siguiente Actividad</button>
+    <button id="btn-siguiente" class="btn-gradient hidden" onclick="siguienteActividad()">Siguiente Actividad</button>
 </div>
 
 <script>
     const actividades = [
         {
-            historia: "Mi amigo Carlos quiere empezar a hacer ejercicio. Me pregunta...",
+            historia: "\"Es sábado por la mañana. Mis amigos y yo estamos en el parque polideportivo. Tenemos mucha energía hoy...\"",
             palabras: [
                 { base: "jugar", variantes: ["juego", "juegas", "juega", "jugamos", "jugáis", "juegan", "jugar"] },
-                { base: "correr", variantes: ["corro", "corres", "corre", "corremos", "corréis", "corren", "correr"] },
-                { base: "equipo", variantes: ["equipo", "equipos"] },
                 { base: "pelota", variantes: ["pelota", "pelotas", "balón"] },
-                { base: "ganar", variantes: ["gano", "ganas", "gana", "ganamos", "ganáis", "ganan", "ganar"] }
+                { base: "equipo", variantes: ["equipo", "equipos"] },
+                { base: "ganar", variantes: ["gano", "ganas", "gana", "ganamos", "ganáis", "ganan", "ganar"] },
+                { base: "rápido", variantes: ["rápido", "rápida", "rápidos", "rápidas"] }
             ]
         },
         {
-            historia: "Estamos viendo las olimpiadas en la televisión. La comentarista dice...",
+            historia: "\"Estamos viendo las olimpiadas en la televisión. La comentarista deportiva anuncia la carrera...\"",
             palabras: [
-                { base: "nadar", variantes: ["nado", "nadas", "nada", "nadamos", "nadáis", "nadan", "nadar"] },
+                { base: "correr", variantes: ["corro", "corres", "corre", "corremos", "corréis", "corren", "correr"] },
                 { base: "entrenar", variantes: ["entreno", "entrenas", "entrena", "entrenamos", "entrenáis", "entrenan", "entrenar"] },
                 { base: "cancha", variantes: ["cancha", "canchas", "pista"] },
-                { base: "rápido", variantes: ["rápido", "rápida", "rápidos", "rápidas"] },
+                { base: "nadar", variantes: ["nado", "nadas", "nada", "nadamos", "nadáis", "nadan", "nadar"] },
                 { base: "perder", variantes: ["pierdo", "pierdes", "pierde", "perdemos", "perdéis", "pierden", "perder"] }
             ]
         }
+        // Agrega hasta 7 actividades aquí
     ];
 
     let indiceActual = 0;
@@ -146,22 +208,23 @@
 
     function iniciarJuego() {
         let equipo = document.getElementById("nombre-equipo").value.trim();
-        if (!equipo) equipo = "Equipo sin nombre"; // Evita bloqueos si el alumno no escribe nada
+        if (!equipo) equipo = "Equipo sin nombre"; 
         
         document.getElementById("pantalla-inicio").classList.add("hidden");
         document.getElementById("pantalla-juego").classList.remove("hidden");
-        document.getElementById("equipo-display").innerText = "Equipo: " + equipo;
+        document.getElementById("equipo-display").innerText = equipo;
         
         cargarActividad();
     }
 
     function cargarActividad() {
         if (indiceActual >= actividades.length) {
-            document.getElementById("pantalla-juego").innerHTML = "<h2>¡Actividad completada con éxito!</h2>";
+            document.getElementById("pantalla-juego").innerHTML = "<h2 class='title-main'>¡Misión Cumplida!</h2><div class='subtitle'>Han completado todas las actividades.</div>";
             return;
         }
 
         const act = actividades[indiceActual];
+        document.getElementById("actividad-counter").innerText = `ACTIVIDAD ${indiceActual + 1} DE ${actividades.length}`;
         document.getElementById("historia-curso").innerText = act.historia;
         document.getElementById("btn-siguiente").classList.add("hidden");
         document.getElementById("input-oracion").disabled = false;
