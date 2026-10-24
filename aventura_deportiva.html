@@ -177,74 +177,82 @@
 </div>
 
 <script>
+    // Función vital para limpiar tildes y puntuación (evita errores con "árbitro." o "¿juegas?")
+    function normalizarTexto(texto) {
+        return texto.toLowerCase()
+                    .normalize("NFD") // Separa las letras de sus tildes
+                    .replace(/[\u0300-\u036f]/g, "") // Elimina las tildes
+                    .replace(/[.,;!?¿¡"'\(\)]/g, ""); // Elimina la puntuación
+    }
+
     const actividades = [
         {
             historia: "\"Es sábado por la mañana. Mis amigos y yo estamos en el parque polideportivo. Tenemos mucha energía hoy...\"",
             palabras: [
-                { base: "jugar", variantes: ["juego", "juegas", "juega", "jugamos", "jugáis", "juegan", "jugar"] },
-                { base: "pelota", variantes: ["pelota", "pelotas", "balón"] },
+                { base: "jugar", variantes: ["juego", "juegas", "juega", "jugamos", "jugáis", "juegan", "jugar", "jueguen"] },
+                { base: "pelota", variantes: ["pelota", "pelotas", "balón", "balon", "balones"] },
                 { base: "equipo", variantes: ["equipo", "equipos"] },
-                { base: "ganar", variantes: ["gano", "ganas", "gana", "ganamos", "ganáis", "ganan", "ganar"] },
-                { base: "rápido", variantes: ["rápido", "rápida", "rápidos", "rápidas"] }
+                { base: "ganar", variantes: ["gano", "ganas", "gana", "ganamos", "ganáis", "ganais", "ganan", "ganar"] },
+                { base: "rápido", variantes: ["rápido", "rápida", "rápidos", "rápidas", "rapido", "rapida", "rapidos", "rapidas"] }
             ]
         },
         {
             historia: "\"Estamos viendo las olimpiadas en la televisión. La comentarista deportiva anuncia la carrera principal...\"",
             palabras: [
-                { base: "correr", variantes: ["corro", "corres", "corre", "corremos", "corréis", "corren", "correr"] },
-                { base: "entrenar", variantes: ["entreno", "entrenas", "entrena", "entrenamos", "entrenáis", "entrenan", "entrenar"] },
-                { base: "cancha", variantes: ["cancha", "canchas", "pista"] },
-                { base: "nadar", variantes: ["nado", "nadas", "nada", "nadamos", "nadáis", "nadan", "nadar"] },
-                { base: "perder", variantes: ["pierdo", "pierdes", "pierde", "perdemos", "perdéis", "pierden", "perder"] }
+                { base: "correr", variantes: ["corro", "corres", "corre", "corremos", "corréis", "correis", "corren", "correr"] },
+                { base: "entrenar", variantes: ["entreno", "entrenas", "entrena", "entrenamos", "entrenáis", "entrenais", "entrenan", "entrenar"] },
+                { base: "cancha", variantes: ["cancha", "canchas", "pista", "pistas"] },
+                { base: "nadar", variantes: ["nado", "nadas", "nada", "nadamos", "nadáis", "nadais", "nadan", "nadar"] },
+                { base: "perder", variantes: ["pierdo", "pierdes", "pierde", "perdemos", "perdéis", "perdeis", "pierden", "perder"] }
             ]
         },
         {
             historia: "\"Mi hermana va al gimnasio todos los días por la tarde. Ella tiene una rutina muy estricta...\"",
             palabras: [
-                { base: "saltar", variantes: ["salto", "saltas", "salta", "saltamos", "saltáis", "saltan", "saltar"] },
+                { base: "saltar", variantes: ["salto", "saltas", "salta", "saltamos", "saltáis", "saltais", "saltan", "saltar"] },
                 { base: "fuerte", variantes: ["fuerte", "fuertes"] },
-                { base: "sudar", variantes: ["sudo", "sudas", "suda", "sudamos", "sudáis", "sudan", "sudar"] },
-                { base: "levantar", variantes: ["levanto", "levantas", "levanta", "levantamos", "levantáis", "levantan", "levantar"] },
-                { base: "pesas", variantes: ["pesa", "pesas"] }
+                { base: "sudar", variantes: ["sudo", "sudas", "suda", "sudamos", "sudáis", "sudais", "sudan", "sudar"] },
+                { base: "levantar", variantes: ["levanto", "levantas", "levanta", "levantamos", "levantáis", "levantais", "levantan", "levantar"] },
+                { base: "pesas", variantes: ["pesa", "pesas", "pesa"] }
             ]
         },
         {
             historia: "\"En la clase de educación física, el profesor nos explica las reglas del nuevo torneo de la escuela...\"",
             palabras: [
-                { base: "empatar", variantes: ["empato", "empatas", "empata", "empatamos", "empatáis", "empatan", "empatar"] },
-                { base: "árbitro", variantes: ["árbitro", "árbitros", "árbitra", "árbitras"] },
-                { base: "pitar", variantes: ["pito", "pitas", "pita", "pitamos", "pitáis", "pitan", "pitar"] },
+                { base: "empatar", variantes: ["empato", "empatas", "empata", "empatamos", "empatáis", "empatais", "empatan", "empatar"] },
+                { base: "árbitro", variantes: ["árbitro", "árbitros", "árbitra", "árbitras", "arbitro", "arbitros", "arbitra", "arbitras"] },
+                { base: "pitar", variantes: ["pito", "pitas", "pita", "pitamos", "pitáis", "pitais", "pitan", "pitar"] },
                 { base: "falta", variantes: ["falta", "faltas"] },
-                { base: "caminar", variantes: ["camino", "caminas", "camina", "caminamos", "camináis", "caminan", "caminar"] }
+                { base: "caminar", variantes: ["camino", "caminas", "camina", "caminamos", "camináis", "caminais", "caminan", "caminar"] }
             ]
         },
         {
             historia: "\"Mañana hay un partido muy importante de baloncesto en el estadio de la ciudad. El entrenador dice...\"",
             palabras: [
-                { base: "tirar", variantes: ["tiro", "tiras", "tira", "tiramos", "tiráis", "tiran", "tirar"] },
+                { base: "tirar", variantes: ["tiro", "tiras", "tira", "tiramos", "tiráis", "tirais", "tiran", "tirar"] },
                 { base: "canasta", variantes: ["canasta", "canastas"] },
-                { base: "defender", variantes: ["defiendo", "defiendes", "defiende", "defendemos", "defendéis", "defienden", "defender"] },
+                { base: "defender", variantes: ["defiendo", "defiendes", "defiende", "defendemos", "defendéis", "defendeis", "defienden", "defender"] },
                 { base: "zapatillas", variantes: ["zapatilla", "zapatillas", "tenis"] },
-                { base: "trofeo", variantes: ["trofeo", "trofeos", "copa"] }
+                { base: "trofeo", variantes: ["trofeo", "trofeos", "copa", "copas"] }
             ]
         },
         {
             historia: "\"En invierno, muchas personas viajan a las montañas para disfrutar de la nieve y los deportes extremos...\"",
             palabras: [
-                { base: "esquiar", variantes: ["esquío", "esquías", "esquía", "esquiamos", "esquiáis", "esquían", "esquiar"] },
-                { base: "patinar", variantes: ["patino", "patinas", "patina", "patinamos", "patináis", "patinan", "patinar"] },
-                { base: "frío", variantes: ["frío", "fríos", "fría", "frías"] },
+                { base: "esquiar", variantes: ["esquío", "esquías", "esquía", "esquiamos", "esquiáis", "esquiais", "esquían", "esquiar", "esquio", "esquias", "esquia", "esquian"] },
+                { base: "patinar", variantes: ["patino", "patinas", "patina", "patinamos", "patináis", "patinais", "patinan", "patinar"] },
+                { base: "frío", variantes: ["frío", "fríos", "fría", "frías", "frio", "frios", "fria", "frias"] },
                 { base: "hielo", variantes: ["hielo", "hielos"] },
-                { base: "resbalar", variantes: ["resbalo", "resbalas", "resbala", "resbalamos", "resbaláis", "resbalan", "resbalar"] }
+                { base: "resbalar", variantes: ["resbalo", "resbalas", "resbala", "resbalamos", "resbaláis", "resbalais", "resbalan", "resbalar"] }
             ]
         },
         {
             historia: "\"Después de un partido muy intenso, los jugadores van a los vestuarios a celebrar y descansar...\"",
             palabras: [
-                { base: "duchar", variantes: ["ducho", "duchas", "ducha", "duchamos", "ducháis", "duchan", "duchar", "ducharse"] },
-                { base: "descansar", variantes: ["descanso", "descansas", "descansa", "descansamos", "descansáis", "descansan", "descansar"] },
+                { base: "duchar", variantes: ["ducho", "duchas", "ducha", "duchamos", "ducháis", "duchais", "duchan", "duchar", "ducharse", "me ducho", "te duchas", "se ducha", "nos duchamos", "os duchais", "se duchan"] },
+                { base: "descansar", variantes: ["descanso", "descansas", "descansa", "descansamos", "descansáis", "descansais", "descansan", "descansar"] },
                 { base: "toalla", variantes: ["toalla", "toallas"] },
-                { base: "beber", variantes: ["bebo", "bebes", "bebe", "bebemos", "bebéis", "beben", "beber"] },
+                { base: "beber", variantes: ["bebo", "bebes", "bebe", "bebemos", "bebéis", "bebeis", "beben", "beber"] },
                 { base: "agua", variantes: ["agua", "aguas"] }
             ]
         }
@@ -326,7 +334,7 @@
     }
 
     function validarOracion() {
-        const inputStr = document.getElementById("input-oracion").value.trim().toLowerCase();
+        const inputStr = document.getElementById("input-oracion").value.trim();
         const feedback = document.getElementById("feedback");
         
         if (inputStr.split(" ").length < 3) {
@@ -336,11 +344,19 @@
 
         const act = actividades[indiceActual];
         let palabrasEncontradas = [];
+        
+        // Aplicamos la normalización (sin tildes, sin puntuación) añadiendo espacios al inicio y final
+        const textoLimpio = " " + normalizarTexto(inputStr) + " ";
 
         for (let p of act.palabras) {
             if (palabrasRestantes.includes(p.base)) {
-                // Validación para detectar conjugaciones correctas dentro de la frase
-                const usaVariante = p.variantes.some(v => new RegExp(`\\b${v}\\b`, 'i').test(inputStr));
+                
+                // Comparamos cada variante limpia con el texto limpio
+                const usaVariante = p.variantes.some(v => {
+                    const varianteLimpia = " " + normalizarTexto(v) + " ";
+                    return textoLimpio.includes(varianteLimpia);
+                });
+
                 if (usaVariante) {
                     palabrasEncontradas.push(p.base);
                 }
