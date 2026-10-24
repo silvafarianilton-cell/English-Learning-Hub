@@ -189,7 +189,7 @@
             ]
         },
         {
-            historia: "\"Estamos viendo las olimpiadas en la televisión. La comentarista deportiva anuncia la carrera...\"",
+            historia: "\"Estamos viendo las olimpiadas en la televisión. La comentarista deportiva anuncia la carrera principal...\"",
             palabras: [
                 { base: "correr", variantes: ["corro", "corres", "corre", "corremos", "corréis", "corren", "correr"] },
                 { base: "entrenar", variantes: ["entreno", "entrenas", "entrena", "entrenamos", "entrenáis", "entrenan", "entrenar"] },
@@ -197,8 +197,57 @@
                 { base: "nadar", variantes: ["nado", "nadas", "nada", "nadamos", "nadáis", "nadan", "nadar"] },
                 { base: "perder", variantes: ["pierdo", "pierdes", "pierde", "perdemos", "perdéis", "pierden", "perder"] }
             ]
+        },
+        {
+            historia: "\"Mi hermana va al gimnasio todos los días por la tarde. Ella tiene una rutina muy estricta...\"",
+            palabras: [
+                { base: "saltar", variantes: ["salto", "saltas", "salta", "saltamos", "saltáis", "saltan", "saltar"] },
+                { base: "fuerte", variantes: ["fuerte", "fuertes"] },
+                { base: "sudar", variantes: ["sudo", "sudas", "suda", "sudamos", "sudáis", "sudan", "sudar"] },
+                { base: "levantar", variantes: ["levanto", "levantas", "levanta", "levantamos", "levantáis", "levantan", "levantar"] },
+                { base: "pesas", variantes: ["pesa", "pesas"] }
+            ]
+        },
+        {
+            historia: "\"En la clase de educación física, el profesor nos explica las reglas del nuevo torneo de la escuela...\"",
+            palabras: [
+                { base: "empatar", variantes: ["empato", "empatas", "empata", "empatamos", "empatáis", "empatan", "empatar"] },
+                { base: "árbitro", variantes: ["árbitro", "árbitros", "árbitra", "árbitras"] },
+                { base: "pitar", variantes: ["pito", "pitas", "pita", "pitamos", "pitáis", "pitan", "pitar"] },
+                { base: "falta", variantes: ["falta", "faltas"] },
+                { base: "caminar", variantes: ["camino", "caminas", "camina", "caminamos", "camináis", "caminan", "caminar"] }
+            ]
+        },
+        {
+            historia: "\"Mañana hay un partido muy importante de baloncesto en el estadio de la ciudad. El entrenador dice...\"",
+            palabras: [
+                { base: "tirar", variantes: ["tiro", "tiras", "tira", "tiramos", "tiráis", "tiran", "tirar"] },
+                { base: "canasta", variantes: ["canasta", "canastas"] },
+                { base: "defender", variantes: ["defiendo", "defiendes", "defiende", "defendemos", "defendéis", "defienden", "defender"] },
+                { base: "zapatillas", variantes: ["zapatilla", "zapatillas", "tenis"] },
+                { base: "trofeo", variantes: ["trofeo", "trofeos", "copa"] }
+            ]
+        },
+        {
+            historia: "\"En invierno, muchas personas viajan a las montañas para disfrutar de la nieve y los deportes extremos...\"",
+            palabras: [
+                { base: "esquiar", variantes: ["esquío", "esquías", "esquía", "esquiamos", "esquiáis", "esquían", "esquiar"] },
+                { base: "patinar", variantes: ["patino", "patinas", "patina", "patinamos", "patináis", "patinan", "patinar"] },
+                { base: "frío", variantes: ["frío", "fríos", "fría", "frías"] },
+                { base: "hielo", variantes: ["hielo", "hielos"] },
+                { base: "resbalar", variantes: ["resbalo", "resbalas", "resbala", "resbalamos", "resbaláis", "resbalan", "resbalar"] }
+            ]
+        },
+        {
+            historia: "\"Después de un partido muy intenso, los jugadores van a los vestuarios a celebrar y descansar...\"",
+            palabras: [
+                { base: "duchar", variantes: ["ducho", "duchas", "ducha", "duchamos", "ducháis", "duchan", "duchar", "ducharse"] },
+                { base: "descansar", variantes: ["descanso", "descansas", "descansa", "descansamos", "descansáis", "descansan", "descansar"] },
+                { base: "toalla", variantes: ["toalla", "toallas"] },
+                { base: "beber", variantes: ["bebo", "bebes", "bebe", "bebemos", "bebéis", "beben", "beber"] },
+                { base: "agua", variantes: ["agua", "aguas"] }
+            ]
         }
-        // Agrega hasta 7 actividades aquí
     ];
 
     let indiceActual = 0;
@@ -219,7 +268,7 @@
 
     function cargarActividad() {
         if (indiceActual >= actividades.length) {
-            document.getElementById("pantalla-juego").innerHTML = "<h2 class='title-main'>¡Misión Cumplida!</h2><div class='subtitle'>Han completado todas las actividades.</div>";
+            document.getElementById("pantalla-juego").innerHTML = "<h2 class='title-main'>¡Misión Cumplida!</h2><div class='subtitle'>Han completado las 7 actividades exitosamente.</div>";
             return;
         }
 
@@ -290,6 +339,7 @@
 
         for (let p of act.palabras) {
             if (palabrasRestantes.includes(p.base)) {
+                // Validación para detectar conjugaciones correctas dentro de la frase
                 const usaVariante = p.variantes.some(v => new RegExp(`\\b${v}\\b`, 'i').test(inputStr));
                 if (usaVariante) {
                     palabrasEncontradas.push(p.base);
@@ -314,7 +364,7 @@
                 feedback.innerHTML = `<span class="success">¡Excelente! Has completado el banco de palabras.</span>`;
             }
         } else {
-            feedback.innerHTML = "<span class='error'>No se detectó ninguna palabra del banco (o ya fue usada).</span>";
+            feedback.innerHTML = "<span class='error'>No se detectó ninguna palabra del banco (o ya fue usada). Revisa si está bien escrita.</span>";
         }
     }
 
