@@ -144,4 +144,123 @@
 
     function iniciarJuego() {
         const equipo = document.getElementById("nombre-equipo").value;
-        if (!equipo) return alert("Por favor ingresa el
+        if (!equipo) return alert("Por favor ingresa el nombre del equipo.");
+        
+        document.getElementById("pantalla-inicio").classList.add("hidden");
+        document.getElementById("pantalla-juego").classList.remove("hidden");
+        document.getElementById("equipo-display").innerText = "Equipo: " + equipo;
+        
+        cargarActividad();
+    }
+
+    function cargarActividad() {
+        if (indiceActual >= actividades.length) {
+            document.getElementById("pantalla-juego").innerHTML = "<h2>¡Actividad completada con éxito!</h2>";
+            return;
+        }
+
+        const act = actividades[indiceActual];
+        document.getElementById("historia-curso").innerText = act.historia;
+        document.getElementById("btn-siguiente").classList.add("hidden");
+        document.getElementById("input-oracion").disabled = false;
+        document.getElementById("btn-enviar").disabled = false;
+        document.getElementById("btn-enviar").classList.remove("hidden");
+        document.getElementById("feedback").innerText = "";
+        document.getElementById("input-oracion").value = "";
+        
+        palabrasRestantes = act.palabras.map(p => p.base);
+        
+        const banco = document.getElementById("banco-palabras");
+        banco.innerHTML = "";
+        act.palabras.forEach(p => {
+            let span = document.createElement("span");
+            span.className = "word";
+            span.id = "word-" + p.base;
+            span.innerText = p.base;
+            banco.appendChild(span);
+        });
+
+        iniciarTemporizador();
+    }
+
+    function iniciarTemporizador() {
+        clearInterval(intervaloTimer);
+        tiempoRestante = 120;
+        actualizarDisplayReloj();
+        intervaloTimer = setInterval(() => {
+            tiempoRestante--;
+            actualizarDisplayReloj();
+            if (tiempoRestante <= 0) {
+                clearInterval(intervaloTimer);
+                tiempoAgotado();
+            }
+        }, 1000);
+    }
+
+    function actualizarDisplayReloj() {
+        let min = Math.floor(tiempoRestante / 60);
+        let sec = tiempoRestante % 60;
+        document.getElementById("timer").innerText = (min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec);
+    }
+
+    function tiempoAgotado() {
+        document.getElementById("input-oracion").disabled = true;
+        document.getElementById("btn-enviar").disabled = true;
+        document.getElementById("btn-enviar").classList.add("hidden");
+        document.getElementById("feedback").innerHTML = "<span class='error'>¡Tiempo agotado! Pasa a la siguiente actividad.</span>";
+        document.getElementById("btn-siguiente").classList.remove("hidden");
+    }
+
+    function validarOracion() {
+        const inputStr = document.getElementById("input-oracion").value.trim().toLowerCase();
+        const feedback = document.getElementById("feedback");
+        
+        if (inputStr.split(" ").length < 3) {
+            feedback.innerHTML = "<span class='error'>La oración es muy corta. Usa al menos 3 palabras para darle sentido.</span>";
+            return;
+        }
+
+        const act = actividades[indiceActual];
+        let palabrasEncontradas = [];
+
+        // Ahora busca todas las palabras válidas presentes en la oración
+        for (let p of act.palabras) {
+            if (palabrasRestantes.includes(p.base)) {
+                // Verifica mediante expresiones regulares si se ha utilizado la palabra o sus conjugaciones
+                const usaVariante = p.variantes.some(v => new RegExp(`\\b${v}\\b`, 'i').test(inputStr));
+                if (usaVariante) {
+                    palabrasEncontradas.push(p.base);
+                }
+            }
+        }
+
+        if (palabrasEncontradas.length > 0) {
+            // Actualiza visualmente todas las palabras encontradas
+            palabrasEncontradas.forEach(palabra => {
+                palabrasRestantes = palabrasRestantes.filter(w => w !== palabra);
+                document.getElementById("word-" + palabra).classList.add("found");
+            });
+            
+            feedback.innerHTML = `<span class="success">¡Bien hecho! Validado.</span>`;
+            document.getElementById("input-oracion").value = "";
+
+            // Verifica si se ha vaciado el banco de palabras
+            if (palabrasRestantes.length === 0) {
+                clearInterval(intervaloTimer);
+                document.getElementById("input-oracion").disabled = true;
+                document.getElementById("btn-enviar").classList.add("hidden");
+                document.getElementById("btn-siguiente").classList.remove("hidden");
+                feedback.innerHTML = `<span class="success">¡Excelente! Has completado el banco de palabras.</span>`;
+            }
+        } else {
+            feedback.innerHTML = "<span class='error'>No se detectó ninguna palabra del banco (o ya fue usada). Revisa la conjugación.</span>";
+        }
+    }
+
+    function siguienteActividad() {
+        indiceActual++;
+        cargarActividad();
+    }
+</script>
+</body>
+</html>
