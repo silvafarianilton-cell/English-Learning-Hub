@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Actividad de UCM</title>
+<style>
+    body { font-family: Arial; background: #fafafa; padding: 20px; }
+    h1 { color: #4a90e2; }
+    a { color: #4a90e2; }
+</style>
+</head>
+
+<body>
+<h1>Primera actividad de LLMs</h1>
+<p>Aqui podemos ver los materiales.</p>
+
+<h2>Actividad dos, Tema 3, semana 5 </h2>
+<ul>
+    <li><a href="events_article_extended_Luis_Flox"> Evento deportivo alumnos A2</a>.</li>
+</ul>
+
+<p><a href="index.html">⬅ Back to main portal</a></p>
+</body>
+</html>
