@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventura de Cumpleaños - Español B1</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #4c3ba5; 
+            color: #333; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            padding: 20px;
+            margin: 0; 
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            width: 100%;
+            max-width: 650px; 
+        }
+        
+        /* Pantalla Inicio */
+        .title-main { text-align: center; color: #8b5cf6; font-size: 38px; margin: 0 0 5px 0; font-weight: 800; }
+        .subtitle { text-align: center; color: #4a5568; font-size: 16px; font-weight: bold; margin-bottom: 30px; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 14px; font-weight: bold; color: #2d3748; margin-bottom: 8px; }
+        
+        input[type="text"] { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 15px; 
+            color: #4a5568; 
+            outline: none; 
+        }
+        input[type="text"]:focus { border: 2px solid #8b5cf6; }
+        
+        .players-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .btn-gradient {
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: opacity 0.2s;
+        }
+        .btn-gradient:hover { opacity: 0.9; }
+
+        /* Pantalla Juego */
+        .header-game { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .team-info h2 { margin: 0; font-size: 22px; color: #1a202c; font-weight: 800; }
+        .act-counter { font-size: 12px; color: #8b5cf6; font-weight: bold; margin-top: 4px; letter-spacing: 1px; }
+        
+        .timer-pill {
+            background: #f1f5f9;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a202c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .historia-box {
+            background: #f0f7ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+        }
+        .historia-title { font-size: 12px; color: #3b82f6; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px; }
+        .historia-text { font-size: 16px; color: #2d3748; font-style: italic; margin: 0; line-height: 1.5; }
+
+        .word-bank-label { font-size: 14px; font-weight: bold; color: #4a5568; margin-bottom: 10px; }
+        .word-bank { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; }
+        .word { 
+            background: white; 
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            color: #2d3748;
+            font-size: 14px;
+        }
+        .word.found { background: #48bb78; color: white; border-color: #48bb78; }
+
+        .input-area { display: flex; gap: 10px; }
+        .btn-purple {
+            background: #a855f7;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .btn-purple:hover { background: #9333ea; }
+        .btn-purple:disabled { background: #d1d5db; cursor: not-allowed; }
+
+        .feedback { margin-top: 15px; font-size: 14px; text-align: left; }
+        .success { color: #48bb78; font-weight: bold; }
+        .error { color: #e53e3e; font-weight: bold; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div id="pantalla-inicio" class="container">
+    <h1 class="title-main">¡Fiesta Sorpresa!</h1>
+    <div class="subtitle">Español B1 - Cumpleaños y Pretérito Perfecto Compuesto</div>
+    
+    <div class="form-group">
+        <label>Nombre del Equipo</label>
+        <input type="text" id="nombre-equipo" placeholder="Ej: Los Fiesteros">
+    </div>
+    
+    <div class="form-group">
+        <label>Nombres de los Jugadores (Mínimo 3)</label>
+        <div class="players-grid">
+            <input type="text" placeholder="Jugador 1">
+            <input type="text" placeholder="Jugador 2">
+            <input type="text" placeholder="Jugador 3">
+            <input type="text" placeholder="Jugador 4 (Opcional)">
+        </div>
+    </div>
+    
+    <button class="btn-gradient" onclick="iniciarJuego()">¡Comenzar Aventura!</button>
+</div>
+
+<div id="pantalla-juego" class="container hidden">
+    <div class="header-game">
+        <div class="team-info">
+            <h2 id="equipo-display">Equipo</h2>
+            <div id="actividad-counter" class="act-counter">ACTIVIDAD 1 DE 7</div>
+        </div>
+        <div class="timer-pill">
+            ⏱ <span id="timer">02:00</span>
+        </div>
+    </div>
+    
+    <div class="historia-box">
+        <div class="historia-title">HISTORIA EN CURSO</div>
+        <p id="historia-curso" class="historia-text"></p>
+    </div>
+    
+    <div class="word-bank-label">Banco de Palabras (Usa el Pretérito Perfecto Compuesto):</div>
+    <div class="word-bank" id="banco-palabras"></div>
+    
+    <div class="input-area">
+        <input type="text" id="input-oracion" placeholder="Escribe tu oración aquí...">
+        <button id="btn-enviar" class="btn-purple" onclick="validarOracion()">Enviar</button>
+    </div>
+    <div id="feedback" class="feedback"></div>
+
+    <button id="btn-siguiente" class="btn-gradient hidden" onclick="siguienteActividad()">Siguiente Actividad</button>
+</div>
+
+<script>
+    function normalizarTexto(texto) {
+        return texto.toLowerCase()
+                    .normalize("NFD") 
+                    .replace(/[\u0300-\u036f]/g, "") 
+                    .replace(/[.,;!?¿¡"'\(\)]/g, ""); 
+    }
+
+    const actividades = [
+        {
+            historia: "\"Mañana es el cumpleaños de mi mejor amigo y estamos organizando una fiesta sorpresa. Hasta ahora...\"",
+            palabras: [
+                { base: "invitar", variantes: ["he invitado", "has invitado", "ha invitado", "hemos invitado", "habéis invitado", "habeis invitado", "han invitado"] },
+                { base: "comprar", variantes: ["he comprado", "has comprado", "ha comprado", "hemos comprado", "habéis comprado", "habeis comprado", "han comprado"] },
+                { base: "regalo", variantes: ["regalo", "regalos"] },
+                { base: "decoración", variantes: ["decoracion", "decoraciones", "decoración", "adornos", "adorno"] },
+                { base: "esconder", variantes: ["he escondido", "has escondido", "ha escondido", "hemos escondido", "habéis escondido", "habeis escondido", "han escondido"] }
+            ]
+        },
+        {
+            historia: "\"La mesa ya casi está lista para los invitados. En la cocina, mi madre y yo...\"",
+            palabras: [
+                { base: "cocinar", variantes: ["he cocinado", "has cocinado", "ha cocinado", "hemos cocinado", "habéis cocinado", "habeis cocinado", "han cocinado"] },
+                { base: "pastel", variantes: ["pastel", "pasteles", "tarta", "tartas"] },
+                { base: "preparar", variantes: ["he preparado", "has preparado", "ha preparado", "hemos preparado", "habéis preparado", "habeis preparado", "han preparado"] },
+                { base: "dulces", variantes: ["dulce", "dulces", "caramelo", "caramelos"] },
+                { base: "poner", variantes: ["he puesto", "has puesto", "ha puesto", "hemos puesto", "habéis puesto", "habeis puesto", "han puesto"] }
+            ]
+        },
+        {
+            historia: "\"Son las ocho de la tarde y la gente empieza a llegar a la casa. Al abrir la puerta...\"",
+            palabras: [
+                { base: "llegar", variantes: ["he llegado", "has llegado", "ha llegado", "hemos llegado", "habéis llegado", "habeis llegado", "han llegado"] },
+                { base: "saludar", variantes: ["he saludado", "has saludado", "ha saludado", "hemos saludado", "habéis saludado", "habeis saludado", "han saludado"] },
+                { base: "abrazar", variantes: ["he abrazado", "has abrazado", "ha abrazado", "hemos abrazado", "habéis abrazado", "habeis abrazado", "han abrazado"] },
+                { base: "amigos", variantes: ["amigo", "amiga", "amigos", "amigas"] },
+                { base: "puntual", variantes: ["puntual", "puntuales"] }
+            ]
+        },
+        {
+            historia: "\"Apagamos las luces y esperamos en silencio. De repente, mi amigo entra y nosotros...\"",
+            palabras: [
+                { base: "gritar", variantes: ["he gritado", "has gritado", "ha gritado", "hemos gritado", "habéis gritado", "habeis gritado", "han gritado"] },
+                { base: "sorprender", variantes: ["he sorprendido", "has sorprendido", "ha sorprendido", "hemos sorprendido", "habéis sorprendido", "habeis sorprendido", "han sorprendido"] },
+                { base: "llorar", variantes: ["he llorado", "has llorado", "ha llorado", "hemos llorado", "habéis llorado", "habeis llorado", "han llorado"] },
+                { base: "emoción", variantes: ["emocion", "emociones", "emoción", "emocionado", "emocionada", "emocionados", "emocionadas"] },
+                { base: "encender", variantes: ["he encendido", "has encendido", "ha encendido", "hemos encendido", "habéis encendido", "habeis encendido", "han encendido"] }
+            ]
+        },
+        {
+            historia: "\"Es el momento más importante de la noche. Llevamos el pastel a la mesa y...\"",
+            palabras: [
+                { base: "cantar", variantes: ["he cantado", "has cantado", "ha cantado", "hemos cantado", "habéis cantado", "habeis cantado", "han cantado"] },
+                { base: "velas", variantes: ["vela", "velas"] },
+                { base: "soplar", variantes: ["he soplado", "has soplado", "ha soplado", "hemos soplado", "habéis soplado", "habeis soplado", "han soplado"] },
+                { base: "deseo", variantes: ["deseo", "deseos"] },
+                { base: "aplaudir", variantes: ["he aplaudido", "has aplaudido", "ha aplaudido", "hemos aplaudido", "habéis aplaudido", "habeis aplaudido", "han aplaudido"] }
+            ]
+        },
+        {
+            historia: "\"El cumpleañero se sienta en el sofá rodeado de cajas de colores. Con mucha curiosidad...\"",
+            palabras: [
+                { base: "abrir", variantes: ["he abierto", "has abierto", "ha abierto", "hemos abierto", "habéis abierto", "habeis abierto", "han abierto"] },
+                { base: "agradecer", variantes: ["he agradecido", "has agradecido", "ha agradecido", "hemos agradecido", "habéis agradecido", "habeis agradecido", "han agradecido"] },
+                { base: "romper", variantes: ["he roto", "has roto", "ha roto", "hemos roto", "habéis roto", "habeis roto", "han roto"] },
+                { base: "papel", variantes: ["papel", "papeles"] },
+                { base: "gustar", variantes: ["ha gustado", "han gustado"] }
+            ]
+        },
+        {
+            historia: "\"Ya es muy tarde y los invitados empiezan a despedirse. Ha sido una noche fantástica y...\"",
+            palabras: [
+                { base: "bailar", variantes: ["he bailado", "has bailado", "ha bailado", "hemos bailado", "habéis bailado", "habeis bailado", "han bailado"] },
+                { base: "disfrutar", variantes: ["he disfrutado", "has disfrutado", "ha disfrutado", "hemos disfrutado", "habéis disfrutado", "habeis disfrutado", "han disfrutado"] },
+                { base: "limpiar", variantes: ["he limpiado", "has limpiado", "ha limpiado", "hemos limpiado", "habéis limpiado", "habeis limpiado", "han limpiado"] },
+                { base: "divertido", variantes: ["divertido", "divertida", "divertidos", "divertidas"] },
+                { base: "irse", variantes: ["me he ido", "te has ido", "se ha ido", "nos hemos ido", "os habéis ido", "os habeis ido", "se han ido", "he ido", "has ido", "ha ido", "hemos ido", "habéis ido", "habeis ido", "han ido"] }
+            ]
+        }
+    ];
+
+    let indiceActual = 0;
+    let palabrasRestantes = [];
+    let tiempoRestante = 120;
+    let intervaloTimer;
+
+    function iniciarJuego() {
+        let equipo = document.getElementById("nombre-equipo").value.trim();
+        if (!equipo) equipo = "Equipo sin nombre"; 
+        
+        document.getElementById("pantalla-inicio").classList.add("hidden");
+        document.getElementById("pantalla-juego").classList.remove("hidden");
+        document.getElementById("equipo-display").innerText = equipo;
+        
+        cargarActividad();
+    }
+
+    function cargarActividad() {
+        if (indiceActual >= actividades.length) {
+            document.getElementById("pantalla-juego").innerHTML = "<h2 class='title-main'>¡Misión Cumplida!</h2><div class='subtitle'>Han completado las 7 actividades de la fiesta exitosamente.</div>";
+            return;
+        }
+
+        const act = actividades[indiceActual];
+        document.getElementById("actividad-counter").innerText = `ACTIVIDAD ${indiceActual + 1} DE ${actividades.length}`;
+        document.getElementById("historia-curso").innerText = act.historia;
+        document.getElementById("btn-siguiente").classList.add("hidden");
+        document.getElementById("input-oracion").disabled = false;
+        document.getElementById("btn-enviar").disabled = false;
+        document.getElementById("btn-enviar").classList.remove("hidden");
+        document.getElementById("feedback").innerText = "";
+        document.getElementById("input-oracion").value = "";
+        
+        palabrasRestantes = act.palabras.map(p => p.base);
+        
+        const banco = document.getElementById("banco-palabras");
+        banco.innerHTML = "";
+        act.palabras.forEach(p => {
+            let span = document.createElement("span");
+            span.className = "word";
+            span.id = "word-" + p.base;
+            span.innerText = p.base;
+            banco.appendChild(span);
+        });
+
+        iniciarTemporizador();
+    }
+
+    function iniciarTemporizador() {
+        clearInterval(intervaloTimer);
+        tiempoRestante = 120;
+        actualizarDisplayReloj();
+        intervaloTimer = setInterval(() => {
+            tiempoRestante--;
+            actualizarDisplayReloj();
+            if (tiempoRestante <= 0) {
+                clearInterval(intervaloTimer);
+                tiempoAgotado();
+            }
+        }, 1000);
+    }
+
+    function actualizarDisplayReloj() {
+        let min = Math.floor(tiempoRestante / 60);
+        let sec = tiempoRestante % 60;
+        document.getElementById("timer").innerText = (min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec);
+    }
+
+    function tiempoAgotado() {
+        document.getElementById("input-oracion").disabled = true;
+        document.getElementById("btn-enviar").disabled = true;
+        document.getElementById("btn-enviar").classList.add("hidden");
+        document.getElementById("feedback").innerHTML = "<span class='error'>¡Tiempo agotado! Pasa a la siguiente actividad.</span>";
+        document.getElementById("btn-siguiente").classList.remove("hidden");
+    }
+
+    function validarOracion() {
+        const inputStr = document.getElementById("input-oracion").value.trim();
+        const feedback = document.getElementById("feedback");
+        
+        if (inputStr.split(" ").length < 3) {
+            feedback.innerHTML = "<span class='error'>La oración es muy corta. Usa al menos 3 palabras.</span>";
+            return;
+        }
+
+        const act = actividades[indiceActual];
+        let palabrasEncontradas = [];
+        
+        const textoLimpio = " " + normalizarTexto(inputStr) + " ";
+
+        for (let p of act.palabras) {
+            if (palabrasRestantes.includes(p.base)) {
+                const usaVariante = p.variantes.some(v => {
+                    const varianteLimpia = " " + normalizarTexto(v) + " ";
+                    return textoLimpio.includes(varianteLimpia);
+                });
+
+                if (usaVariante) {
+                    palabrasEncontradas.push(p.base);
+                }
+            }
+        }
+
+        if (palabrasEncontradas.length > 0) {
+            palabrasEncontradas.forEach(palabra => {
+                palabrasRestantes = palabrasRestantes.filter(w => w !== palabra);
+                document.getElementById("word-" + palabra).classList.add("found");
+            });
+            
+            feedback.innerHTML = `<span class="success">¡Bien hecho! Validado.</span>`;
+            document.getElementById("input-oracion").value = "";
+
+            if (palabrasRestantes.length === 0) {
+                clearInterval(intervaloTimer);
+                document.getElementById("input-oracion").disabled = true;
+                document.getElementById("btn-enviar").classList.add("hidden");
+                document.getElementById("btn-siguiente").classList.remove("hidden");
+                feedback.innerHTML = `<span class="success">¡Excelente! Has completado el banco de palabras.</span>`;
+            }
+        } else {
+            feedback.innerHTML = "<span class='error'>No se detectó ninguna palabra (o ya fue usada). Recuerda usar el Pretérito Perfecto Compuesto (Ej: he invitado).</span>";
+        }
+    }
+
+    function siguienteActividad() {
+        indiceActual++;
+        cargarActividad();
+    }
+</script>
+</body>
+</html>
