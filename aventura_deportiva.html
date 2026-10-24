@@ -11,6 +11,7 @@
             color: #333; 
             display: flex; 
             justify-content: center; 
+            align-items: flex-start;
             padding-top: 50px;
             margin: 0; 
             min-height: 100vh;
@@ -19,13 +20,13 @@
             background: white; 
             padding: 40px; 
             border-radius: 8px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
             width: 100%;
-            max-width: 600px; 
+            max-width: 550px; 
             text-align: center; 
         }
-        h2 { margin-top: 0; color: #2d3748; margin-bottom: 20px; }
-        h3 { font-size: 18px; color: #2d3748; margin-bottom: 20px; }
+        h2 { font-size: 22px; color: #2d3748; margin-top: 0; margin-bottom: 25px; font-weight: bold; }
+        h3 { font-size: 16px; color: #2d3748; margin-bottom: 20px; font-weight: bold; }
         
         input[type="text"] { 
             width: 100%; 
@@ -34,57 +35,59 @@
             border: 1px solid #cbd5e0; 
             border-radius: 4px; 
             box-sizing: border-box; 
-            font-size: 16px; 
+            font-size: 15px; 
             color: #4a5568; 
             outline: none; 
         }
         input[type="text"]:focus {
-            border: 2px solid #000;
+            border: 1px solid #000;
         }
         
         button { 
-            background: #4299e1; 
+            background: #4a90e2; 
             color: white; 
             border: none; 
-            padding: 12px 24px; 
+            padding: 10px 20px; 
             border-radius: 4px; 
             cursor: pointer; 
-            font-size: 16px; 
+            font-size: 15px; 
+            margin-top: 10px;
         }
-        button:hover { background: #3182ce; }
+        button:hover { background: #357abd; }
         button:disabled { background: #a0aec0; cursor: not-allowed; }
         
         .hidden { display: none; }
         
         #timer { 
-            font-size: 28px; 
+            font-size: 24px; 
             font-weight: bold; 
-            color: #e53e3e; 
-            margin: 15px 0; 
+            color: #d9534f; 
+            margin: 15px 0 25px 0; 
         }
         
         .word-bank { 
             display: flex; 
-            gap: 12px; 
+            gap: 10px; 
             justify-content: center; 
-            margin: 25px 0; 
+            margin: 20px 0; 
             flex-wrap: wrap; 
         }
         .word { 
             background: #e2e8f0; 
-            padding: 8px 18px; 
+            padding: 8px 16px; 
             border-radius: 20px; 
             font-weight: bold; 
             color: #2d3748;
+            font-size: 14px;
         }
         .word.found { 
             background: #48bb78; 
             color: white; 
         }
         
-        .feedback { margin-top: 15px; font-size: 15px; }
+        .feedback { margin-top: 15px; font-size: 14px; }
         .success { color: #48bb78; }
-        .error { color: #e53e3e; }
+        .error { color: #d9534f; }
     </style>
 </head>
 <body>
@@ -93,7 +96,7 @@
     <h2>Registro de Equipo</h2>
     <input type="text" id="nombre-equipo" placeholder="Nombre del equipo (ej. Los Leones)">
     <input type="text" id="nombres-alumnos" placeholder="Nombres de los integrantes (3 o 4)">
-    <br><br>
+    <br>
     <button onclick="iniciarJuego()">Comenzar Actividad</button>
 </div>
 
@@ -108,7 +111,7 @@
     <button id="btn-enviar" onclick="validarOracion()">Enviar Oración</button>
     <div id="feedback" class="feedback"></div>
 
-    <br><br>
+    <br>
     <button id="btn-siguiente" class="hidden" onclick="siguienteActividad()">Siguiente Actividad</button>
 </div>
 
@@ -134,7 +137,6 @@
                 { base: "perder", variantes: ["pierdo", "pierdes", "pierde", "perdemos", "perdéis", "pierden", "perder"] }
             ]
         }
-        // Puedes agregar más actividades aquí.
     ];
 
     let indiceActual = 0;
@@ -143,8 +145,8 @@
     let intervaloTimer;
 
     function iniciarJuego() {
-        const equipo = document.getElementById("nombre-equipo").value;
-        if (!equipo) return alert("Por favor ingresa el nombre del equipo.");
+        let equipo = document.getElementById("nombre-equipo").value.trim();
+        if (!equipo) equipo = "Equipo sin nombre"; // Evita bloqueos si el alumno no escribe nada
         
         document.getElementById("pantalla-inicio").classList.add("hidden");
         document.getElementById("pantalla-juego").classList.remove("hidden");
@@ -216,17 +218,15 @@
         const feedback = document.getElementById("feedback");
         
         if (inputStr.split(" ").length < 3) {
-            feedback.innerHTML = "<span class='error'>La oración es muy corta. Usa al menos 3 palabras para darle sentido.</span>";
+            feedback.innerHTML = "<span class='error'>La oración es muy corta. Usa al menos 3 palabras.</span>";
             return;
         }
 
         const act = actividades[indiceActual];
         let palabrasEncontradas = [];
 
-        // Ahora busca todas las palabras válidas presentes en la oración
         for (let p of act.palabras) {
             if (palabrasRestantes.includes(p.base)) {
-                // Verifica mediante expresiones regulares si se ha utilizado la palabra o sus conjugaciones
                 const usaVariante = p.variantes.some(v => new RegExp(`\\b${v}\\b`, 'i').test(inputStr));
                 if (usaVariante) {
                     palabrasEncontradas.push(p.base);
@@ -235,7 +235,6 @@
         }
 
         if (palabrasEncontradas.length > 0) {
-            // Actualiza visualmente todas las palabras encontradas
             palabrasEncontradas.forEach(palabra => {
                 palabrasRestantes = palabrasRestantes.filter(w => w !== palabra);
                 document.getElementById("word-" + palabra).classList.add("found");
@@ -244,7 +243,6 @@
             feedback.innerHTML = `<span class="success">¡Bien hecho! Validado.</span>`;
             document.getElementById("input-oracion").value = "";
 
-            // Verifica si se ha vaciado el banco de palabras
             if (palabrasRestantes.length === 0) {
                 clearInterval(intervaloTimer);
                 document.getElementById("input-oracion").disabled = true;
@@ -253,7 +251,7 @@
                 feedback.innerHTML = `<span class="success">¡Excelente! Has completado el banco de palabras.</span>`;
             }
         } else {
-            feedback.innerHTML = "<span class='error'>No se detectó ninguna palabra del banco (o ya fue usada). Revisa la conjugación.</span>";
+            feedback.innerHTML = "<span class='error'>No se detectó ninguna palabra del banco (o ya fue usada).</span>";
         }
     }
 
